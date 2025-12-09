@@ -1,18 +1,20 @@
-// src/pages/ProductDetailPage.jsx (UPDATED for React Router useParams)
+// src/pages/ProductDetailPage.jsx (Updated to use imported images)
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // <-- IMPORT useParams
+import { useParams } from 'react-router-dom';
 import { Share2, Facebook, Twitter, Linkedin, Star, Minus, Plus } from 'lucide-react';
 import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
 import { ALL_PRODUCTS } from '../data/products'; 
+import { images } from '../data/productImages'; // <-- Import images
 
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
+    // 1. Asgaard sofa details 
     'Asgaard sofa': {
         reviews: 5,
         rating: 4.7,
-        images: ['/images/asgaard-1.jpg', '/images/asgaard-2.jpg', '/images/asgaard-3.jpg', '/images/asgaard-4.jpg'],
+        images: [images.asgaard1, images.asgaard2, images.asgaard3, images.asgaard4],
         colors: [
             { name: 'Brown', hex: '#8B4513' }, 
             { name: 'Red', hex: '#FF0000' }, 
@@ -23,34 +25,33 @@ const productDetails = {
         category: 'Sofas',
         fullDescription: "Setting the bar as one of the loudest speakers in its class, the Kilburn is a compact, stout-hearted hero with a well-balanced audio which boasts a clear midrange and extended highs for a sound. Embodying the raw, wayward spirit of rock n' roll, the Kilburn portable active stereo speaker takes the unmistakable look and sound of Marshall, unplugs the chords, and takes the show on the road.",
     },
+    // 2. Default details for all OTHER products 
     'default': { 
-        images: ['/images/default-main.jpg'], 
-        colors: [{ name: 'Default', hex: '#B88E2F' }],
-        sizes: ['L', 'XL', 'XS'],
+        images: [images.defaultMain], 
+        colors: [
+            { name: 'White', hex: '#FFFFFF' }, 
+            { name: 'Tan', hex: '#B88E2F' }, 
+        ],
+        sizes: ['S', 'M', 'L'], 
         reviews: 1,
         rating: 4.0,
+        fullDescription: "This product is part of our default collection. All options (size and color) are placeholders until specific details are available. Add it to your cart today!",
     }
 };
 
 
-const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId from props
+const ProductDetailPage = ({ goToProduct, goToShop }) => {
   
-  // CRITICAL FIX 1: Retrieve the ID from the URL parameter
   const { productId: idParam } = useParams();
-  
-  // Convert the URL string parameter to a number
   const productId = parseInt(idParam); 
   
-  // 1. Find the selected product from the central data source
   const selectedProduct = ALL_PRODUCTS.find(p => p.id === productId);
 
   let product;
-  let productSpecificDetails;
-
+  
   if (selectedProduct) {
-    productSpecificDetails = productDetails[selectedProduct.name] || productDetails.default;
+    const productSpecificDetails = productDetails[selectedProduct.name] || productDetails.default;
     
-    // CRITICAL: Ensure the image used in the default case is the ALL_PRODUCTS image
     product = {
       ...selectedProduct,
       ...productSpecificDetails, 
@@ -59,55 +60,46 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId 
       mainImage: selectedProduct.image, 
     };
   } else {
-    // Default fallback if product not found (e.g. invalid URL)
     const defaultAsgaard = { 
         id: 100, 
         name: 'Asgaard sofa', 
         price: 250000.00, 
-        image: '/images/asgaard-1.jpg', 
+        image: productDetails['Asgaard sofa'].images[0], 
         ...productDetails['Asgaard sofa'] 
     };
     product = defaultAsgaard;
     product.mainImage = product.image;
   }
   
-  // State for user selections and image source
   const [selectedColor, setSelectedColor] = useState(product.colors[0].name);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Description');
-  // State for the main image source (CRITICAL)
   const [mainImageSource, setMainImageSource] = useState(product.mainImage); 
 
-  // --- CRITICAL FIX 2: useEffect to reset image and state on new product ID ---
-  // This hook ensures that when the URL changes (e.g., clicking related product), the component updates.
   useEffect(() => {
-    // Reset the main image source to the new product's image path
     setMainImageSource(product.mainImage); 
     
-    // Reset selections
     setSelectedColor(product.colors[0].name);
     setSelectedSize(product.sizes[0]);
     setQuantity(1);
-  }, [idParam, product.mainImage]); // <-- DEPENDS ON THE URL PARAMETER (idParam)
+    
+  }, [product.mainImage]); 
 
-  // 2. Related Products Logic (Now uses the dynamically loaded product)
   const relatedProducts = ALL_PRODUCTS
     .filter(p => p.id !== product.id)
     .sort(() => 0.5 - Math.random()) 
     .slice(0, 4); 
     
-  // --- HANDLERS (Unchanged) ---
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
   const handleAddToCart = () => {
     alert(`Added ${quantity} x ${product.name} (Color: ${selectedColor}, Size: ${selectedSize}) to the cart!`);
   };
 
-  const formattedPrice = `Rs. ${product.price.toLocaleString('en-IN')}.00`;
+  const formattedPrice = `Rs. ${parseFloat(product.price.toString().replace(/[Rp\.]/g, '')).toLocaleString('en-IN')}.00`;
   const ratingStars = [...Array(Math.floor(product.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
   
-  // Tab Content Renderer (Unchanged)
   const TabContent = () => {
     switch (activeTab) {
       case 'Description':
@@ -169,12 +161,15 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId 
           
           {/* Left Side: Images */}
           <div className="flex space-x-4">
-            {/* Small Images Column (Thumbnail Gallery) - Leave blank for now */}
             <div className="flex flex-col space-y-4">
-              {/* If you add more images to your product data, they would go here */}
+              <img 
+                src={mainImageSource} 
+                alt={`${product.name} thumbnail`} 
+                className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition duration-150" 
+              />
             </div>
             
-            {/* Main Image - Uses the updating mainImageSource state */}
+            {/* Main Image */}
             <div className="flex-grow">
               <img 
                 src={mainImageSource} 
@@ -235,7 +230,7 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId 
               </div>
             </div>
 
-            {/* Quantity and Action Buttons */}
+            {/* Quantity and Action Buttons (Unchanged) */}
             <div className="flex items-center space-x-6 pt-6 border-t border-gray-200">
               
               <div className="flex items-center space-x-2 border border-gray-400 rounded-lg">
@@ -273,7 +268,7 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId 
         </div>
       </div>
       
-      {/* Tabs Section */}
+      {/* Tabs Section (Unchanged) */}
       <div className="border-t border-gray-200 py-16">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
           
@@ -311,7 +306,6 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => { // Removed productId 
                   <ProductCard 
                     key={relatedProduct.id} 
                     product={relatedProduct}
-                    goToProduct={goToProduct} 
                   /> 
                 ))}
             </div>

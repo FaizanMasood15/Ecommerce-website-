@@ -21,7 +21,7 @@ const Header = ({ toggleCart }) => {
         
         {/* Logo: Use Link to go to the root path */}
         <Link to="/" className="flex items-center space-x-2 cursor-pointer">
-          <img src="/logo.png" alt="Faizan Butt Logo" className="w-8 h-8 object-contain" />
+          <img src="images/logo.png" alt="Faizan Butt Logo" className="w-8 h-8 object-contain" />
           <span className="text-2xl font-bold text-gray-900">Faizan Butt</span>
         </Link>
 
