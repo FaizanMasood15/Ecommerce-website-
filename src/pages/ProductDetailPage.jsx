@@ -7,7 +7,7 @@ import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
 import { ALL_PRODUCTS } from '../data/products'; 
 import { images } from '../data/productImages'; // <-- Import images
-
+import { useCart } from '../context/CartContext'; // <-- Import Cart Hook
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
     // 1. Asgaard sofa details 
@@ -40,13 +40,13 @@ const productDetails = {
 };
 
 
-const ProductDetailPage = ({ goToProduct, goToShop }) => {
+const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
   
   const { productId: idParam } = useParams();
   const productId = parseInt(idParam); 
   
   const selectedProduct = ALL_PRODUCTS.find(p => p.id === productId);
-
+const { addToCart, subtotal } = useCart(); // <-- Use the Cart hook
   let product;
   
   if (selectedProduct) {
@@ -58,19 +58,20 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => {
       sku: selectedProduct.id.toString().padStart(4, '0'),
       category: selectedProduct.description,
       mainImage: selectedProduct.image, 
+      basePrice: parseFloat(selectedProduct.price.replace(/[Rp\.]/g, '')),
     };
   } else {
-    const defaultAsgaard = { 
+  const defaultAsgaard = { 
         id: 100, 
         name: 'Asgaard sofa', 
         price: 250000.00, 
         image: productDetails['Asgaard sofa'].images[0], 
-        ...productDetails['Asgaard sofa'] 
+        ...productDetails['Asgaard sofa'],
+        basePrice: 250000.00,
     };
     product = defaultAsgaard;
     product.mainImage = product.image;
   }
-  
   const [selectedColor, setSelectedColor] = useState(product.colors[0].name);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
@@ -90,13 +91,16 @@ const ProductDetailPage = ({ goToProduct, goToShop }) => {
     .filter(p => p.id !== product.id)
     .sort(() => 0.5 - Math.random()) 
     .slice(0, 4); 
-    
+    const handleAddToCart = () => {
+    // Call the global function with current product ID, quantity, size, and color
+    addToCart(product.id, quantity, selectedColor, selectedSize);
+if (toggleCart) {
+        toggleCart();
+    }
+    };
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
-  const handleAddToCart = () => {
-    alert(`Added ${quantity} x ${product.name} (Color: ${selectedColor}, Size: ${selectedSize}) to the cart!`);
-  };
-
+ 
   const formattedPrice = `Rs. ${parseFloat(product.price.toString().replace(/[Rp\.]/g, '')).toLocaleString('en-IN')}.00`;
   const ratingStars = [...Array(Math.floor(product.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
   

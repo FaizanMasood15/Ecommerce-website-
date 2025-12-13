@@ -6,7 +6,7 @@ import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
-
+import ScrollToTop from "./components/ScrollToTop";
 // Page Components
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/Shop';
@@ -50,8 +50,13 @@ function App() {
             {/* Dynamic URL segment (:productId) allows loading specific products */}
             <Route 
               path="/shop/:productId" 
-              element={<ProductDetailPage goToProduct={goToProduct} goToShop={goToShop} />} 
+              element={<ProductDetailPage 
+                goToProduct={goToProduct}
+                 goToShop={goToShop} 
+                 toggleCart={toggleCart}
+                 />} 
             />
+
             <Route 
               path="*" 
               element={<h1 className="text-center py-20 text-3xl">404: Page Not Found</h1>} 
@@ -70,6 +75,7 @@ function App() {
     <CartProvider> 
         {/* BrowserRouter is the container for the entire router setup */}
         <Router>
+        <ScrollToTop />
             <Layout />
         </Router>
     </CartProvider>

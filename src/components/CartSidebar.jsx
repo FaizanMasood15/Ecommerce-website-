@@ -19,8 +19,8 @@ const CartSidebar = ({ isOpen, onClose }) => {
             {/* Overlay (Appears dark when sidebar is open) */}
             <div 
                 onClick={onClose}
-                className={`fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300 
-                            ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+                className={`fixed inset-0 bg-black bg-opacity-3 z-40 transition-opacity duration-600 
+                            ${isOpen ? 'opacity-35 visible' : 'opacity-100 invisible'}`}
             ></div>
 
             {/* Sidebar Panel */}
@@ -33,7 +33,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 <div className="p-6 border-b flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-gray-900">
                         Shopping Cart 
-                        {totalItems > 0 && <span className="text-primary text-base font-medium ml-2">({totalItems})</span>}
+                        {totalItems > 0 && <span className="text-primary text-base font-medium ml-2">({totalItems}items)</span>}
                     </h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition duration-150">
                         <X className="w-6 h-6" />

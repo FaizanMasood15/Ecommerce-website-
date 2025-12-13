@@ -3,6 +3,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // <-- Import Link
 import { User, Search, Heart, ShoppingCart } from 'lucide-react';
+import logo from '/images/logo.png';
+import { images } from '../data/productImages';
 
 // We no longer need goToHome/goToShop props for the main links
 const Header = ({ toggleCart }) => { 
@@ -21,7 +23,7 @@ const Header = ({ toggleCart }) => {
         
         {/* Logo: Use Link to go to the root path */}
         <Link to="/" className="flex items-center space-x-2 cursor-pointer">
-          <img src="images/logo.png" alt="Faizan Butt Logo" className="w-8 h-8 object-contain" />
+          <img src={logo} alt="Faizan Butt Logo" className="w-8 h-8 object-contain" />
           <span className="text-2xl font-bold text-gray-900">Faizan Butt</span>
         </Link>
 
