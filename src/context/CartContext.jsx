@@ -12,32 +12,37 @@ const getProductDetails = (id) => {
 
 export const CartProvider = ({ children }) => {
     // CRITICAL FIX: Change initial state to an empty array
-    const [cartItems, setCartItems] = useState([]); 
+    const [cartItems, setCartItems] = useState([]);
 
     // Function to add a product to the cart
     const addToCart = (id, quantity, color, size) => {
         const numericId = parseInt(id);
         setCartItems(prevItems => {
             // Check if the item (matching ID, color, and size) already exists
-            const existingItemIndex = prevItems.findIndex(item => 
+            const existingItemIndex = prevItems.findIndex(item =>
                 item.id === numericId && item.color === color && item.size === size
             );
 
             if (existingItemIndex > -1) {
                 // Item exists: increase quantity
-                const newItems = [...prevItems];
-                newItems[existingItemIndex].quantity += quantity;
-                return newItems;
+                return prevItems.map(item =>
+                    item.id === numericId &&
+                        item.color === color &&
+                        item.size === size
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+
             } else {
                 // Item is new: add to cart
-                return [...prevItems, { id:numericId, quantity, color, size }];
+                return [...prevItems, { id: numericId, quantity, color, size }];
             }
         });
     };
-    
+
     // ... (removeItem logic remains the same) ...
     const removeItem = (id, color, size) => {
-        setCartItems(prevItems => prevItems.filter(item => 
+        setCartItems(prevItems => prevItems.filter(item =>
             !(item.id === id && item.color === color && item.size === size)
         ));
     };
@@ -47,7 +52,7 @@ export const CartProvider = ({ children }) => {
     const cartData = cartItems.map(item => {
         const product = getProductDetails(item.id);
         // CRITICAL FIX: Ensure price calculation is robust for products with no details
-        const priceString = product ? product.price : '0'; 
+        const priceString = product ? product.price : '0';
         const price = parseFloat(priceString.toString().replace(/[Rp\.]/g, ''));
 
         return {
