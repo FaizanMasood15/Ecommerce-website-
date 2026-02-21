@@ -30,4 +30,85 @@ const getProductById = async (req, res) => {
     }
 };
 
-export { getProducts, getProductById };
+// @desc    Delete a product
+// @route   DELETE /api/products/:idOrSlug
+// @access  Private/Admin
+const deleteProduct = async (req, res) => {
+    const { id: idOrSlug } = req.params;
+    let product;
+
+    product = await Product.findOne({ slug: idOrSlug });
+
+    if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
+        product = await Product.findById(idOrSlug);
+    }
+
+    if (product) {
+        await Product.deleteOne({ _id: product._id });
+        res.status(200).json({ message: 'Product deleted successfully' });
+    } else {
+        res.status(404).json({ message: 'Product not found' });
+    }
+};
+
+// @desc    Create a product
+// @route   POST /api/products
+// @access  Private/Admin
+const createProduct = async (req, res) => {
+    try {
+        const product = new Product({
+            name: 'Sample name',
+            slug: `sample-name-${Date.now()}`,
+            price: 0,
+            user: req.user._id,
+            image: '/images/sample.jpg',
+            category: 'Sample category',
+            countInStock: 0,
+            description: 'Sample description',
+        });
+
+        const createdProduct = await product.save();
+        res.status(201).json(createdProduct);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Update a product
+// @route   PUT /api/products/:idOrSlug
+// @access  Private/Admin
+const updateProduct = async (req, res) => {
+    try {
+        const { name, price, description, image, category, countInStock, isNewProduct, discount } = req.body;
+        const { id: idOrSlug } = req.params;
+        let product;
+
+        product = await Product.findOne({ slug: idOrSlug });
+
+        if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
+            product = await Product.findById(idOrSlug);
+        }
+
+        if (product) {
+            product.name = name;
+            product.price = price;
+            product.description = description;
+            product.image = image;
+            product.category = category;
+            product.countInStock = countInStock;
+            product.slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            // Optional properties you might have added
+            if (isNewProduct !== undefined) product.isNew = isNewProduct;
+            if (discount !== undefined) product.discount = discount;
+
+            const updatedProduct = await product.save();
+            res.json(updatedProduct);
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export { getProducts, getProductById, deleteProduct, createProduct, updateProduct };

@@ -15,6 +15,10 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PrivateRoute from './components/PrivateRoute';
 
+import AdminRoute from './components/AdminRoute';
+import AdminProductListPage from './pages/AdminProductListPage';
+import AdminProductEditPage from './pages/AdminProductEditPage';
+
 // Main App Component (Responsible for layout and context)
 function App() {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
@@ -67,6 +71,12 @@ function App() {
             {/* Registered users only */}
             <Route path="" element={<PrivateRoute />}>
               {/* Place future protected routes like /checkout here */}
+            </Route>
+
+            {/* Admin users only */}
+            <Route path="" element={<AdminRoute />}>
+              <Route path="/admin/products" element={<AdminProductListPage />} />
+              <Route path="/admin/product/:id/edit" element={<AdminProductEditPage />} />
             </Route>
 
             <Route

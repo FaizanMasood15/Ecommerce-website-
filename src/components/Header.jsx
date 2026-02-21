@@ -59,7 +59,12 @@ const Header = ({ toggleCart }) => {
         <div className="flex items-center space-x-4 md:space-x-6 shrink-0">
 
           {userInfo ? (
-            <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="flex items-center space-x-4 md:space-x-6">
+              {userInfo.isAdmin && (
+                <Link to="/admin/products" className="text-sm font-semibold text-primary hover:text-amber-700 transition">
+                  Admin Dashboard
+                </Link>
+              )}
               <span className="hidden sm:inline-block text-sm font-medium text-gray-700">Hi, {userInfo.name.split(' ')[0]}</span>
               <LogOut
                 className="w-5 h-5 md:w-6 md:h-6 text-gray-900 hover:text-primary cursor-pointer"
