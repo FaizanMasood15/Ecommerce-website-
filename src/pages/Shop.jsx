@@ -4,28 +4,28 @@ import React, { useState } from 'react';
 import { SlidersHorizontal, Grid3X3, List } from 'lucide-react';
 import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
-import { ALL_PRODUCTS } from '../data/products';
-import { images } from '../data/productImages'; 
+import { images } from '../data/productImages';
+import { useGetProductsQuery } from '../slices/productsApiSlice';
 
 // Constants for pagination
 const PRODUCTS_PER_PAGE = 16;
-const totalResults = ALL_PRODUCTS.length; 
-const totalPages = Math.ceil(totalResults / PRODUCTS_PER_PAGE); 
 
 const categories = ['All', 'Chairs', 'Sofas', 'Lamps', 'Tables'];
 
 const ShopPage = ({ goToProduct }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortOrder, setSortOrder] = useState('default'); 
-  const [selectedCategory, setSelectedCategory] = useState('All'); 
+  const [sortOrder, setSortOrder] = useState('default');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const { data: ALL_PRODUCTS, isLoading, error } = useGetProductsQuery();
 
   const filterProducts = (products) => {
     if (selectedCategory === 'All') {
       return products;
     }
-    const lowerCategory = selectedCategory.toLowerCase().slice(0, -1); 
-    
-    return products.filter(product => 
+    const lowerCategory = selectedCategory.toLowerCase().slice(0, -1);
+
+    return products.filter(product =>
       product.description.toLowerCase().includes(lowerCategory)
     );
   };
@@ -47,8 +47,10 @@ const ShopPage = ({ goToProduct }) => {
     }
     return sortedProducts;
   };
-  
-  const filteredProducts = filterProducts(ALL_PRODUCTS);
+  if (isLoading) return <div className="py-24 text-center text-3xl font-bold">Loading...</div>;
+  if (error) return <div className="py-24 text-center text-red-500 font-bold">Error: {error?.data?.message || error.error}</div>;
+
+  const filteredProducts = filterProducts(ALL_PRODUCTS || []);
   const sortedAndFilteredProducts = sortProducts(filteredProducts);
   const currentTotalResults = sortedAndFilteredProducts.length;
   const currentTotalPages = Math.ceil(currentTotalResults / PRODUCTS_PER_PAGE);
@@ -60,23 +62,23 @@ const ShopPage = ({ goToProduct }) => {
   const handlePageChange = (page) => {
     if (page >= 1 && page <= currentTotalPages) {
       setCurrentPage(page);
-      window.scrollTo({ top: 400, behavior: 'smooth' }); 
+      window.scrollTo({ top: 400, behavior: 'smooth' });
     }
   };
-  
+
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
 
   return (
     <>
       {/* 1. Shop Banner */}
-      <div 
+      <div
         className="py-24 text-center bg-cover bg-center relative"
-        style={{ 
-            backgroundImage: `url(${images.shopBanner})` // <-- Use imported image
+        style={{
+          backgroundImage: `url(${images.shopBanner})` // <-- Use imported image
         }}
       >
         <div className="absolute inset-0 bg-white opacity-60"></div>
@@ -91,26 +93,26 @@ const ShopPage = ({ goToProduct }) => {
       {/* 2. Filter / Sort Bar */}
       <div className="bg-background-light py-4 md:py-6">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8 flex flex-col md:flex-row items-center justify-between">
-          
+
           <div className="flex items-center space-x-6">
-            
+
             <div className="flex items-center space-x-2">
-                <SlidersHorizontal className="w-6 h-6 text-gray-900" />
-                <span className="text-lg font-medium text-gray-900">Filter By:</span>
-                <select 
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                    className="bg-white border border-gray-300 p-2 rounded-lg text-base"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
+              <SlidersHorizontal className="w-6 h-6 text-gray-900" />
+              <span className="text-lg font-medium text-gray-900">Filter By:</span>
+              <select
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="bg-white border border-gray-300 p-2 rounded-lg text-base"
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
-            
+
             <div className='flex items-center space-x-4'>
-                <Grid3X3 className="w-6 h-6 text-gray-900 cursor-pointer hover:text-primary" />
-                <List className="w-6 h-6 text-gray-500 cursor-pointer hover:text-primary" />
+              <Grid3X3 className="w-6 h-6 text-gray-900 cursor-pointer hover:text-primary" />
+              <List className="w-6 h-6 text-gray-500 cursor-pointer hover:text-primary" />
             </div>
 
             <span className="text-gray-500 text-base">
@@ -128,11 +130,11 @@ const ShopPage = ({ goToProduct }) => {
 
             <div className="flex items-center space-x-2">
               <span className="text-gray-900 text-base">Sort by</span>
-              <select 
-                value={sortOrder} 
+              <select
+                value={sortOrder}
                 onChange={(e) => {
-                  setSortOrder(e.target.value); 
-                  handlePageChange(1); 
+                  setSortOrder(e.target.value);
+                  handlePageChange(1);
                 }}
                 className="bg-white border border-gray-300 p-2 rounded-lg text-base"
               >
@@ -150,10 +152,10 @@ const ShopPage = ({ goToProduct }) => {
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {shopProducts.map(product => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-              /> 
+              <ProductCard
+                key={product._id}
+                product={product}
+              />
             ))}
           </div>
 
@@ -165,24 +167,23 @@ const ShopPage = ({ goToProduct }) => {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageChange(pageNumber)}
-                  className={`${
-                    currentPage === pageNumber
-                      ? 'bg-primary text-white'
-                      : 'bg-hero-box text-gray-900 hover:bg-primary hover:text-white'
-                  } font-semibold py-3 px-5 rounded-lg transition duration-200`}
+                  className={`${currentPage === pageNumber
+                    ? 'bg-primary text-white'
+                    : 'bg-hero-box text-gray-900 hover:bg-primary hover:text-white'
+                    } font-semibold py-3 px-5 rounded-lg transition duration-200`}
                 >
                   {pageNumber}
                 </button>
               );
             })}
-            
+
             {currentPage < currentTotalPages && (
-                <button 
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className="bg-hero-box text-gray-900 font-semibold py-3 px-5 rounded-lg hover:bg-primary hover:text-white transition duration-200"
-                >
-                  Next
-                </button>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="bg-hero-box text-gray-900 font-semibold py-3 px-5 rounded-lg hover:bg-primary hover:text-white transition duration-200"
+              >
+                Next
+              </button>
             )}
           </div>
         </div>

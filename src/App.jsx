@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { CartProvider } from './context/CartContext'; 
+import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
@@ -11,10 +11,13 @@ import ScrollToTop from "./components/ScrollToTop";
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/Shop';
 import ProductDetailPage from './pages/ProductDetailPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import PrivateRoute from './components/PrivateRoute';
 
 // Main App Component (Responsible for layout and context)
 function App() {
-  const [isCartOpen, setIsCartOpen] = React.useState(false); 
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
   const toggleCart = () => setIsCartOpen(prev => !prev);
 
   // We define the layout wrapper here
@@ -30,54 +33,63 @@ function App() {
     return (
       <div className="flex flex-col min-h-screen">
         {/* Header needs the navigation functions and cart toggle */}
-        <Header 
-          goToHome={goToHome} 
-          goToShop={goToShop} 
-          toggleCart={toggleCart} 
-        /> 
-        
+        <Header
+          goToHome={goToHome}
+          goToShop={goToShop}
+          toggleCart={toggleCart}
+        />
+
         <main className="flex-grow">
           {/* Define all possible URL paths here */}
           <Routes>
-            <Route 
-              path="/" 
-              element={<HomePage goToShop={goToShop} goToProduct={goToProduct} />} 
+            <Route
+              path="/"
+              element={<HomePage goToShop={goToShop} goToProduct={goToProduct} />}
             />
-            <Route 
-              path="/shop" 
-              element={<ShopPage goToProduct={goToProduct} />} 
+            <Route
+              path="/shop"
+              element={<ShopPage goToProduct={goToProduct} />}
             />
+            {/* Authentication Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
             {/* Dynamic URL segment (:productId) allows loading specific products */}
-            <Route 
-              path="/shop/:productId" 
-              element={<ProductDetailPage 
+            <Route
+              path="/shop/:productId"
+              element={<ProductDetailPage
                 goToProduct={goToProduct}
-                 goToShop={goToShop} 
-                 toggleCart={toggleCart}
-                 />} 
+                goToShop={goToShop}
+                toggleCart={toggleCart}
+              />}
             />
 
-            <Route 
-              path="*" 
-              element={<h1 className="text-center py-20 text-3xl">404: Page Not Found</h1>} 
+            {/* Registered users only */}
+            <Route path="" element={<PrivateRoute />}>
+              {/* Place future protected routes like /checkout here */}
+            </Route>
+
+            <Route
+              path="*"
+              element={<h1 className="text-center py-20 text-3xl">404: Page Not Found</h1>}
             />
           </Routes>
         </main>
 
         <Footer />
-        
+
         <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       </div>
     );
   };
 
   return (
-    <CartProvider> 
-        {/* BrowserRouter is the container for the entire router setup */}
-        <Router>
+    <CartProvider>
+      {/* BrowserRouter is the container for the entire router setup */}
+      <Router>
         <ScrollToTop />
-            <Layout />
-        </Router>
+        <Layout />
+      </Router>
     </CartProvider>
   );
 }
