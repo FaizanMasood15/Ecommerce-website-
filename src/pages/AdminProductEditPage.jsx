@@ -26,6 +26,7 @@ const AdminProductEditPage = () => {
     const [images, setImages] = useState([]);
     const [colors, setColors] = useState([]);
     const [sizes, setSizes] = useState([]);
+    const [variants, setVariants] = useState([]);
     const [category, setCategory] = useState('');
     const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
@@ -59,12 +60,65 @@ const AdminProductEditPage = () => {
 
                 setColors(product.colors || []);
                 setSizes(product.sizes || []);
+                setVariants(product.variants || []);
                 setCategory(product.category);
                 setCountInStock(product.countInStock);
                 setDescription(product.description);
             }
         }
     }, [product]);
+
+    // Automatically generate or sync the variants matrix when sizes/colors change
+    useEffect(() => {
+        if (!sizes.length && !colors.length) {
+            setVariants([]);
+            return;
+        }
+
+        const newVariants = [];
+
+        // If sizes exist but no colors
+        if (sizes.length > 0 && colors.length === 0) {
+            sizes.forEach(size => {
+                const existing = variants.find(v => v.size === size && !v.color);
+                newVariants.push(existing || { size, color: '', colorHex: '', price: price, countInStock: 0, sku: '' });
+            });
+        }
+        // If colors exist but no sizes
+        else if (colors.length > 0 && sizes.length === 0) {
+            colors.forEach(color => {
+                const existing = variants.find(v => v.color === color.name && !v.size);
+                newVariants.push(existing || { size: '', color: color.name, colorHex: color.hex, price: price, countInStock: 0, sku: '' });
+            });
+        }
+        // Both exist
+        else {
+            sizes.forEach(size => {
+                colors.forEach(color => {
+                    const existing = variants.find(v => v.size === size && v.color === color.name);
+                    newVariants.push(existing || {
+                        size,
+                        color: color.name,
+                        colorHex: color.hex,
+                        price: price,
+                        countInStock: 0,
+                        sku: ''
+                    });
+                });
+            });
+        }
+
+        // Only update if the length changed or the core permutations changed, to avoid infinite loops
+        if (JSON.stringify(newVariants.map(v => `${v.size}-${v.color}`)) !== JSON.stringify(variants.map(v => `${v.size}-${v.color}`))) {
+            setVariants(newVariants);
+        }
+    }, [sizes, colors]);
+
+    const handleVariantChange = (index, field, value) => {
+        const updatedVariants = [...variants];
+        updatedVariants[index] = { ...updatedVariants[index], [field]: value };
+        setVariants(updatedVariants);
+    };
 
     const uploadFileHandler = async (e) => {
         if (images.length >= 5) {
@@ -124,6 +178,7 @@ const AdminProductEditPage = () => {
                 images, // New array
                 colors,
                 sizes,
+                variants,
                 category,
                 countInStock: Number(countInStock) || 0,
                 description,
@@ -325,6 +380,75 @@ const AdminProductEditPage = () => {
                             })}
                         </div>
                     </div>
+
+                    {/* Dynamic Variant Matrix */}
+                    {variants.length > 0 && (
+                        <div className="border border-primary/20 p-4 rounded-lg bg-white shadow-sm overflow-x-auto">
+                            <h3 className="text-gray-900 font-bold mb-4 flex items-center">
+                                <span className="bg-primary text-white w-6 h-6 rounded-full inline-flex justify-center items-center text-xs mr-2 border border-amber-700">✓</span>
+                                Variant Pricing & Stock Inventory
+                            </h3>
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-600">
+                                        <th className="p-3 font-semibold">Variant (Size / Color)</th>
+                                        <th className="p-3 font-semibold w-24">Price (Rs)</th>
+                                        <th className="p-3 font-semibold w-24">Stock</th>
+                                        <th className="p-3 font-semibold">SKU (Optional)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {variants.map((variant, index) => (
+                                        <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                                            <td className="p-3">
+                                                <div className="flex items-center space-x-2">
+                                                    {variant.colorHex && (
+                                                        <span
+                                                            className="w-4 h-4 rounded-full border border-gray-300 shadow-sm"
+                                                            style={{ backgroundColor: variant.colorHex }}
+                                                            title={variant.color}
+                                                        ></span>
+                                                    )}
+                                                    <span className="font-medium text-gray-800">
+                                                        {variant.size || 'Default'} {variant.color && `- ${variant.color}`}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="p-3">
+                                                <input
+                                                    type="number"
+                                                    value={variant.price}
+                                                    onChange={(e) => handleVariantChange(index, 'price', Number(e.target.value))}
+                                                    className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                                                />
+                                            </td>
+                                            <td className="p-3">
+                                                <input
+                                                    type="number"
+                                                    value={variant.countInStock}
+                                                    onChange={(e) => handleVariantChange(index, 'countInStock', Number(e.target.value))}
+                                                    className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                                                />
+                                            </td>
+                                            <td className="p-3">
+                                                <input
+                                                    type="text"
+                                                    value={variant.sku || ''}
+                                                    onChange={(e) => handleVariantChange(index, 'sku', e.target.value)}
+                                                    className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                                                    placeholder="e.g. SHIRT-M-RED"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <p className="text-xs text-gray-500 mt-3 flex items-center">
+                                <span className="mr-1">ℹ️</span>
+                                If a variant has 0 stock, it will show as "Out of Stock" when a user selects that combination.
+                            </p>
+                        </div>
+                    )}
 
                     <div className="pb-10">
                         <label className="block text-gray-700 font-semibold mb-2">Description</label>

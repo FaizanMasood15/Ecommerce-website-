@@ -66,6 +66,7 @@ const createProduct = async (req, res) => {
             images: [],
             colors: [],
             sizes: [],
+            variants: [],
             category: 'Sample category',
             countInStock: 0,
             description: 'Sample description',
@@ -83,7 +84,7 @@ const createProduct = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
     try {
-        const { name, sku, price, description, image, images, colors, sizes, category, countInStock, isNewProduct, discount } = req.body;
+        const { name, sku, price, description, image, images, colors, sizes, variants, category, countInStock, isNewProduct, discount } = req.body;
         const { id: idOrSlug } = req.params;
         let product;
 
@@ -102,6 +103,7 @@ const updateProduct = async (req, res) => {
             product.images = images || [];
             product.colors = colors || [];
             product.sizes = sizes || [];
+            product.variants = variants || [];
             product.category = category;
             product.countInStock = countInStock;
             let newSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');

@@ -113,7 +113,20 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
-  const formattedPrice = `Rs. ${parseFloat(product?.price?.toString().replace(/[Rp\.]/g, '') || 0).toLocaleString('en-IN')}.00`;
+  // Determine current variant based on selections
+  const currentVariant = product.variants?.find(
+    (v) => (v.size || '') === selectedSize && (v.color || '') === selectedColor
+  );
+
+  const displayPrice = currentVariant && currentVariant.price > 0
+    ? currentVariant.price
+    : product.basePrice;
+
+  const displayStock = currentVariant
+    ? currentVariant.countInStock
+    : product.countInStock;
+
+  const formattedPrice = `Rs. ${displayPrice.toLocaleString('en-IN')}.00`;
   const ratingStars = [...Array(Math.floor(product?.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
 
   const TabContent = () => {
@@ -221,19 +234,19 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
               {/* Urgency/Stock Badge */}
               <div className="flex items-center">
-                {product.countInStock > 5 && (
+                {displayStock > 5 && (
                   <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full flex items-center">
                     <span className="w-2 h-2 mr-1 bg-green-500 rounded-full animate-pulse"></span>
                     In Stock
                   </span>
                 )}
-                {product.countInStock > 0 && product.countInStock <= 5 && (
+                {displayStock > 0 && displayStock <= 5 && (
                   <span className="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full flex items-center">
                     <span className="w-2 h-2 mr-1 bg-red-500 rounded-full animate-pulse"></span>
-                    🔥 High Demand: Only {product.countInStock} left!
+                    🔥 High Demand: Only {displayStock} left!
                   </span>
                 )}
-                {(product.countInStock === 0 || product.countInStock == null) && (
+                {(displayStock === 0 || displayStock == null) && (
                   <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                     Out of Stock
                   </span>
@@ -313,8 +326,8 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                 <span className="text-lg font-semibold w-6 text-center">{quantity}</span>
                 <button
                   onClick={increaseQuantity}
-                  disabled={quantity >= product.countInStock}
-                  className={`p-3 text-lg transition duration-150 ${quantity >= product.countInStock ? 'text-gray-300 cursor-not-allowed' : 'text-gray-900 hover:bg-gray-100'}`}
+                  disabled={quantity >= displayStock}
+                  className={`p-3 text-lg transition duration-150 ${quantity >= displayStock ? 'text-gray-300 cursor-not-allowed' : 'text-gray-900 hover:bg-gray-100'}`}
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -322,8 +335,8 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
               <button
                 onClick={handleAddToCart}
-                disabled={product.countInStock === 0 || !product.countInStock}
-                className={`border text-primary font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(product.countInStock === 0 || !product.countInStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-primary hover:bg-primary hover:text-white'
+                disabled={displayStock === 0 || !displayStock}
+                className={`border text-primary font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-primary hover:bg-primary hover:text-white'
                   }`}
               >
                 Add To Cart
@@ -406,11 +419,11 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
         </div>
         <button
           onClick={handleAddToCart}
-          disabled={product.countInStock === 0 || !product.countInStock}
-          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(product.countInStock === 0 || !product.countInStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-amber-700 text-white shadow-lg'
+          disabled={displayStock === 0 || !displayStock}
+          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-amber-700 text-white shadow-lg'
             }`}
         >
-          {product.countInStock === 0 || !product.countInStock ? 'Out of Stock' : 'Add To Cart'}
+          {displayStock === 0 || !displayStock ? 'Out of Stock' : 'Add To Cart'}
         </button>
       </div>
 

@@ -39,6 +39,16 @@ const productSchema = mongoose.Schema(
                 type: String,
             }
         ],
+        variants: [
+            {
+                size: { type: String },
+                color: { type: String },
+                colorHex: { type: String },
+                price: { type: Number, required: true, default: 0 },
+                countInStock: { type: Number, required: true, default: 0 },
+                sku: { type: String },
+            }
+        ],
         description: {
             type: String,
             required: true,
