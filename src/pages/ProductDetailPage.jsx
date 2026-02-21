@@ -5,69 +5,68 @@ import { useParams } from 'react-router-dom';
 import { Share2, Facebook, Twitter, Linkedin, Star, Minus, Plus } from 'lucide-react';
 import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
-import { ALL_PRODUCTS } from '../data/products'; 
 import { images } from '../data/productImages'; // <-- Import images
 import { useCart } from '../context/CartContext'; // <-- Import Cart Hook
+import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
-    // 1. Asgaard sofa details 
-    'Asgaard sofa': {
-        reviews: 5,
-        rating: 4.7,
-        images: [images.asgaard1, images.asgaard2, images.asgaard3, images.asgaard4],
-        colors: [
-            { name: 'Brown', hex: '#8B4513' }, 
-            { name: 'Red', hex: '#FF0000' }, 
-            { name: 'Blue', hex: '#1E90FF' }, 
-        ],
-        sizes: ['L', 'XL', 'XS'],
-        sku: 'SS001',
-        category: 'Sofas',
-        fullDescription: "Setting the bar as one of the loudest speakers in its class, the Kilburn is a compact, stout-hearted hero with a well-balanced audio which boasts a clear midrange and extended highs for a sound. Embodying the raw, wayward spirit of rock n' roll, the Kilburn portable active stereo speaker takes the unmistakable look and sound of Marshall, unplugs the chords, and takes the show on the road.",
-    },
-    // 2. Default details for all OTHER products 
-    'default': { 
-        images: [images.defaultMain], 
-        colors: [
-            { name: 'White', hex: '#FFFFFF' }, 
-            { name: 'Tan', hex: '#B88E2F' }, 
-        ],
-        sizes: ['S', 'M', 'L'], 
-        reviews: 1,
-        rating: 4.0,
-        fullDescription: "This product is part of our default collection. All options (size and color) are placeholders until specific details are available. Add it to your cart today!",
-    }
+  // 1. Asgaard sofa details 
+  'Asgaard sofa': {
+    reviews: 5,
+    rating: 4.7,
+    images: [images.asgaard1, images.asgaard2, images.asgaard3, images.asgaard4],
+    colors: [
+      { name: 'Brown', hex: '#8B4513' },
+      { name: 'Red', hex: '#FF0000' },
+      { name: 'Blue', hex: '#1E90FF' },
+    ],
+    sizes: ['L', 'XL', 'XS'],
+    sku: 'SS001',
+    category: 'Sofas',
+    fullDescription: "Setting the bar as one of the loudest speakers in its class, the Kilburn is a compact, stout-hearted hero with a well-balanced audio which boasts a clear midrange and extended highs for a sound. Embodying the raw, wayward spirit of rock n' roll, the Kilburn portable active stereo speaker takes the unmistakable look and sound of Marshall, unplugs the chords, and takes the show on the road.",
+  },
+  // 2. Default details for all OTHER products 
+  'default': {
+    images: [images.defaultMain],
+    colors: [
+      { name: 'White', hex: '#FFFFFF' },
+      { name: 'Tan', hex: '#B88E2F' },
+    ],
+    sizes: ['S', 'M', 'L'],
+    reviews: 1,
+    rating: 4.0,
+    fullDescription: "This product is part of our default collection. All options (size and color) are placeholders until specific details are available. Add it to your cart today!",
+  }
 };
 
 
 const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
-  
+
   const { productId: idParam } = useParams();
-  const productId = parseInt(idParam); 
-  
-  const selectedProduct = ALL_PRODUCTS.find(p => p.id === productId);
-const { addToCart, subtotal } = useCart(); // <-- Use the Cart hook
+
+  const { data: selectedProduct, isLoading, error } = useGetProductDetailsQuery(idParam);
+  const { addToCart, subtotal } = useCart(); // <-- Use the Cart hook
   let product;
-  
+
   if (selectedProduct) {
     const productSpecificDetails = productDetails[selectedProduct.name] || productDetails.default;
-    
+
     product = {
       ...selectedProduct,
-      ...productSpecificDetails, 
-      sku: selectedProduct.id.toString().padStart(4, '0'),
-      category: selectedProduct.description,
-      mainImage: selectedProduct.image, 
-      basePrice: parseFloat(selectedProduct.price.replace(/[Rp\.]/g, '')),
+      ...productSpecificDetails,
+      sku: selectedProduct._id.toString().substring(0, 4).padStart(4, '0'),
+      category: selectedProduct.category,
+      mainImage: selectedProduct.image,
+      basePrice: parseFloat(selectedProduct.price?.toString().replace(/[Rp\.]/g, '') || 0),
     };
   } else {
-  const defaultAsgaard = { 
-        id: 100, 
-        name: 'Asgaard sofa', 
-        price: 250000.00, 
-        image: productDetails['Asgaard sofa'].images[0], 
-        ...productDetails['Asgaard sofa'],
-        basePrice: 250000.00,
+    const defaultAsgaard = {
+      id: 100,
+      name: 'Asgaard sofa',
+      price: 250000.00,
+      image: productDetails['Asgaard sofa'].images[0],
+      ...productDetails['Asgaard sofa'],
+      basePrice: 250000.00,
     };
     product = defaultAsgaard;
     product.mainImage = product.image;
@@ -76,34 +75,35 @@ const { addToCart, subtotal } = useCart(); // <-- Use the Cart hook
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Description');
-  const [mainImageSource, setMainImageSource] = useState(product.mainImage); 
+  const [mainImageSource, setMainImageSource] = useState(product?.mainImage || '');
 
   useEffect(() => {
-    setMainImageSource(product.mainImage); 
-    
-    setSelectedColor(product.colors[0].name);
-    setSelectedSize(product.sizes[0]);
-    setQuantity(1);
-    
-  }, [product.mainImage]); 
-
-  const relatedProducts = ALL_PRODUCTS
-    .filter(p => p.id !== product.id)
-    .sort(() => 0.5 - Math.random()) 
-    .slice(0, 4); 
-    const handleAddToCart = () => {
-    // Call the global function with current product ID, quantity, size, and color
-    addToCart(product.id, quantity, selectedColor, selectedSize);
-if (toggleCart) {
-        toggleCart();
+    if (product) {
+      setMainImageSource(product.mainImage);
+      setSelectedColor(product.colors[0].name);
+      setSelectedSize(product.sizes[0]);
+      setQuantity(1);
     }
-    };
+  }, [product?.mainImage]);
+
+  if (isLoading) return <div className="py-24 text-center text-3xl font-bold">Loading...</div>;
+  if (error) return <div className="py-24 text-center text-red-500 font-bold">Error: {error?.data?.message || error.error}</div>;
+
+  // We temporarily disable related products while moving to MongoDB
+  const relatedProducts = [];
+  const handleAddToCart = () => {
+    // Call the global function with the entire product object alongside quantity/size/color
+    addToCart(product, quantity, selectedColor, selectedSize);
+    if (toggleCart) {
+      toggleCart();
+    }
+  };
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
- 
-  const formattedPrice = `Rs. ${parseFloat(product.price.toString().replace(/[Rp\.]/g, '')).toLocaleString('en-IN')}.00`;
-  const ratingStars = [...Array(Math.floor(product.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
-  
+
+  const formattedPrice = `Rs. ${parseFloat(product?.price?.toString().replace(/[Rp\.]/g, '') || 0).toLocaleString('en-IN')}.00`;
+  const ratingStars = [...Array(Math.floor(product?.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
+
   const TabContent = () => {
     switch (activeTab) {
       case 'Description':
@@ -162,39 +162,39 @@ if (toggleCart) {
       {/* Product Details Section */}
       <div className="py-16">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10">
-          
+
           {/* Left Side: Images */}
           <div className="flex space-x-4">
             <div className="flex flex-col space-y-4">
-              <img 
-                src={mainImageSource} 
-                alt={`${product.name} thumbnail`} 
-                className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition duration-150" 
+              <img
+                src={mainImageSource}
+                alt={`${product.name} thumbnail`}
+                className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition duration-150"
               />
             </div>
-            
+
             {/* Main Image */}
             <div className="flex-grow">
-              <img 
-                src={mainImageSource} 
-                alt={product.name} 
-                className="w-full h-auto object-cover rounded-lg" 
+              <img
+                src={mainImageSource}
+                alt={product.name}
+                className="w-full h-auto object-cover rounded-lg"
               />
             </div>
           </div>
-          
+
           {/* Right Side: Details and Controls (Unchanged) */}
           <div className="space-y-6">
             <h1 className="text-4xl font-semibold text-gray-900">{product.name}</h1>
             <p className="text-2xl font-medium text-gray-900">{formattedPrice}</p>
-            
+
             {/* Rating and Reviews */}
             <div className="flex items-center space-x-3 text-sm">
-                <div className="flex text-primary">
-                    {ratingStars}
-                </div>
-                <span className="text-gray-500 text-sm">|</span>
-                <span className="text-gray-500">{product.reviews || 5} Customer Review</span>
+              <div className="flex text-primary">
+                {ratingStars}
+              </div>
+              <span className="text-gray-500 text-sm">|</span>
+              <span className="text-gray-500">{product.reviews || 5} Customer Review</span>
             </div>
 
             <p className="text-gray-700 text-base max-w-lg">
@@ -236,7 +236,7 @@ if (toggleCart) {
 
             {/* Quantity and Action Buttons (Unchanged) */}
             <div className="flex items-center space-x-6 pt-6 border-t border-gray-200">
-              
+
               <div className="flex items-center space-x-2 border border-gray-400 rounded-lg">
                 <button onClick={decreaseQuantity} className="p-3 text-lg text-gray-900 hover:bg-gray-100 transition duration-150">
                   <Minus className="w-4 h-4" />
@@ -255,37 +255,36 @@ if (toggleCart) {
                 + Compare
               </button>
             </div>
-            
+
             {/* Metadata (SKU, Category, Tags) */}
             <div className="pt-6 text-sm text-gray-500 border-t border-gray-200 space-y-2">
-                <p>SKU: <span className="text-gray-700 font-medium">{product.sku}</span></p>
-                <p>Category: <span className="text-gray-700 font-medium">{product.category}</span></p>
-                <p>Tags: <span className="text-gray-700 font-medium">Sofa, Chair, Home, Shop</span></p>
-                <div className="flex items-center space-x-2">
-                    <p>Share:</p>
-                    <Facebook className="w-5 h-5 cursor-pointer hover:text-primary" />
-                    <Twitter className="w-5 h-5 cursor-pointer hover:text-primary" />
-                    <Linkedin className="w-5 h-5 cursor-pointer hover:text-primary" />
-                </div>
+              <p>SKU: <span className="text-gray-700 font-medium">{product.sku}</span></p>
+              <p>Category: <span className="text-gray-700 font-medium">{product.category}</span></p>
+              <p>Tags: <span className="text-gray-700 font-medium">Sofa, Chair, Home, Shop</span></p>
+              <div className="flex items-center space-x-2">
+                <p>Share:</p>
+                <Facebook className="w-5 h-5 cursor-pointer hover:text-primary" />
+                <Twitter className="w-5 h-5 cursor-pointer hover:text-primary" />
+                <Linkedin className="w-5 h-5 cursor-pointer hover:text-primary" />
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       {/* Tabs Section (Unchanged) */}
       <div className="border-t border-gray-200 py-16">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-          
+
           <div className="flex space-x-10 border-b pb-4">
             {['Description', 'Additional Information', 'Reviews'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`text-xl font-medium transition duration-150 ${
-                  activeTab === tab 
-                    ? 'text-gray-900 border-b-2 border-primary' 
-                    : 'text-gray-500 hover:text-gray-900'
-                }`}
+                className={`text-xl font-medium transition duration-150 ${activeTab === tab
+                  ? 'text-gray-900 border-b-2 border-primary'
+                  : 'text-gray-500 hover:text-gray-900'
+                  }`}
               >
                 {tab} {tab === 'Reviews' && `(${product.reviews || 5})`}
               </button>
@@ -298,27 +297,27 @@ if (toggleCart) {
 
         </div>
       </div>
-      
+
       {/* Related Products Section (Dynamic and Clickable) */}
       <div className="py-16 bg-background-light text-center">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-                Related Products
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                {relatedProducts.map(relatedProduct => (
-                  <ProductCard 
-                    key={relatedProduct.id} 
-                    product={relatedProduct}
-                  /> 
-                ))}
-            </div>
-            <button onClick={goToShop} className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-10 mt-10 transition duration-300 uppercase">
-                Show More
-            </button>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+            Related Products
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {relatedProducts.map(relatedProduct => (
+              <ProductCard
+                key={relatedProduct.id}
+                product={relatedProduct}
+              />
+            ))}
+          </div>
+          <button onClick={goToShop} className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-10 mt-10 transition duration-300 uppercase">
+            Show More
+          </button>
         </div>
       </div>
-      
+
       <FeatureStrip />
     </>
   );
