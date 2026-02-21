@@ -26,9 +26,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Make the public/images folder accessible statically for the browser to load
-const __dirname = path.resolve();
-app.use('/images', express.static(path.join(__dirname, '/backend/public/images')));
+// Make the uploads folder accessible statically for the browser to load
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Basic route to test the server
 app.get('/', (req, res) => {

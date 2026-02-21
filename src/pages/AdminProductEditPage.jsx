@@ -10,6 +10,7 @@ const AdminProductEditPage = () => {
     const [price, setPrice] = useState(0);
     const [image, setImage] = useState('');
     const [category, setCategory] = useState('');
+    const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
 
     const { data: product, isLoading, error } = useGetProductDetailsQuery(productId);
@@ -22,6 +23,7 @@ const AdminProductEditPage = () => {
             setPrice(product.price);
             setImage(product.image);
             setCategory(product.category);
+            setCountInStock(product.countInStock);
             setDescription(product.description);
         }
     }, [product]);
@@ -48,6 +50,7 @@ const AdminProductEditPage = () => {
                 price,
                 image,
                 category,
+                countInStock,
                 description,
             }).unwrap();
             alert('Product updated successfully');
@@ -119,6 +122,17 @@ const AdminProductEditPage = () => {
                             placeholder="Enter category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700 font-semibold mb-2">Count In Stock</label>
+                        <input
+                            type="number"
+                            placeholder="Enter stock amount"
+                            value={countInStock}
+                            onChange={(e) => setCountInStock(Number(e.target.value))}
                             className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
                     </div>
