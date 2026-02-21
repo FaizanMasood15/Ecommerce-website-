@@ -59,9 +59,13 @@ const createProduct = async (req, res) => {
         const product = new Product({
             name: 'Sample name',
             slug: `sample-name-${Date.now()}`,
+            sku: '',
             price: 0,
             user: req.user._id,
             image: '/images/sample.jpg',
+            images: [],
+            colors: [],
+            sizes: [],
             category: 'Sample category',
             countInStock: 0,
             description: 'Sample description',
@@ -79,7 +83,7 @@ const createProduct = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
     try {
-        const { name, price, description, image, category, countInStock, isNewProduct, discount } = req.body;
+        const { name, sku, price, description, image, images, colors, sizes, category, countInStock, isNewProduct, discount } = req.body;
         const { id: idOrSlug } = req.params;
         let product;
 
@@ -91,12 +95,22 @@ const updateProduct = async (req, res) => {
 
         if (product) {
             product.name = name;
+            product.sku = sku || '';
             product.price = price;
             product.description = description;
             product.image = image;
+            product.images = images || [];
+            product.colors = colors || [];
+            product.sizes = sizes || [];
             product.category = category;
             product.countInStock = countInStock;
-            product.slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            let newSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+            // Check if this slug is already taken by another product
+            const existingSlugProduct = await Product.findOne({ slug: newSlug, _id: { $ne: product._id } });
+            if (existingSlugProduct) {
+                newSlug = `${newSlug}-${Date.now()}`;
+            }
+            product.slug = newSlug;
             // Optional properties you might have added
             if (isNewProduct !== undefined) product.isNew = isNewProduct;
             if (discount !== undefined) product.discount = discount;

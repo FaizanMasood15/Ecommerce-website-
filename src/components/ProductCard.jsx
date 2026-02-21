@@ -16,7 +16,9 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.preventDefault(); // Prevent navigating to the product detail page when clicking the button
-    addToCart(product, 1, product.colors ? product.colors[0].name : 'Default', product.sizes ? product.sizes[0] : 'Default');
+    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0].name : '';
+    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : '';
+    addToCart(product, 1, defaultColor, defaultSize);
   };
 
   return (
@@ -31,7 +33,7 @@ const ProductCard = ({ product }) => {
         className="relative h-72 w-full overflow-hidden" // Remove cursor-pointer and onClick
       >
         <img
-          src={product.image}
+          src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
           alt={product.name}
           className="w-full h-full object-cover"
         />
@@ -71,9 +73,10 @@ const ProductCard = ({ product }) => {
           {product.name}
         </h3>
         {/* ... (rest of the info) ... */}
-        <p className="text-sm text-gray-500 mb-2">
-          {product.description}
-        </p>
+        <div
+          className="text-sm text-gray-500 mb-2 line-clamp-2"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
         <div className="flex items-center space-x-3">
           <span className="text-xl font-semibold text-gray-900">
             Rp {product.price}

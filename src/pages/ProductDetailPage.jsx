@@ -51,12 +51,18 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
   if (selectedProduct) {
     const productSpecificDetails = productDetails[selectedProduct.name] || productDetails.default;
 
+    // Fallback to legacy single image if array is empty or undefined
+    const validImages = selectedProduct.images && selectedProduct.images.length > 0
+      ? selectedProduct.images
+      : [selectedProduct.image];
+
     product = {
-      ...selectedProduct,
       ...productSpecificDetails,
-      sku: selectedProduct._id.toString().substring(0, 4).padStart(4, '0'),
+      ...selectedProduct,
+      images: validImages, // Override dummy images with real DB array
+      sku: selectedProduct.sku || selectedProduct._id.toString().substring(0, 4).padStart(4, '0'),
       category: selectedProduct.category,
-      mainImage: selectedProduct.image,
+      mainImage: validImages[0], // Set first array item as main image
       basePrice: parseFloat(selectedProduct.price?.toString().replace(/[Rp\.]/g, '') || 0),
     };
   } else {
@@ -71,8 +77,8 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
     product = defaultAsgaard;
     product.mainImage = product.image;
   }
-  const [selectedColor, setSelectedColor] = useState(product.colors[0].name);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+  const [selectedColor, setSelectedColor] = useState(product.colors && product.colors.length > 0 ? product.colors[0].name : '');
+  const [selectedSize, setSelectedSize] = useState(product.sizes && product.sizes.length > 0 ? product.sizes[0] : '');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('Description');
   const [mainImageSource, setMainImageSource] = useState(product?.mainImage || '');
@@ -80,8 +86,8 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
   useEffect(() => {
     if (product) {
       setMainImageSource(product.mainImage);
-      setSelectedColor(product.colors[0].name);
-      setSelectedSize(product.sizes[0]);
+      setSelectedColor(product.colors && product.colors.length > 0 ? product.colors[0].name : '');
+      setSelectedSize(product.sizes && product.sizes.length > 0 ? product.sizes[0] : '');
       setQuantity(1);
     }
   }, [product?.mainImage]);
@@ -109,9 +115,10 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
       case 'Description':
         return (
           <div className="space-y-4 text-gray-700">
-            <p className="mt-4">
-              {product.description}
-            </p>
+            <div
+              className="mt-4 prose prose-sm max-w-none text-gray-700"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
             <p>
               {product.fullDescription || "Detailed description is coming soon. Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
             </p>
@@ -165,12 +172,17 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
           {/* Left Side: Images */}
           <div className="flex space-x-4">
-            <div className="flex flex-col space-y-4">
-              <img
-                src={mainImageSource}
-                alt={`${product.name} thumbnail`}
-                className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition duration-150"
-              />
+            {/* Thumbnails Column */}
+            <div className="flex flex-col space-y-4 max-h-[500px] overflow-y-auto pr-2">
+              {product.images && product.images.map((imgSrc, index) => (
+                <img
+                  key={index}
+                  src={imgSrc}
+                  alt={`${product.name} thumbnail ${index + 1}`}
+                  onClick={() => setMainImageSource(imgSrc)}
+                  className={`w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition duration-150 ${mainImageSource === imgSrc ? 'border-2 border-primary opacity-100' : 'opacity-60'}`}
+                />
+              ))}
             </div>
 
             {/* Main Image */}
@@ -178,7 +190,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               <img
                 src={mainImageSource}
                 alt={product.name}
-                className="w-full h-auto object-cover rounded-lg"
+                className="w-full h-auto max-h-[600px] object-cover rounded-lg"
               />
             </div>
           </div>
@@ -197,42 +209,58 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               <span className="text-gray-500">{product.reviews || 5} Customer Review</span>
             </div>
 
-            <p className="text-gray-700 text-base max-w-lg">
-              {product.description}
-            </p>
+            <div
+              className="text-gray-700 text-base max-w-lg prose prose-sm"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
 
             {/* Size Selector */}
-            <div className="space-y-3">
-              <h3 className="text-base font-semibold text-gray-500">Size</h3>
-              <div className="flex space-x-3">
-                {product.sizes && product.sizes.map(size => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`h-10 w-10 rounded-lg text-sm font-semibold 
-                      ${selectedSize === size ? 'bg-primary text-white' : 'bg-hero-box text-gray-900 hover:bg-gray-200'}`}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-base font-semibold text-gray-500">Size</h3>
+                <div className="flex flex-wrap gap-3">
+                  {product.sizes.map(size => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-10 h-10 rounded-lg text-sm font-semibold flex items-center justify-center transition-all 
+                        ${selectedSize === size
+                          ? 'bg-primary text-white shadow-md border-transparent'
+                          : 'bg-white text-gray-900 border border-gray-300 hover:border-primary hover:text-primary'}`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Color Selector */}
-            <div className="space-y-3">
-              <h3 className="text-base font-semibold text-gray-500">Color</h3>
-              <div className="flex space-x-3">
-                {product.colors && product.colors.map(color => (
-                  <button
-                    key={color.name}
-                    onClick={() => setSelectedColor(color.name)}
-                    className={`h-6 w-6 rounded-full border-2 transition-all duration-150 
-                      ${selectedColor === color.name ? 'border-primary' : 'border-transparent hover:border-gray-400'}`}
-                    style={{ backgroundColor: color.hex }}
-                  />
-                ))}
+            {product.colors && product.colors.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-base font-semibold text-gray-500">Color</h3>
+                <div className="flex flex-wrap gap-4">
+                  {product.colors.map(color => (
+                    <button
+                      key={color.name}
+                      onClick={() => setSelectedColor(color.name)}
+                      className={`flex flex-col items-center space-y-1 p-2 rounded-lg border transition-all 
+                        ${selectedColor === color.name
+                          ? 'bg-blue-50 border-primary shadow-sm'
+                          : 'bg-white border-transparent hover:border-gray-300'}`}
+                    >
+                      <span
+                        className="w-8 h-8 rounded-full border shadow-sm flex items-center justify-center"
+                        style={{ backgroundColor: color.hex, borderColor: color.hex === '#ffffff' || color.hex === '#FFFFFF' ? '#e5e7eb' : color.hex }}
+                      >
+                        {selectedColor === color.name && <span className={color.hex === '#ffffff' || color.hex === '#FFFFFF' ? 'text-black text-sm' : 'text-white text-sm'}>✓</span>}
+                      </span>
+                      <span className={`text-xs ${selectedColor === color.name ? 'font-semibold text-primary' : 'text-gray-600'}`}>{color.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity and Action Buttons (Unchanged) */}
             <div className="flex items-center space-x-6 pt-6 border-t border-gray-200">

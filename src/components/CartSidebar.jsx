@@ -17,14 +17,14 @@ const CartSidebar = ({ isOpen, onClose }) => {
     return (
         <>
             {/* Overlay (Appears dark when sidebar is open) */}
-            <div 
+            <div
                 onClick={onClose}
                 className={`fixed inset-0 bg-black bg-opacity-3 z-40 transition-opacity duration-600 
                             ${isOpen ? 'opacity-35 visible' : 'opacity-100 invisible'}`}
             ></div>
 
             {/* Sidebar Panel */}
-            <div 
+            <div
                 className={`fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-xl z-50 
                             transform transition-transform duration-500 ease-in-out
                             ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
@@ -32,7 +32,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="p-6 border-b flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-gray-900">
-                        Shopping Cart 
+                        Shopping Cart
                         {totalItems > 0 && <span className="text-primary text-base font-medium ml-2">({totalItems}items)</span>}
                     </h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition duration-150">
@@ -48,17 +48,17 @@ const CartSidebar = ({ isOpen, onClose }) => {
                         cartItems.map((item, index) => (
                             <div key={index} className="flex items-start space-x-4 border-b pb-4">
                                 {/* Product Image */}
-                                <img 
-                                    src={item.product.image} 
-                                    alt={item.product.name} 
+                                <img
+                                    src={(item.product.images && item.product.images.length > 0) ? item.product.images[0] : item.product.image}
+                                    alt={item.product.name}
                                     className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
                                 />
-                                
+
                                 {/* Item Details */}
                                 <div className="flex-grow">
                                     <h3 className="text-lg font-semibold text-gray-900">{item.product.name}</h3>
                                     <p className="text-sm text-gray-500">
-                                        {formatCurrency(item.price)} x {item.quantity} 
+                                        {formatCurrency(item.price)} x {item.quantity}
                                         {item.color && item.size && (
                                             <span className='ml-2 text-xs'>
                                                 ({item.color}/{item.size})
@@ -67,9 +67,9 @@ const CartSidebar = ({ isOpen, onClose }) => {
                                     </p>
                                     <p className="text-primary font-medium mt-1">Total: {formatCurrency(item.totalPrice)}</p>
                                 </div>
-                                
+
                                 {/* Remove Button */}
-                                <button 
+                                <button
                                     onClick={() => removeItem(item.id, item.color, item.size)}
                                     className="text-red-500 hover:text-red-700 transition duration-150 p-1"
                                     aria-label="Remove item"
