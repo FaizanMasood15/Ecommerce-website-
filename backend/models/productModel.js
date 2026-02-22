@@ -12,6 +12,9 @@ const productSchema = mongoose.Schema(
             required: true,
             unique: true,
         },
+        sku: {
+            type: String,
+        },
         name: {
             type: String,
             required: true,
@@ -20,6 +23,32 @@ const productSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        images: [
+            {
+                type: String,
+            }
+        ],
+        colors: [
+            {
+                name: { type: String, required: true },
+                hex: { type: String, required: true },
+            }
+        ],
+        sizes: [
+            {
+                type: String,
+            }
+        ],
+        variants: [
+            {
+                size: { type: String },
+                color: { type: String },
+                colorHex: { type: String },
+                price: { type: Number, required: true, default: 0 },
+                countInStock: { type: Number, required: true, default: 0 },
+                sku: { type: String },
+            }
+        ],
         description: {
             type: String,
             required: true,
@@ -37,6 +66,11 @@ const productSchema = mongoose.Schema(
             type: Number,
             required: true,
             default: 0,
+        },
+        isDraft: {
+            type: Boolean,
+            required: true,
+            default: false,
         },
     },
     {
