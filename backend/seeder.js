@@ -14,14 +14,14 @@ const parsePrice = (priceStr) => {
 };
 
 const mockProducts = [
-    { name: 'Syltherine', description: 'Stylish cafe chair', price: parsePrice('2.500.000'), category: 'Chairs', image: '/images/Images1.png', countInStock: 10 },
-    { name: 'Leviosa', description: 'Stylish cafe chair', price: parsePrice('2.500.000'), category: 'Chairs', image: '/images/Images2.png', countInStock: 5 },
-    { name: 'Lolito', description: 'Luxury big sofa', price: parsePrice('7.000.000'), category: 'Sofas', image: '/images/Images 3.png', countInStock: 2 },
-    { name: 'Respira', description: 'Outdoor bar table and stool', price: parsePrice('500.000'), category: 'Outdoor', image: '/images/Images4.png', countInStock: 20 },
-    { name: 'Grifo', description: 'Night lamp', price: parsePrice('1.500.000'), category: 'Lamps', image: '/images/Images5.png', countInStock: 15 },
-    { name: 'Muggo', description: 'Small mug', price: parsePrice('150.000'), category: 'Accessories', image: '/images/Images6.png', countInStock: 50 },
-    { name: 'Pingky', description: 'Cute bed set', price: parsePrice('7.000.000'), category: 'Beds', image: '/images/Images7.png', countInStock: 3 },
-    { name: 'Potty', description: 'Minimalist flower pot', price: parsePrice('500.000'), category: 'Accessories', image: '/images/Images8.png', countInStock: 30 }
+    { name: 'Syltherine', description: 'Stylish cafe chair', price: parsePrice('2.500.000'), category: 'Chairs', image: '/images/Images1.png', countInStock: 10, isDraft: false },
+    { name: 'Leviosa', description: 'Stylish cafe chair', price: parsePrice('2.500.000'), category: 'Chairs', image: '/images/Images2.png', countInStock: 5, isDraft: false },
+    { name: 'Lolito', description: 'Luxury big sofa', price: parsePrice('7.000.000'), category: 'Sofas', image: '/images/Images 3.png', countInStock: 2, isDraft: false },
+    { name: 'Respira', description: 'Outdoor bar table and stool', price: parsePrice('500.000'), category: 'Outdoor', image: '/images/Images4.png', countInStock: 20, isDraft: false },
+    { name: 'Grifo', description: 'Night lamp', price: parsePrice('1.500.000'), category: 'Lamps', image: '/images/Images5.png', countInStock: 15, isDraft: false },
+    { name: 'Muggo', description: 'Small mug', price: parsePrice('150.000'), category: 'Accessories', image: '/images/Images6.png', countInStock: 50, isDraft: false },
+    { name: 'Pingky', description: 'Cute bed set', price: parsePrice('7.000.000'), category: 'Beds', image: '/images/Images7.png', countInStock: 3, isDraft: false },
+    { name: 'Potty', description: 'Minimalist flower pot', price: parsePrice('500.000'), category: 'Accessories', image: '/images/Images8.png', countInStock: 30, isDraft: false }
 ];
 
 dotenv.config();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGetProductsQuery, useDeleteProductMutation, useCreateProductMutation } from '../slices/productsApiSlice';
+import { useGetProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
-import { Trash2 } from 'lucide-react'; // Import an icon for the bulk delete button
+import { Trash2, Edit2, Check, X, Eye, EyeOff } from 'lucide-react'; // Import icons
 
 const CustomSwal = Swal.mixin({
     customClass: {
@@ -17,14 +17,19 @@ const CustomSwal = Swal.mixin({
 
 const AdminProductListPage = () => {
     const navigate = useNavigate();
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+    const { data: products, isLoading, error, refetch } = useGetProductsQuery({ all: true });
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
     const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
+    const [updateProduct] = useUpdateProductMutation(); // For inline edits
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-    const filteredProducts = products?.filter((product) => {
+    // Inline Edit State
+    const [editingCell, setEditingCell] = useState({ id: null, field: null, value: '' });
+
+    let filteredProducts = products?.filter((product) => {
         const term = searchTerm.toLowerCase();
         return (
             product.name.toLowerCase().includes(term) ||
@@ -32,6 +37,33 @@ const AdminProductListPage = () => {
             product.category.toLowerCase().includes(term)
         );
     }) || [];
+
+    if (sortConfig.key) {
+        filteredProducts.sort((a, b) => {
+            if (a[sortConfig.key] < b[sortConfig.key]) {
+                return sortConfig.direction === 'asc' ? -1 : 1;
+            }
+            if (a[sortConfig.key] > b[sortConfig.key]) {
+                return sortConfig.direction === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+    }
+
+    const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (columnName) => {
+        if (sortConfig.key !== columnName) {
+            return <span className="text-gray-400 text-xs ml-1">↕️</span>;
+        }
+        return sortConfig.direction === 'asc' ? <span className="text-primary text-xs ml-1">↑</span> : <span className="text-primary text-xs ml-1">↓</span>;
+    };
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
@@ -48,6 +80,53 @@ const AdminProductListPage = () => {
             setSelectedProducts([...selectedProducts, id]);
         }
     };
+
+    // --- Inline Editing Logic ---
+    const handleInlineEditStart = (product, field) => {
+        setEditingCell({ id: product._id, field, value: product[field] });
+    };
+
+    const handleInlineEditChange = (e) => {
+        setEditingCell({ ...editingCell, value: e.target.value });
+    };
+
+    const handleInlineEditCancel = () => {
+        setEditingCell({ id: null, field: null, value: '' });
+    };
+
+    const handleInlineEditSave = async (product) => {
+        if (String(editingCell.value) === String(product[editingCell.field])) {
+            handleInlineEditCancel();
+            return; // No change made
+        }
+
+        try {
+            await updateProduct({
+                productId: product._id,
+                ...product, // Send existing data
+                [editingCell.field]: Number(editingCell.value) || 0, // Update the specific field
+            }).unwrap();
+
+            refetch(); // Refresh list to get updated data
+            handleInlineEditCancel();
+        } catch (err) {
+            CustomSwal.fire({ icon: 'error', title: 'Update Failed', text: err?.data?.message || err.error });
+        }
+    };
+
+    const handleToggleDraft = async (product) => {
+        try {
+            await updateProduct({
+                productId: product._id,
+                ...product,
+                isDraft: !product.isDraft,
+            }).unwrap();
+            refetch();
+        } catch (err) {
+            CustomSwal.fire({ icon: 'error', title: 'Update Failed', text: err?.data?.message || err.error });
+        }
+    };
+    // -----------------------------
 
     const handleCreateProduct = async () => {
         try {
@@ -164,9 +243,24 @@ const AdminProductListPage = () => {
                             </th>
                             <th className="p-4 font-semibold text-gray-700">ID / SKU</th>
                             <th className="p-4 font-semibold text-gray-700">Image</th>
-                            <th className="p-4 font-semibold text-gray-700">Name</th>
-                            <th className="p-4 font-semibold text-gray-700">Price</th>
-                            <th className="p-4 font-semibold text-gray-700">Stock</th>
+                            <th
+                                className="p-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-200 select-none group transition-colors"
+                                onClick={() => requestSort('name')}
+                            >
+                                Name {getSortIcon('name')}
+                            </th>
+                            <th
+                                className="p-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-200 select-none group transition-colors"
+                                onClick={() => requestSort('price')}
+                            >
+                                Price {getSortIcon('price')}
+                            </th>
+                            <th
+                                className="p-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-200 select-none group transition-colors"
+                                onClick={() => requestSort('countInStock')}
+                            >
+                                Stock {getSortIcon('countInStock')}
+                            </th>
                             <th className="p-4 font-semibold text-gray-700">Colors</th>
                             <th className="p-4 font-semibold text-gray-700">Sizes</th>
                             <th className="p-4 font-semibold text-gray-700">Category</th>
@@ -190,13 +284,70 @@ const AdminProductListPage = () => {
                                     <td className="p-4">
                                         <img src={(product.images && product.images.length > 0) ? product.images[0] : product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                                     </td>
-                                    <td className="p-4 font-medium text-gray-900">{product.name}</td>
-                                    <td className="p-4">Rs. {product.price.toLocaleString()}</td>
-                                    <td className="p-4">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.countInStock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                            {product.countInStock}
-                                        </span>
+                                    <td className="p-4 font-medium text-gray-900">
+                                        <div className="flex items-center space-x-2">
+                                            <span>{product.name}</span>
+                                            {product.isDraft && (
+                                                <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Draft</span>
+                                            )}
+                                        </div>
                                     </td>
+
+                                    {/* Inline Edit UI for Price */}
+                                    <td className="p-4">
+                                        {editingCell.id === product._id && editingCell.field === 'price' ? (
+                                            <div className="flex items-center space-x-1">
+                                                <span className="text-gray-500 text-sm">Rs.</span>
+                                                <input
+                                                    type="number"
+                                                    className="w-20 border border-primary rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                                                    value={editingCell.value}
+                                                    onChange={handleInlineEditChange}
+                                                    autoFocus
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') handleInlineEditSave(product);
+                                                        if (e.key === 'Escape') handleInlineEditCancel();
+                                                    }}
+                                                />
+                                                <button onClick={() => handleInlineEditSave(product)} className="text-green-600 hover:text-green-800 p-1"><Check size={16} /></button>
+                                                <button onClick={handleInlineEditCancel} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button>
+                                            </div>
+                                        ) : (
+                                            <div className="group flex items-center space-x-2 cursor-pointer" onClick={() => handleInlineEditStart(product, 'price')}>
+                                                <span>Rs. {product.price.toLocaleString()}</span>
+                                                <Edit2 className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        )}
+                                    </td>
+
+                                    {/* Inline Edit UI for Stock */}
+                                    <td className="p-4">
+                                        {editingCell.id === product._id && editingCell.field === 'countInStock' ? (
+                                            <div className="flex items-center space-x-1">
+                                                <input
+                                                    type="number"
+                                                    className="w-16 border border-primary rounded px-2 py-1 text-sm text-center focus:outline-none focus:ring-1 focus:ring-primary"
+                                                    value={editingCell.value}
+                                                    onChange={handleInlineEditChange}
+                                                    autoFocus
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') handleInlineEditSave(product);
+                                                        if (e.key === 'Escape') handleInlineEditCancel();
+                                                    }}
+                                                />
+                                                <button onClick={() => handleInlineEditSave(product)} className="text-green-600 hover:text-green-800 p-1"><Check size={16} /></button>
+                                                <button onClick={handleInlineEditCancel} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button>
+                                            </div>
+                                        ) : (
+                                            <div className="group flex items-center space-x-2 cursor-pointer" onClick={() => handleInlineEditStart(product, 'countInStock')}>
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.countInStock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                    {product.countInStock}
+                                                </span>
+                                                <Edit2 className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        )}
+                                    </td>
+
                                     <td className="p-4">
                                         <div className="flex -space-x-1">
                                             {product.colors && product.colors.length > 0 ? (
@@ -212,17 +363,24 @@ const AdminProductListPage = () => {
                                         {product.sizes && product.sizes.length > 0 ? product.sizes.join(', ') : 'N/A'}
                                     </td>
                                     <td className="p-4 text-gray-600">{product.category}</td>
-                                    <td className="p-4 text-right space-x-3">
+                                    <td className="p-4 text-right space-x-2 flex items-center justify-end">
+                                        <button
+                                            onClick={() => handleToggleDraft(product)}
+                                            className={`p-2 rounded-lg transition ${product.isDraft ? 'text-amber-600 bg-amber-50 hover:bg-amber-100' : 'text-green-600 bg-green-50 hover:bg-green-100'}`}
+                                            title={product.isDraft ? 'Currently Draft. Click to Publish.' : 'Currently Published. Click to Unpublish.'}
+                                        >
+                                            {product.isDraft ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
                                         <Link
                                             to={`/admin/product/${product._id}/edit`}
-                                            className="text-blue-500 hover:text-blue-700 text-sm font-semibold transition inline-block">
-                                            Edit
+                                            className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg text-sm font-semibold transition inline-block">
+                                            <Edit2 className="w-4 h-4" />
                                         </Link>
                                         <button
                                             onClick={() => handleDelete(product._id)}
                                             disabled={isDeleting}
-                                            className="text-red-500 hover:text-red-700 text-sm font-semibold transition">
-                                            Delete
+                                            className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg text-sm font-semibold transition">
+                                            <Trash2 className="w-4 h-4" />
                                         </button>
                                     </td>
                                 </tr>

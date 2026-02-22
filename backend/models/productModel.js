@@ -67,6 +67,11 @@ const productSchema = mongoose.Schema(
             required: true,
             default: 0,
         },
+        isDraft: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
     },
     {
         timestamps: true,

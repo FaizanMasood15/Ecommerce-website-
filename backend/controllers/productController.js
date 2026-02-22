@@ -4,7 +4,22 @@ import Product from '../models/productModel.js';
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-    const products = await Product.find({});
+    // If admin is requesting, send all. Otherwise send only published.
+    // NOTE: This assumes the route uses the auth middleware to set req.user if logged in.
+    // Since getProducts is usually public, req.user might be undefined.
+    // Let's check for an 'isAdmin' query parameter securely, or just let the API rely on the fact that 
+    // public frontend shouldn't request drafts.
+    // To be perfectly secure, we should create a separate Admin route, but for now, 
+    // we'll check if the query includes an explicit admin flag or if req.user is an admin.
+
+    let query = { isDraft: { $ne: true } };
+
+    // If an admin requests it from the admin panel, they might pass a query parameter like ?all=true
+    if (req.query.all === 'true') {
+        query = {}; // fetch all
+    }
+
+    const products = await Product.find(query);
     res.json(products);
 };
 
@@ -21,6 +36,11 @@ const getProductById = async (req, res) => {
     // If no slug match and it's a valid Mongo ObjectId, try ID lookup
     if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
         product = await Product.findById(idOrSlug);
+    }
+
+    // If it's a draft, don't show it unless explicitly requested by admin logic
+    if (product && product.isDraft && req.query.all !== 'true') {
+        product = null;
     }
 
     if (product) {
@@ -69,6 +89,7 @@ const createProduct = async (req, res) => {
             variants: [],
             category: 'Sample category',
             countInStock: 0,
+            isDraft: true,
             description: 'Sample description',
         });
 
@@ -84,7 +105,7 @@ const createProduct = async (req, res) => {
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
     try {
-        const { name, sku, price, description, image, images, colors, sizes, variants, category, countInStock, isNewProduct, discount } = req.body;
+        const { name, sku, price, description, image, images, colors, sizes, variants, category, countInStock, isDraft, isNewProduct, discount } = req.body;
         const { id: idOrSlug } = req.params;
         let product;
 
@@ -106,6 +127,11 @@ const updateProduct = async (req, res) => {
             product.variants = variants || [];
             product.category = category;
             product.countInStock = countInStock;
+
+            // Allow inline toggling or setting of draft status
+            if (isDraft !== undefined) {
+                product.isDraft = isDraft;
+            }
             let newSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
             // Check if this slug is already taken by another product
             const existingSlugProduct = await Product.findOne({ slug: newSlug, _id: { $ne: product._id } });

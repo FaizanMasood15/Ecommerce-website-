@@ -30,8 +30,9 @@ const AdminProductEditPage = () => {
     const [category, setCategory] = useState('');
     const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
+    const [isDraft, setIsDraft] = useState(false);
 
-    const { data: product, isLoading, error } = useGetProductDetailsQuery(productId);
+    const { data: product, isLoading, error } = useGetProductDetailsQuery({ id: productId, all: true });
     const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
     const [uploadProductImage, { isLoading: isUploading }] = useUploadProductImageMutation();
 
@@ -64,6 +65,7 @@ const AdminProductEditPage = () => {
                 setCategory(product.category);
                 setCountInStock(product.countInStock);
                 setDescription(product.description);
+                setIsDraft(product.isDraft || false);
             }
         }
     }, [product]);
@@ -181,6 +183,7 @@ const AdminProductEditPage = () => {
                 variants,
                 category,
                 countInStock: Number(countInStock) || 0,
+                isDraft,
                 description,
             }).unwrap();
 
@@ -213,7 +216,26 @@ const AdminProductEditPage = () => {
             </button>
 
             <div className="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6 text-gray-900">Edit Product</h1>
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
+
+                    {/* Draft Toggle */}
+                    <div className="flex items-center space-x-3 bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg">
+                        <span className="text-sm font-semibold text-gray-700">Status:</span>
+                        <button
+                            type="button"
+                            onClick={() => setIsDraft(!isDraft)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${!isDraft ? 'bg-green-500' : 'bg-gray-300'}`}
+                        >
+                            <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out ${!isDraft ? 'translate-x-6' : 'translate-x-1'}`}
+                            />
+                        </button>
+                        <span className={`text-sm font-bold ${!isDraft ? 'text-green-600' : 'text-gray-500'}`}>
+                            {!isDraft ? 'Published' : 'Draft'}
+                        </span>
+                    </div>
+                </div>
 
                 <form onSubmit={submitHandler} className="space-y-6">
                     <div>
