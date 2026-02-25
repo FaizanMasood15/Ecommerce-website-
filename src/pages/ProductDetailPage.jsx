@@ -9,6 +9,8 @@ import { images } from '../data/productImages';
 import { useCart } from '../context/CartContext';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
+import WishlistHeart from '../components/WishlistHeart';
+import ProductReviews from '../components/ProductReviews';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
@@ -226,9 +228,12 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
             </div>
           </div>
 
-          {/* Right Side: Details and Controls (Unchanged) */}
+          {/* Right Side: Details and Controls */}
           <div className="space-y-6">
-            <h1 className="text-4xl font-semibold text-gray-900">{product.name}</h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-4xl font-semibold text-gray-900">{product.name}</h1>
+              {selectedProduct && <WishlistHeart productId={selectedProduct._id} className="flex-shrink-0 mt-1" />}
+            </div>
             <div className="flex flex-col space-y-2">
               <p className="text-2xl font-medium text-gray-900">{formattedPrice}</p>
 
@@ -260,7 +265,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                 {ratingStars}
               </div>
               <span className="text-gray-500 text-sm">|</span>
-              <span className="text-gray-500">{product.reviews || 5} Customer Review</span>
+              <span className="text-gray-500">{selectedProduct?.numReviews || 0} Customer Review{selectedProduct?.numReviews !== 1 ? 's' : ''}</span>
             </div>
 
             <div
@@ -377,7 +382,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                   : 'text-gray-500 hover:text-gray-900'
                   }`}
               >
-                {tab} {tab === 'Reviews' && `(${product.reviews || 5})`}
+                {tab} {tab === 'Reviews' && `(${selectedProduct?.numReviews || 0})`}
               </button>
             ))}
           </div>
@@ -388,6 +393,17 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
         </div>
       </div>
+
+      {/* Live Customer Reviews Section */}
+      {selectedProduct && (
+        <div className="container mx-auto max-w-7xl px-4 lg:px-8 pb-10">
+          <ProductReviews
+            productId={selectedProduct._id}
+            productRating={selectedProduct.rating || 0}
+            numReviews={selectedProduct.numReviews || 0}
+          />
+        </div>
+      )}
 
       {/* Related Products Section (Dynamic and Clickable) */}
       <div className="py-16 bg-background-light text-center">

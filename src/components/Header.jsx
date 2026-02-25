@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { User, Search, ShoppingCart, LogOut, LayoutDashboard, ShoppingBag } from 'lucide-react';
+import { User, Search, ShoppingCart, LogOut, LayoutDashboard, ShoppingBag, Heart, Tag } from 'lucide-react';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import { useCart } from '../context/CartContext';
@@ -68,6 +68,22 @@ const Header = ({ toggleCart }) => {
                   <span className="hidden md:inline">Admin</span>
                 </Link>
               )}
+              {userInfo.isAdmin && (
+                <Link
+                  to="/admin/coupons"
+                  className="hidden sm:flex items-center gap-1 text-sm font-semibold text-primary hover:text-amber-700 transition"
+                  title="Manage Coupons"
+                >
+                  <Tag className="w-4 h-4" />
+                </Link>
+              )}
+              <Link
+                to="/wishlist"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-red-500 transition"
+                title="My Wishlist"
+              >
+                <Heart className="w-5 h-5" />
+              </Link>
               <Link
                 to="/profile/orders"
                 className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-primary transition"

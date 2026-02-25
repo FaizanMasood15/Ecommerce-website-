@@ -23,6 +23,7 @@ import OrderDetailPage from './pages/OrderDetailPage';
 // User Account
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import ProfilePage from './pages/ProfilePage';
+import WishlistPage from './pages/WishlistPage';
 
 // Admin
 import AdminRoute from './components/AdminRoute';
@@ -32,6 +33,7 @@ import AdminProductEditPage from './pages/AdminProductEditPage';
 import AdminOrderListPage from './pages/AdminOrderListPage';
 import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminCouponManager from './pages/AdminCouponManager';
 
 function App() {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
@@ -70,6 +72,7 @@ function App() {
               <Route path="/orders/:id" element={<OrderDetailPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/orders" element={<OrderHistoryPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
             </Route>
 
             {/* Protected: Admin Only */}
@@ -79,6 +82,7 @@ function App() {
               <Route path="/admin/product/:id/edit" element={<AdminProductEditPage />} />
               <Route path="/admin/orders" element={<AdminOrderListPage />} />
               <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
+              <Route path="/admin/coupons" element={<AdminCouponManager />} />
             </Route>
 
             <Route path="*" element={<h1 className="text-center py-20 text-3xl">404: Page Not Found</h1>} />
