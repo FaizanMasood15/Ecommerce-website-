@@ -171,6 +171,11 @@ const AdminProductEditPage = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            // Recalculate base count in stock from variants if they exist to keep data consistent
+            const calculatedTotalStock = variants.length > 0
+                ? variants.reduce((total, v) => total + (Number(v.countInStock) || 0), 0)
+                : Number(countInStock);
+
             await updateProduct({
                 productId,
                 name,
@@ -182,7 +187,7 @@ const AdminProductEditPage = () => {
                 sizes,
                 variants,
                 category,
-                countInStock: Number(countInStock) || 0,
+                countInStock: calculatedTotalStock,
                 isDraft,
                 description,
             }).unwrap();
@@ -320,16 +325,18 @@ const AdminProductEditPage = () => {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 font-semibold mb-2">Count In Stock</label>
-                        <input
-                            type="number"
-                            placeholder="Enter stock amount"
-                            value={countInStock}
-                            onChange={(e) => setCountInStock(Number(e.target.value))}
-                            className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                    </div>
+                    {variants.length === 0 && (
+                        <div>
+                            <label className="block text-gray-700 font-semibold mb-2">Count In Stock</label>
+                            <input
+                                type="number"
+                                placeholder="Enter stock amount"
+                                value={countInStock}
+                                onChange={(e) => setCountInStock(Number(e.target.value))}
+                                className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                        </div>
+                    )}
 
                     <div className="border border-gray-200 p-4 rounded-lg bg-gray-50">
                         <label className="block text-gray-700 font-semibold mb-3">Available Sizes</label>
