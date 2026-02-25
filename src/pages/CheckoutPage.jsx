@@ -1,8 +1,9 @@
 // src/pages/CheckoutPage.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
-import { MapPin, CreditCard, Truck, Tag, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { MapPin, CreditCard, Truck, Tag, CheckCircle, AlertCircle, Loader, Mail, LogIn } from 'lucide-react';
 import { useValidateCouponMutation } from '../slices/couponApiSlice';
 
 const PAYMENT_METHODS = [
@@ -14,6 +15,9 @@ const PAYMENT_METHODS = [
 const CheckoutPage = () => {
     const navigate = useNavigate();
     const { cartItems, subtotal } = useCart();
+    const { userInfo } = useSelector((state) => state.auth);
+
+    const [guestEmail, setGuestEmail] = useState('');
 
     const [shippingAddress, setShippingAddress] = useState({
         fullName: '',
@@ -43,6 +47,10 @@ const CheckoutPage = () => {
         if (!shippingAddress.address.trim()) newErrors.address = 'Address is required';
         if (!shippingAddress.city.trim()) newErrors.city = 'City is required';
         if (!shippingAddress.phone.trim()) newErrors.phone = 'Phone number is required';
+        // Guest email required only if not logged in
+        if (!userInfo && (!guestEmail.trim() || !/\S+@\S+\.\S+/.test(guestEmail))) {
+            newErrors.guestEmail = 'A valid email is required for guest checkout';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -58,6 +66,7 @@ const CheckoutPage = () => {
             tax,
             discountAmount,
             couponCode: appliedCoupon?.code || '',
+            guestEmail: userInfo ? '' : guestEmail.trim(),
         }));
         navigate('/place-order');
     };
@@ -77,6 +86,31 @@ const CheckoutPage = () => {
             <div className="container mx-auto max-w-5xl px-4">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
                 <p className="text-gray-500 mb-8">{cartItems.reduce((a, i) => a + i.quantity, 0)} items in your cart</p>
+
+                {/* Guest email section — only shown when not logged in */}
+                {!userInfo && (
+                    <div className="bg-white rounded-xl shadow-sm p-5 mb-6 border border-amber-100">
+                        <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-amber-700" /> Your Email
+                        </h2>
+                        <p className="text-sm text-gray-500 mb-3">
+                            We'll use this to send your order confirmation. No account needed.
+                        </p>
+                        <input
+                            type="email"
+                            value={guestEmail}
+                            onChange={e => { setGuestEmail(e.target.value); if (errors.guestEmail) setErrors(p => ({ ...p, guestEmail: '' })); }}
+                            placeholder="your@email.com"
+                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.guestEmail ? 'border-red-400' : 'border-gray-300'}`}
+                        />
+                        {errors.guestEmail && <p className="text-red-500 text-xs mt-1">{errors.guestEmail}</p>}
+                        <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
+                            <LogIn className="w-3.5 h-3.5" />
+                            Already have an account?{' '}
+                            <Link to="/login" className="text-amber-700 font-medium hover:underline">Sign in</Link>{' '}for order tracking &amp; faster checkout.
+                        </p>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

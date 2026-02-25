@@ -19,6 +19,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import GuestOrderConfirmationPage from './pages/GuestOrderConfirmationPage';
 
 // User Account
 import OrderHistoryPage from './pages/OrderHistoryPage';
@@ -34,6 +35,7 @@ import AdminOrderListPage from './pages/AdminOrderListPage';
 import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminCouponManager from './pages/AdminCouponManager';
+import AdminCategoryManager from './pages/AdminCategoryManager';
 
 function App() {
   const [isCartOpen, setIsCartOpen] = React.useState(false);
@@ -62,13 +64,18 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Cart (no auth required to view cart) */}
+            {/* Cart (no auth required) */}
             <Route path="/cart" element={<CartPage />} />
+
+            {/* Checkout & Place Order — public (guest checkout supported) */}
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/place-order" element={<PlaceOrderPage />} />
+
+            {/* Guest order confirmation (public — no account needed) */}
+            <Route path="/guest-order/:id" element={<GuestOrderConfirmationPage />} />
 
             {/* Protected: Authenticated Users */}
             <Route path="" element={<PrivateRoute />}>
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/place-order" element={<PlaceOrderPage />} />
               <Route path="/orders/:id" element={<OrderDetailPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/orders" element={<OrderHistoryPage />} />
@@ -83,6 +90,7 @@ function App() {
               <Route path="/admin/orders" element={<AdminOrderListPage />} />
               <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
               <Route path="/admin/coupons" element={<AdminCouponManager />} />
+              <Route path="/admin/categories" element={<AdminCategoryManager />} />
             </Route>
 
             <Route path="*" element={<h1 className="text-center py-20 text-3xl">404: Page Not Found</h1>} />

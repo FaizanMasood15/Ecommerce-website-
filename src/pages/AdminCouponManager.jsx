@@ -1,12 +1,38 @@
-// src/components/AdminCouponManager.jsx
+// src/pages/AdminCouponManager.jsx
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import {
     useGetAllCouponsQuery,
     useCreateCouponMutation,
     useUpdateCouponMutation,
     useDeleteCouponMutation,
 } from '../slices/couponApiSlice';
-import { Plus, Trash2, Edit2, X, CheckCircle, AlertCircle, Tag } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, Tag } from 'lucide-react';
+
+const CustomSwal = Swal.mixin({
+    customClass: {
+        confirmButton: 'bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
+        popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
+        title: 'text-xl font-bold text-gray-900',
+        htmlContainer: 'text-gray-600 font-medium',
+    },
+    buttonsStyling: false,
+});
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2800,
+    timerProgressBar: true,
+    customClass: { popup: 'rounded-xl shadow-lg' },
+});
+
+const EMPTY_FORM = {
+    code: '', description: '', discountType: 'percentage',
+    discountValue: '', minOrderAmount: '', maxUses: '', expiresAt: '', isActive: true,
+};
 
 const AdminCouponManager = () => {
     const { data: coupons = [], isLoading } = useGetAllCouponsQuery();
@@ -16,20 +42,9 @@ const AdminCouponManager = () => {
 
     const [showForm, setShowForm] = useState(false);
     const [editId, setEditId] = useState(null);
-    const [msg, setMsg] = useState('');
-    const [error, setError] = useState('');
-    const [form, setForm] = useState({
-        code: '', description: '', discountType: 'percentage',
-        discountValue: '', minOrderAmount: '', maxUses: '', expiresAt: '', isActive: true,
-    });
+    const [form, setForm] = useState(EMPTY_FORM);
 
-    const resetForm = () => {
-        setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '', maxUses: '', expiresAt: '', isActive: true });
-        setEditId(null);
-        setShowForm(false);
-        setMsg('');
-        setError('');
-    };
+    const resetForm = () => { setForm(EMPTY_FORM); setEditId(null); setShowForm(false); };
 
     const handleEdit = (coupon) => {
         setEditId(coupon._id);
@@ -44,31 +59,45 @@ const AdminCouponManager = () => {
             isActive: coupon.isActive,
         });
         setShowForm(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMsg(''); setError('');
         try {
             if (editId) {
                 await updateCoupon({ id: editId, ...form }).unwrap();
-                setMsg('Coupon updated!');
+                Toast.fire({ icon: 'success', title: `Coupon "${form.code}" updated!` });
             } else {
                 await createCoupon(form).unwrap();
-                setMsg('Coupon created!');
+                Toast.fire({ icon: 'success', title: `Coupon "${form.code}" created!` });
             }
             resetForm();
         } catch (err) {
-            setError(err?.data?.message || 'Failed to save coupon.');
+            CustomSwal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: err?.data?.message || 'Could not save coupon. Please try again.',
+            });
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Delete this coupon?')) {
+    const handleDelete = async (coupon) => {
+        const result = await CustomSwal.fire({
+            title: 'Delete Coupon?',
+            html: `You are about to permanently delete the coupon <strong class="font-mono">${coupon.code}</strong>.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete It',
+            cancelButtonText: 'Cancel',
+        });
+
+        if (result.isConfirmed) {
             try {
-                await deleteCoupon(id).unwrap();
+                await deleteCoupon(coupon._id).unwrap();
+                Toast.fire({ icon: 'success', title: `Coupon "${coupon.code}" deleted` });
             } catch (err) {
-                setError('Failed to delete.');
+                CustomSwal.fire({ icon: 'error', title: 'Delete Failed', text: err?.data?.message || 'Something went wrong.' });
             }
         }
     };
@@ -76,33 +105,32 @@ const AdminCouponManager = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="container mx-auto max-w-5xl px-4">
+
+                {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Coupon Manager</h1>
-                        <p className="text-sm text-gray-500">{coupons.length} active coupons</p>
+                        <p className="text-sm text-gray-500">{coupons.length} coupon{coupons.length !== 1 ? 's' : ''} total</p>
                     </div>
                     <button
                         onClick={() => { resetForm(); setShowForm(true); }}
-                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-800 transition text-sm"
+                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-800 transition text-sm shadow-sm"
                     >
                         <Plus className="w-4 h-4" /> Add Coupon
                     </button>
                 </div>
 
-                {msg && <div className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-200 rounded-lg px-4 py-3 mb-4 text-sm"><CheckCircle className="w-4 h-4" />{msg}</div>}
-                {error && <div className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 rounded-lg px-4 py-3 mb-4 text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}
-
-                {/* Coupon Form */}
+                {/* Form */}
                 {showForm && (
                     <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-amber-100">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="font-bold text-gray-900">{editId ? 'Edit Coupon' : 'New Coupon'}</h2>
-                            <button onClick={resetForm}><X className="w-5 h-5 text-gray-400 hover:text-gray-700" /></button>
+                            <h2 className="font-bold text-gray-900 text-lg">{editId ? 'Edit Coupon' : 'New Coupon'}</h2>
+                            <button onClick={resetForm} className="text-gray-400 hover:text-gray-700 transition"><X className="w-5 h-5" /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Code *</label>
-                                <input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="SUMMER20" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase" required />
+                                <input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="SUMMER20" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase font-mono" required />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Description</label>
@@ -117,23 +145,23 @@ const AdminCouponManager = () => {
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Discount Value *</label>
-                                <input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percentage' ? "e.g. 20" : "e.g. 500"} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" required min={0} />
+                                <input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 500'} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" required min={0} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Min Order (Rs.)</label>
                                 <input type="number" value={form.minOrderAmount} onChange={e => setForm(f => ({ ...f, minOrderAmount: e.target.value }))} placeholder="0" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={0} />
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Max Uses</label>
-                                <input type="number" value={form.maxUses} onChange={e => setForm(f => ({ ...f, maxUses: e.target.value }))} placeholder="Leave blank for unlimited" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={1} />
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Max Uses <span className="text-gray-400 font-normal">(blank = unlimited)</span></label>
+                                <input type="number" value={form.maxUses} onChange={e => setForm(f => ({ ...f, maxUses: e.target.value }))} placeholder="Unlimited" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={1} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Expiry Date</label>
                                 <input type="date" value={form.expiresAt} onChange={e => setForm(f => ({ ...f, expiresAt: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
                             </div>
-                            <div className="flex items-center gap-2 mt-6">
-                                <input type="checkbox" id="isActive" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-amber-600" />
-                                <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active</label>
+                            <div className="flex items-center gap-2 mt-4">
+                                <input type="checkbox" id="couponIsActive" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-amber-600" />
+                                <label htmlFor="couponIsActive" className="text-sm font-medium text-gray-700 cursor-pointer">Active</label>
                             </div>
                             <div className="sm:col-span-2 flex gap-3">
                                 <button type="submit" disabled={isCreating} className="bg-amber-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-amber-800 transition text-sm disabled:opacity-50">
@@ -145,12 +173,12 @@ const AdminCouponManager = () => {
                     </div>
                 )}
 
-                {/* Coupons Table */}
+                {/* Table */}
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-gray-50 border-b text-xs font-semibold text-gray-500 uppercase">
+                                <tr className="bg-gray-50 border-b text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     <th className="px-5 py-3 text-left">Code</th>
                                     <th className="px-5 py-3 text-left">Discount</th>
                                     <th className="px-5 py-3 text-left">Min Order</th>
@@ -161,26 +189,24 @@ const AdminCouponManager = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {isLoading && (
-                                    <tr><td colSpan="7" className="text-center py-8 text-gray-400">Loading...</td></tr>
-                                )}
+                                {isLoading && <tr><td colSpan="7" className="text-center py-8 text-gray-400">Loading...</td></tr>}
                                 {!isLoading && coupons.length === 0 && (
-                                    <tr><td colSpan="7" className="text-center py-8 text-gray-400">No coupons yet. Create one!</td></tr>
+                                    <tr><td colSpan="7" className="text-center py-10 text-gray-400">No coupons yet. Create one above!</td></tr>
                                 )}
                                 {coupons.map(coupon => (
                                     <tr key={coupon._id} className="hover:bg-gray-50 transition">
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-2">
-                                                <Tag className="w-4 h-4 text-amber-600" />
+                                                <Tag className="w-4 h-4 text-amber-600 flex-shrink-0" />
                                                 <span className="font-mono font-bold text-gray-800">{coupon.code}</span>
                                             </div>
-                                            {coupon.description && <p className="text-xs text-gray-400 mt-0.5">{coupon.description}</p>}
+                                            {coupon.description && <p className="text-xs text-gray-400 mt-0.5 ml-6">{coupon.description}</p>}
                                         </td>
                                         <td className="px-5 py-3 font-semibold text-green-700">
-                                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `Rs. ${coupon.discountValue.toLocaleString()}`}
+                                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `Rs. ${coupon.discountValue?.toLocaleString()}`}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
-                                            {coupon.minOrderAmount > 0 ? `Rs. ${coupon.minOrderAmount.toLocaleString()}` : '—'}
+                                            {coupon.minOrderAmount > 0 ? `Rs. ${coupon.minOrderAmount?.toLocaleString()}` : '—'}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
                                             {coupon.usedCount}/{coupon.maxUses ?? '∞'}
@@ -195,9 +221,9 @@ const AdminCouponManager = () => {
                                             }
                                         </td>
                                         <td className="px-5 py-3">
-                                            <div className="flex gap-2">
-                                                <button onClick={() => handleEdit(coupon)} className="text-amber-600 hover:text-amber-800 transition"><Edit2 className="w-4 h-4" /></button>
-                                                <button onClick={() => handleDelete(coupon._id)} className="text-red-400 hover:text-red-600 transition"><Trash2 className="w-4 h-4" /></button>
+                                            <div className="flex gap-3">
+                                                <button onClick={() => handleEdit(coupon)} title="Edit" className="text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1.5 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
+                                                <button onClick={() => handleDelete(coupon)} title="Delete" className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-full transition"><Trash2 className="w-4 h-4" /></button>
                                             </div>
                                         </td>
                                     </tr>

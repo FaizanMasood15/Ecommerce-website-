@@ -3,19 +3,13 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Trash2, ShoppingBag, ArrowRight, Minus, Plus } from 'lucide-react';
-import { useSelector } from 'react-redux';
 
 const CartPage = () => {
     const { cartItems, subtotal, removeItem, updateQuantity } = useCart();
-    const { userInfo } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
     const handleCheckout = () => {
-        if (!userInfo) {
-            navigate('/login?redirect=/checkout');
-        } else {
-            navigate('/checkout');
-        }
+        navigate('/checkout');
     };
 
     if (cartItems.length === 0) {

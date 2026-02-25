@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useGetAnalyticsQuery } from '../slices/ordersApiSlice';
 import {
     ShoppingBag, DollarSign, Clock, TrendingUp,
-    Loader, AlertCircle, Package, Eye
+    Loader, AlertCircle, Package, Eye, Tag, Ticket, Box
 } from 'lucide-react';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -98,10 +98,22 @@ const AdminDashboardPage = () => {
                         <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                         <p className="text-sm text-gray-500">Welcome back! Here's your store overview.</p>
                     </div>
-                    <div className="flex gap-3">
-                        <Link to="/admin/products" className="text-sm text-amber-700 hover:underline font-medium">Products</Link>
+                    <div className="flex flex-wrap gap-3">
+                        <Link to="/admin/products" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
+                            <Box className="w-3.5 h-3.5" /> Products
+                        </Link>
                         <span className="text-gray-300">|</span>
-                        <Link to="/admin/orders" className="text-sm text-amber-700 hover:underline font-medium">Orders</Link>
+                        <Link to="/admin/orders" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
+                            <ShoppingBag className="w-3.5 h-3.5" /> Orders
+                        </Link>
+                        <span className="text-gray-300">|</span>
+                        <Link to="/admin/categories" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
+                            <Tag className="w-3.5 h-3.5" /> Categories
+                        </Link>
+                        <span className="text-gray-300">|</span>
+                        <Link to="/admin/coupons" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
+                            <Ticket className="w-3.5 h-3.5" /> Coupons
+                        </Link>
                     </div>
                 </div>
 
@@ -110,7 +122,7 @@ const AdminDashboardPage = () => {
                     <StatCard
                         title="Total Revenue"
                         value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`}
-                        subtitle="From paid orders"
+                        subtitle="From delivered orders"
                         icon={DollarSign}
                         color="border-green-600"
                     />
@@ -141,7 +153,7 @@ const AdminDashboardPage = () => {
                     {/* Revenue Chart */}
                     <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
                         <h2 className="font-bold text-gray-900 mb-1">Revenue (Last 6 Months)</h2>
-                        <p className="text-xs text-gray-400 mb-4">Paid orders only</p>
+                        <p className="text-xs text-gray-400 mb-4">From delivered orders</p>
                         <BarChart data={analytics.monthlyRevenue} />
                     </div>
 

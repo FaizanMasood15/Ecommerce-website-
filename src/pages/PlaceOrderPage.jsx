@@ -1,14 +1,21 @@
 // src/pages/PlaceOrderPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
-import { useCreateOrderMutation } from '../slices/ordersApiSlice';
+import { useCreateOrderMutation, useCreateGuestOrderMutation } from '../slices/ordersApiSlice';
 import { CheckCircle, Loader, AlertCircle } from 'lucide-react';
 
 const PlaceOrderPage = () => {
     const navigate = useNavigate();
     const { cartItems, subtotal, clearCart } = useCart();
-    const [createOrder, { isLoading, error }] = useCreateOrderMutation();
+    const { userInfo } = useSelector((state) => state.auth);
+
+    const [createOrder, { isLoading: isLoadingAuth, error: errorAuth }] = useCreateOrderMutation();
+    const [createGuestOrder, { isLoading: isLoadingGuest, error: errorGuest }] = useCreateGuestOrderMutation();
+
+    const isLoading = isLoadingAuth || isLoadingGuest;
+    const error = errorAuth || errorGuest;
 
     const [checkoutData, setCheckoutData] = useState(null);
 
@@ -29,36 +36,48 @@ const PlaceOrderPage = () => {
 
     if (!checkoutData) return null;
 
-    const { shippingAddress, paymentMethod, shippingCost, tax } = checkoutData;
-    const total = subtotal + shippingCost + tax;
+    const { shippingAddress, paymentMethod, shippingCost, tax, discountAmount, couponCode, guestEmail } = checkoutData;
+    const total = subtotal + shippingCost + tax - (discountAmount || 0);
 
     const handlePlaceOrder = async () => {
+        const orderItems = cartItems.map(item => ({
+            name: item.product?.name,
+            qty: item.quantity,
+            image: item.product?.image,
+            price: item.price,
+            selectedSize: item.size || '',
+            selectedColor: item.color || '',
+            selectedColorHex: item.colorHex || '',
+            product: item.id,
+            variantId: item.variantId || null,
+        }));
+
+        const payload = {
+            orderItems,
+            shippingAddress,
+            paymentMethod,
+            itemsPrice: subtotal,
+            taxPrice: tax,
+            shippingPrice: shippingCost,
+            discountAmount: discountAmount || 0,
+            couponCode: couponCode || '',
+            totalPrice: total,
+        };
+
         try {
-            const orderItems = cartItems.map(item => ({
-                name: item.product?.name,
-                qty: item.quantity,
-                image: item.product?.image,
-                price: item.price,
-                selectedSize: item.size || '',
-                selectedColor: item.color || '',
-                selectedColorHex: item.colorHex || '',
-                product: item.id,
-                variantId: item.variantId || null,
-            }));
-
-            const res = await createOrder({
-                orderItems,
-                shippingAddress,
-                paymentMethod,
-                itemsPrice: subtotal,
-                taxPrice: tax,
-                shippingPrice: shippingCost,
-                totalPrice: total,
-            }).unwrap();
-
-            clearCart();
-            sessionStorage.removeItem('checkoutData');
-            navigate(`/orders/${res._id}`);
+            if (userInfo) {
+                // Logged-in user — use authenticated endpoint
+                const res = await createOrder(payload).unwrap();
+                clearCart();
+                sessionStorage.removeItem('checkoutData');
+                navigate(`/orders/${res._id}`);
+            } else {
+                // Guest user — use public guest endpoint
+                const res = await createGuestOrder({ ...payload, guestEmail }).unwrap();
+                clearCart();
+                sessionStorage.removeItem('checkoutData');
+                navigate(`/guest-order/${res._id}`);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -78,6 +97,14 @@ const PlaceOrderPage = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
+                        {/* Guest email reminder */}
+                        {!userInfo && guestEmail && (
+                            <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
+                                <CheckCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                                Confirmation will be sent to <strong>{guestEmail}</strong>
+                            </div>
+                        )}
+
                         {/* Shipping Info */}
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex items-center justify-between mb-3">
@@ -146,6 +173,12 @@ const PlaceOrderPage = () => {
                                     <span>Shipping</span>
                                     <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `Rs. ${shippingCost}`}</span>
                                 </div>
+                                {discountAmount > 0 && (
+                                    <div className="flex justify-between text-green-600 font-medium">
+                                        <span>Coupon {couponCode && `(${couponCode})`}</span>
+                                        <span>− Rs. {discountAmount.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <hr />
                                 <div className="flex justify-between font-bold text-gray-900 text-base">
                                     <span>Total</span>
@@ -163,6 +196,11 @@ const PlaceOrderPage = () => {
                                     <><CheckCircle className="w-4 h-4" /> Confirm Order</>
                                 )}
                             </button>
+                            {!userInfo && (
+                                <p className="text-xs text-gray-400 text-center mt-3">
+                                    Checking out as guest · <Link to="/login" className="text-amber-700 hover:underline">Sign in</Link>
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

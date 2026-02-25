@@ -21,11 +21,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
 
     const handleCheckout = () => {
         onClose();
-        if (!userInfo) {
-            navigate('/login?redirect=/checkout');
-        } else {
-            navigate('/checkout');
-        }
+        navigate('/checkout');
     };
 
     return (

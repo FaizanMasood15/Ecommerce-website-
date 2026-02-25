@@ -61,8 +61,8 @@ const AdminOrderListPage = () => {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${statusFilter === status
-                                    ? 'bg-amber-700 text-white border-amber-700'
-                                    : 'bg-white text-gray-600 border-gray-300 hover:border-amber-400'
+                                ? 'bg-amber-700 text-white border-amber-700'
+                                : 'bg-white text-gray-600 border-gray-300 hover:border-amber-400'
                                 }`}
                         >
                             {status}
@@ -97,8 +97,17 @@ const AdminOrderListPage = () => {
                                             #{order._id.slice(-8).toUpperCase()}
                                         </td>
                                         <td className="px-5 py-3">
-                                            <p className="font-medium text-gray-900">{order.user?.name || 'Guest'}</p>
-                                            <p className="text-xs text-gray-500">{order.user?.email}</p>
+                                            {order.user ? (
+                                                <>
+                                                    <p className="font-medium text-gray-900">{order.user.name}</p>
+                                                    <p className="text-xs text-gray-500">{order.user.email}</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="font-medium text-gray-500 italic">Guest</p>
+                                                    {order.guestEmail && <p className="text-xs text-gray-400">{order.guestEmail}</p>}
+                                                </>
+                                            )}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
                                             {new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}

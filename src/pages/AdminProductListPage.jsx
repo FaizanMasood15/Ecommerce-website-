@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useGetProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
-import { Trash2, Edit2, Check, X, Eye, EyeOff } from 'lucide-react'; // Import icons
+import { Trash2, Edit2, Check, X, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 const CustomSwal = Swal.mixin({
     customClass: {
@@ -75,9 +75,11 @@ const AdminProductListPage = () => {
 
     const getSortIcon = (columnName) => {
         if (sortConfig.key !== columnName) {
-            return <span className="text-gray-400 text-xs ml-1">↕️</span>;
+            return <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-gray-400 inline" />;
         }
-        return sortConfig.direction === 'asc' ? <span className="text-primary text-xs ml-1">↑</span> : <span className="text-primary text-xs ml-1">↓</span>;
+        return sortConfig.direction === 'asc'
+            ? <ArrowUp className="w-3.5 h-3.5 ml-1 text-amber-700 inline" />
+            : <ArrowDown className="w-3.5 h-3.5 ml-1 text-amber-700 inline" />;
     };
 
     const handleSelectAll = (e) => {

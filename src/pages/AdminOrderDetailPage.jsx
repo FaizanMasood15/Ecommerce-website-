@@ -1,13 +1,33 @@
 // src/pages/AdminOrderDetailPage.jsx
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import {
     useGetOrderDetailsQuery,
     useUpdateOrderStatusMutation,
     useMarkOrderAsPaidMutation,
     useMarkOrderAsDeliveredMutation,
 } from '../slices/ordersApiSlice';
-import { Loader, AlertCircle, CheckCircle, Package, Truck } from 'lucide-react';
+import { Loader, AlertCircle, Package } from 'lucide-react';
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2800,
+    timerProgressBar: true,
+    customClass: { popup: 'rounded-xl shadow-lg' },
+});
+
+const CustomSwal = Swal.mixin({
+    customClass: {
+        confirmButton: 'bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
+        cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition',
+        popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
+        title: 'text-xl font-bold text-gray-900',
+    },
+    buttonsStyling: false,
+});
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Refunded'];
 
@@ -38,38 +58,37 @@ const AdminOrderDetailPage = () => {
 
     const [selectedStatus, setSelectedStatus] = useState('');
     const [statusNote, setStatusNote] = useState('');
-    const [feedback, setFeedback] = useState('');
 
     const handleStatusUpdate = async () => {
         if (!selectedStatus) return;
         try {
             await updateOrderStatus({ id, status: selectedStatus, note: statusNote }).unwrap();
-            setFeedback(`Status updated to "${selectedStatus}" successfully.`);
+            Toast.fire({ icon: 'success', title: `Status updated to "${selectedStatus}"` });
             setSelectedStatus('');
             setStatusNote('');
             refetch();
         } catch (err) {
-            setFeedback('Failed to update status.');
+            CustomSwal.fire({ icon: 'error', title: 'Update Failed', text: err?.data?.message || 'Could not update status.' });
         }
     };
 
     const handleMarkPaid = async () => {
         try {
             await markOrderAsPaid({ id, paymentResult: { id: 'MANUAL', status: 'COMPLETED', update_time: new Date().toISOString() } }).unwrap();
-            setFeedback('Order marked as paid.');
+            Toast.fire({ icon: 'success', title: 'Order marked as paid' });
             refetch();
         } catch {
-            setFeedback('Failed to mark as paid.');
+            CustomSwal.fire({ icon: 'error', title: 'Failed', text: 'Could not mark order as paid.' });
         }
     };
 
     const handleMarkDelivered = async () => {
         try {
             await markOrderAsDelivered(id).unwrap();
-            setFeedback('Order marked as delivered.');
+            Toast.fire({ icon: 'success', title: 'Order marked as delivered' });
             refetch();
         } catch {
-            setFeedback('Failed to mark as delivered.');
+            CustomSwal.fire({ icon: 'error', title: 'Failed', text: 'Could not mark order as delivered.' });
         }
     };
 
@@ -91,20 +110,23 @@ const AdminOrderDetailPage = () => {
                     <StatusBadge status={order.status} />
                 </div>
 
-                {feedback && (
-                    <div className={`flex items-center gap-2 px-4 py-3 rounded-lg mb-4 text-sm ${feedback.includes('Failed') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'}`}>
-                        <CheckCircle className="w-4 h-4" /> {feedback}
-                    </div>
-                )}
-
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-5">
                         {/* Customer & Shipping */}
                         <div className="bg-white rounded-xl shadow-sm p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <h2 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide text-gray-500">Customer</h2>
-                                <p className="font-semibold text-gray-900">{order.user?.name}</p>
-                                <p className="text-sm text-gray-500">{order.user?.email}</p>
+                                {order.user ? (
+                                    <>
+                                        <p className="font-semibold text-gray-900">{order.user?.name}</p>
+                                        <p className="text-sm text-gray-500">{order.user?.email}</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="font-semibold text-gray-500 italic">Guest Order</p>
+                                        {order.guestEmail && <p className="text-sm text-gray-500">{order.guestEmail}</p>}
+                                    </>
+                                )}
                             </div>
                             <div>
                                 <h2 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide text-gray-500">Ship To</h2>

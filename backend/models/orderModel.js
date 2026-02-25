@@ -4,8 +4,13 @@ const orderSchema = mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            required: true,
+            required: false,   // null for guest orders
             ref: 'User',
+        },
+        // Guest checkout support — email provided at checkout, no account needed
+        guestEmail: {
+            type: String,
+            default: '',
         },
         orderItems: [
             {

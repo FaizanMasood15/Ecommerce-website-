@@ -1,7 +1,9 @@
 import express from 'express';
 import {
     createOrder,
+    createGuestOrder,
     getOrderById,
+    getGuestOrderById,
     getMyOrders,
     getAllOrders,
     updateOrderStatus,
@@ -19,12 +21,16 @@ router.get('/analytics', protect, admin, getAnalytics);
 // My orders (logged-in user)
 router.get('/myorders', protect, getMyOrders);
 
+// ── Guest checkout routes (PUBLIC — no auth) ──────────────────────────────
+router.post('/guest', createGuestOrder);
+router.get('/guest/:id', getGuestOrderById);
+
 // Create order / Get all orders (admin)
 router.route('/')
     .post(protect, createOrder)
     .get(protect, admin, getAllOrders);
 
-// Single order by ID
+// Single order by ID (authenticated users / admin)
 router.route('/:id')
     .get(protect, getOrderById);
 

@@ -10,6 +10,17 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Order'],
         }),
+        // Guest checkout — no auth cookie needed
+        createGuestOrder: builder.mutation({
+            query: (order) => ({
+                url: '/orders/guest',
+                method: 'POST',
+                body: order,
+            }),
+        }),
+        getGuestOrder: builder.query({
+            query: (id) => ({ url: `/orders/guest/${id}` }),
+        }),
         getOrderDetails: builder.query({
             query: (id) => ({ url: `/orders/${id}` }),
             providesTags: (result, error, id) => [{ type: 'Order', id }],
@@ -54,6 +65,8 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useCreateOrderMutation,
+    useCreateGuestOrderMutation,
+    useGetGuestOrderQuery,
     useGetOrderDetailsQuery,
     useGetMyOrdersQuery,
     useGetAllOrdersQuery,
