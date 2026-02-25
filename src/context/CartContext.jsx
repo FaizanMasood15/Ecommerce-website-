@@ -1,10 +1,37 @@
 // src/context/CartContext.jsx
-import React, { createContext, useState, useContext } from 'react';
+// Cart state persists to localStorage so items survive page refresh
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const CartContext = createContext();
 
+const CART_STORAGE_KEY = 'faizanbutt_cart';
+
+// Load persisted cart from localStorage on startup
+const loadCart = () => {
+    try {
+        const saved = localStorage.getItem(CART_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : [];
+    } catch {
+        return [];
+    }
+};
+
+// Save raw cart items (before price computation) to localStorage
+const saveCart = (items) => {
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch {
+        // Silently fail (e.g. private browsing, full storage)
+    }
+};
+
 export const CartProvider = ({ children }) => {
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState(loadCart);
+
+    // Persist to localStorage every time cart changes
+    useEffect(() => {
+        saveCart(cartItems);
+    }, [cartItems]);
 
     // Add item to cart (or increase quantity if same variant)
     const addToCart = (product, quantity, color, size, colorHex, variantId) => {
@@ -21,7 +48,15 @@ export const CartProvider = ({ children }) => {
                         : item
                 );
             } else {
-                return [...prevItems, { id, product, quantity, color, size, colorHex: colorHex || '', variantId: variantId || null }];
+                return [...prevItems, {
+                    id,
+                    product,
+                    quantity,
+                    color: color || '',
+                    size: size || '',
+                    colorHex: colorHex || '',
+                    variantId: variantId || null,
+                }];
             }
         });
     };
@@ -33,7 +68,7 @@ export const CartProvider = ({ children }) => {
         ));
     };
 
-    // Update quantity of a specific item (-1 quantity removes item)
+    // Update quantity of a specific item (0 or negative removes item)
     const updateQuantity = (id, color, size, newQuantity) => {
         if (newQuantity <= 0) {
             removeItem(id, color, size);
@@ -51,11 +86,14 @@ export const CartProvider = ({ children }) => {
     // Clear all items from cart (called after order is placed)
     const clearCart = () => {
         setCartItems([]);
+        localStorage.removeItem(CART_STORAGE_KEY);
     };
 
-    // Compute derived cart data
+    // Compute derived cart data (add price + totalPrice per item)
     const cartData = cartItems.map(item => {
-        const price = parseFloat(item.product?.price?.toString().replace(/[^0-9.]/g, '') || '0');
+        const price = parseFloat(
+            item.product?.price?.toString().replace(/[^0-9.]/g, '') || '0'
+        );
         return {
             ...item,
             price,
@@ -67,7 +105,15 @@ export const CartProvider = ({ children }) => {
     const totalItemCount = cartData.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ cartItems: cartData, subtotal, totalItemCount, addToCart, removeItem, updateQuantity, clearCart }}>
+        <CartContext.Provider value={{
+            cartItems: cartData,
+            subtotal,
+            totalItemCount,
+            addToCart,
+            removeItem,
+            updateQuantity,
+            clearCart,
+        }}>
             {children}
         </CartContext.Provider>
     );
