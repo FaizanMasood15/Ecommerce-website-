@@ -6,9 +6,9 @@ import { ArrowRight } from 'lucide-react';
 const RoomInspiration = () => {
   // Data for the inspiration gallery
   const rooms = [
-    { id: 1, type: 'Bed Room', name: 'Inner Peace', image: 'public/images/Rectangle 24.png' },
-    { id: 2, type: 'Dining Room', name: 'Bright Light', image: 'public/images/Rectangle 25.png' },
-    { id: 3, type: 'Living Room', name: 'Cozy Space', image: 'public/images/shop.jpg' },
+    { id: 1, type: 'Bed Room', name: 'Inner Peace', image: '/images/Rectangle 24.png' },
+    { id: 2, type: 'Dining Room', name: 'Bright Light', image: '/images/Rectangle 25.png' },
+    { id: 3, type: 'Living Room', name: 'Cozy Space', image: '/images/shop.jpg' },
   ];
   
   // State to track the index of the currently visible room (0-indexed)

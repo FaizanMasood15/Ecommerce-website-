@@ -38,12 +38,27 @@ const AdminProductListPage = () => {
         );
     }) || [];
 
+    const getProductStock = (product) => {
+        if (product.variants && product.variants.length > 0) {
+            return product.variants.reduce((total, variant) => total + (Number(variant.countInStock) || 0), 0);
+        }
+        return Number(product.countInStock) || 0;
+    };
+
     if (sortConfig.key) {
         filteredProducts.sort((a, b) => {
-            if (a[sortConfig.key] < b[sortConfig.key]) {
+            let valA = a[sortConfig.key];
+            let valB = b[sortConfig.key];
+
+            if (sortConfig.key === 'countInStock') {
+                valA = getProductStock(a);
+                valB = getProductStock(b);
+            }
+
+            if (valA < valB) {
                 return sortConfig.direction === 'asc' ? -1 : 1;
             }
-            if (a[sortConfig.key] > b[sortConfig.key]) {
+            if (valA > valB) {
                 return sortConfig.direction === 'asc' ? 1 : -1;
             }
             return 0;
@@ -322,7 +337,11 @@ const AdminProductListPage = () => {
 
                                     {/* Inline Edit UI for Stock */}
                                     <td className="p-4">
-                                        {editingCell.id === product._id && editingCell.field === 'countInStock' ? (
+                                        {product.variants && product.variants.length > 0 ? (
+                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getProductStock(product) > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`} title="Stock is managed via the variant matrix">
+                                                {getProductStock(product)} (Variants)
+                                            </span>
+                                        ) : editingCell.id === product._id && editingCell.field === 'countInStock' ? (
                                             <div className="flex items-center space-x-1">
                                                 <input
                                                     type="number"
@@ -340,8 +359,8 @@ const AdminProductListPage = () => {
                                             </div>
                                         ) : (
                                             <div className="group flex items-center space-x-2 cursor-pointer" onClick={() => handleInlineEditStart(product, 'countInStock')}>
-                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${product.countInStock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                                    {product.countInStock}
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getProductStock(product) > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                    {getProductStock(product)}
                                                 </span>
                                                 <Edit2 className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>

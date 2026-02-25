@@ -48,7 +48,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
   const { productId: idParam } = useParams();
 
-  const { data: selectedProduct, isLoading, error } = useGetProductDetailsQuery(idParam);
+  const { data: selectedProduct, isLoading, error } = useGetProductDetailsQuery({ id: idParam });
   const { addToCart, subtotal } = useCart(); // <-- Use the Cart hook
   let product;
 
