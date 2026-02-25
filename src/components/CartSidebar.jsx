@@ -1,103 +1,127 @@
 // src/components/CartSidebar.jsx
-
 import React from 'react';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-// Accept isOpen and onClose props for controlling visibility
 const CartSidebar = ({ isOpen, onClose }) => {
     const { cartItems, subtotal, removeItem } = useCart();
+    const navigate = useNavigate();
+    const { userInfo } = useSelector((state) => state.auth);
 
-    // Formatting currency for display
-    const formatCurrency = (amount) => `Rs. ${amount.toLocaleString('en-IN')}.00`;
+    const formatCurrency = (amount) => `Rs. ${Number(amount).toLocaleString('en-IN')}`;
 
-    // Calculate item count (not unique count, but total items)
     const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
+
+    const handleViewCart = () => {
+        onClose();
+        navigate('/cart');
+    };
+
+    const handleCheckout = () => {
+        onClose();
+        if (!userInfo) {
+            navigate('/login?redirect=/checkout');
+        } else {
+            navigate('/checkout');
+        }
+    };
 
     return (
         <>
-            {/* Overlay (Appears dark when sidebar is open) */}
+            {/* Overlay */}
             <div
                 onClick={onClose}
-                className={`fixed inset-0 bg-black bg-opacity-3 z-40 transition-opacity duration-600 
-                            ${isOpen ? 'opacity-35 visible' : 'opacity-100 invisible'}`}
-            ></div>
+                className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 
+                            ${isOpen ? 'opacity-30 visible' : 'opacity-0 invisible pointer-events-none'}`}
+            />
 
             {/* Sidebar Panel */}
             <div
-                className={`fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-xl z-50 
-                            transform transition-transform duration-500 ease-in-out
+                className={`fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-2xl z-50 
+                            flex flex-col transform transition-transform duration-400 ease-in-out
                             ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
                 {/* Header */}
-                <div className="p-6 border-b flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-gray-900">
+                <div className="px-6 py-4 border-b flex justify-between items-center flex-shrink-0">
+                    <h2 className="text-xl font-bold text-gray-900">
                         Shopping Cart
-                        {totalItems > 0 && <span className="text-primary text-base font-medium ml-2">({totalItems}items)</span>}
+                        {totalItems > 0 && (
+                            <span className="text-amber-700 text-sm font-medium ml-2">({totalItems} item{totalItems > 1 ? 's' : ''})</span>
+                        )}
                     </h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition duration-150">
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                {/* Body: Cart Items List */}
-                <div className="p-4 h-[calc(100vh-160px)] overflow-y-auto space-y-4">
+                {/* Body: Cart Items (scrollable) */}
+                <div className="flex-grow overflow-y-auto p-4 space-y-4">
                     {cartItems.length === 0 ? (
-                        <p className="text-gray-500 text-center mt-10">Your cart is empty.</p>
+                        <div className="text-center mt-16">
+                            <ShoppingBag className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                            <p className="text-gray-400 font-medium">Your cart is empty</p>
+                            <button
+                                onClick={() => { onClose(); navigate('/shop'); }}
+                                className="mt-4 text-amber-700 font-semibold hover:underline text-sm"
+                            >
+                                Browse Products →
+                            </button>
+                        </div>
                     ) : (
                         cartItems.map((item, index) => (
-                            <div key={index} className="flex items-start space-x-4 border-b pb-4">
-                                {/* Product Image */}
+                            <div key={index} className="flex items-start gap-3 border-b pb-4">
                                 <img
-                                    src={(item.product.images && item.product.images.length > 0) ? item.product.images[0] : item.product.image}
-                                    alt={item.product.name}
-                                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                                    src={(item.product?.images && item.product.images.length > 0) ? item.product.images[0] : item.product?.image}
+                                    alt={item.product?.name}
+                                    className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                                 />
-
-                                {/* Item Details */}
-                                <div className="flex-grow">
-                                    <h3 className="text-lg font-semibold text-gray-900">{item.product.name}</h3>
-                                    <p className="text-sm text-gray-500">
-                                        {formatCurrency(item.price)} x {item.quantity}
-                                        {item.color && item.size && (
-                                            <span className='ml-2 text-xs'>
-                                                ({item.color}/{item.size})
-                                            </span>
+                                <div className="flex-grow min-w-0">
+                                    <h3 className="text-sm font-semibold text-gray-900 truncate">{item.product?.name}</h3>
+                                    <p className="text-xs text-gray-500">
+                                        {formatCurrency(item.price)} × {item.quantity}
+                                        {(item.color || item.size) && (
+                                            <span className="ml-1">({[item.size, item.color].filter(Boolean).join('/')})</span>
                                         )}
                                     </p>
-                                    <p className="text-primary font-medium mt-1">Total: {formatCurrency(item.totalPrice)}</p>
+                                    <p className="text-amber-700 font-semibold text-sm mt-0.5">{formatCurrency(item.totalPrice)}</p>
                                 </div>
-
-                                {/* Remove Button */}
                                 <button
                                     onClick={() => removeItem(item.id, item.color, item.size)}
-                                    className="text-red-500 hover:text-red-700 transition duration-150 p-1"
+                                    className="text-red-400 hover:text-red-600 transition p-1 flex-shrink-0"
                                     aria-label="Remove item"
                                 >
-                                    <Trash2 className="w-5 h-5" />
+                                    <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
                         ))
                     )}
                 </div>
 
-                {/* Footer and Subtotal */}
-                <div className="absolute bottom-0 w-full p-6 border-t bg-white">
-                    <div className="flex justify-between text-xl font-bold mb-4">
-                        <span>Subtotal:</span>
-                        <span className="text-primary">{formatCurrency(subtotal)}</span>
+                {/* Footer (sticky) */}
+                {cartItems.length > 0 && (
+                    <div className="flex-shrink-0 p-5 border-t bg-white">
+                        <div className="flex justify-between text-lg font-bold mb-4 text-gray-900">
+                            <span>Subtotal</span>
+                            <span className="text-amber-700">{formatCurrency(subtotal)}</span>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handleViewCart}
+                                className="flex-1 border-2 border-gray-900 text-gray-900 hover:bg-gray-100 py-2.5 rounded-lg font-semibold transition text-sm"
+                            >
+                                View Cart
+                            </button>
+                            <button
+                                onClick={handleCheckout}
+                                className="flex-1 bg-amber-700 text-white hover:bg-amber-800 py-2.5 rounded-lg font-semibold transition text-sm"
+                            >
+                                Checkout
+                            </button>
+                        </div>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex space-x-3">
-                        <button className="flex-1 border border-gray-900 text-gray-900 hover:bg-gray-100 py-3 rounded-lg font-semibold transition duration-150">
-                            View Cart
-                        </button>
-                        <button className="flex-1 bg-primary text-white hover:bg-amber-700 py-3 rounded-lg font-semibold transition duration-150">
-                            Checkout
-                        </button>
-                    </div>
-                </div>
+                )}
             </div>
         </>
     );

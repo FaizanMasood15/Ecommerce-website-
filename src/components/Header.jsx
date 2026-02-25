@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { User, Search, Heart, ShoppingCart, LogOut } from 'lucide-react';
+import { User, Search, ShoppingCart, LogOut, LayoutDashboard, ShoppingBag } from 'lucide-react';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
+import { useCart } from '../context/CartContext';
 import logo from '/images/logo.png';
-import { images } from '../data/productImages';
 
 const Header = ({ toggleCart }) => {
   const { userInfo } = useSelector((state) => state.auth);
+  const { totalItemCount } = useCart();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,12 +25,9 @@ const Header = ({ toggleCart }) => {
     }
   };
 
-  // Navigation Links using Link component
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Shop', path: '/shop' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
   ];
 
   return (
@@ -56,21 +54,41 @@ const Header = ({ toggleCart }) => {
         </nav>
 
         {/* Action Icons */}
-        <div className="flex items-center space-x-4 md:space-x-6 shrink-0">
+        <div className="flex items-center space-x-4 md:space-x-5 shrink-0">
 
           {userInfo ? (
-            <div className="flex items-center space-x-4 md:space-x-6">
+            <div className="flex items-center space-x-4 md:space-x-5">
               {userInfo.isAdmin && (
-                <Link to="/admin/products" className="text-sm font-semibold text-primary hover:text-amber-700 transition">
-                  Admin Dashboard
+                <Link
+                  to="/admin/dashboard"
+                  className="hidden sm:flex items-center gap-1 text-sm font-semibold text-primary hover:text-amber-700 transition"
+                  title="Admin Dashboard"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span className="hidden md:inline">Admin</span>
                 </Link>
               )}
-              <span className="hidden sm:inline-block text-sm font-medium text-gray-700">Hi, {userInfo.name.split(' ')[0]}</span>
-              <LogOut
-                className="w-5 h-5 md:w-6 md:h-6 text-gray-900 hover:text-primary cursor-pointer"
+              <Link
+                to="/profile/orders"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-primary transition"
+                title="My Orders"
+              >
+                <ShoppingBag className="w-5 h-5" />
+              </Link>
+              <Link
+                to="/profile"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-primary transition"
+                title="My Profile"
+              >
+                <User className="w-5 h-5" />
+              </Link>
+              <button
                 onClick={logoutHandler}
+                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-500 transition"
                 title="Logout"
-              />
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
           ) : (
             <Link to="/login">
@@ -78,14 +96,17 @@ const Header = ({ toggleCart }) => {
             </Link>
           )}
 
-          <Search className="w-5 h-5 md:w-6 md:h-6 text-gray-900 hover:text-primary cursor-pointer hidden sm:block" />
-          <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-900 hover:text-primary cursor-pointer hidden sm:block" />
-
+          {/* Cart with badge */}
           <div className="relative">
             <ShoppingCart
               className="w-5 h-5 md:w-6 md:h-6 text-gray-900 hover:text-primary cursor-pointer"
               onClick={toggleCart}
             />
+            {totalItemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-amber-700 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                {totalItemCount > 9 ? '9+' : totalItemCount}
+              </span>
+            )}
           </div>
         </div>
       </div>

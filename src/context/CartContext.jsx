@@ -1,64 +1,73 @@
-// src/context/CartContext.jsx (Removing hardcoded demo items)
-
+// src/context/CartContext.jsx
 import React, { createContext, useState, useContext } from 'react';
-// Removed ALL_PRODUCTS static import
+
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-    // CRITICAL FIX: Change initial state to an empty array
     const [cartItems, setCartItems] = useState([]);
 
-    // Function to add a product to the cart
-    const addToCart = (product, quantity, color, size) => {
+    // Add item to cart (or increase quantity if same variant)
+    const addToCart = (product, quantity, color, size, colorHex, variantId) => {
         const id = product._id || product.id;
         setCartItems(prevItems => {
-            // Check if the item (matching ID, color, and size) already exists
             const existingItemIndex = prevItems.findIndex(item =>
                 item.id === id && item.color === color && item.size === size
             );
 
             if (existingItemIndex > -1) {
-                // Item exists: increase quantity
                 return prevItems.map(item =>
-                    item.id === id &&
-                        item.color === color &&
-                        item.size === size
+                    item.id === id && item.color === color && item.size === size
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
-
             } else {
-                // Item is new: add to cart
-                return [...prevItems, { id, product, quantity, color, size }];
+                return [...prevItems, { id, product, quantity, color, size, colorHex: colorHex || '', variantId: variantId || null }];
             }
         });
     };
 
-    // ... (removeItem logic remains the same) ...
+    // Remove a specific item from cart
     const removeItem = (id, color, size) => {
         setCartItems(prevItems => prevItems.filter(item =>
             !(item.id === id && item.color === color && item.size === size)
         ));
     };
 
+    // Update quantity of a specific item (-1 quantity removes item)
+    const updateQuantity = (id, color, size, newQuantity) => {
+        if (newQuantity <= 0) {
+            removeItem(id, color, size);
+        } else {
+            setCartItems(prevItems =>
+                prevItems.map(item =>
+                    item.id === id && item.color === color && item.size === size
+                        ? { ...item, quantity: newQuantity }
+                        : item
+                )
+            );
+        }
+    };
 
-    // Calculate total price and item count
+    // Clear all items from cart (called after order is placed)
+    const clearCart = () => {
+        setCartItems([]);
+    };
+
+    // Compute derived cart data
     const cartData = cartItems.map(item => {
-        // CRITICAL FIX: Ensure price calculation is robust for products with no details
-        const priceString = item.product?.price ? item.product.price : '0';
-        const price = parseFloat(priceString.toString().replace(/[Rp\.]/g, ''));
-
+        const price = parseFloat(item.product?.price?.toString().replace(/[^0-9.]/g, '') || '0');
         return {
             ...item,
             price,
             totalPrice: price * item.quantity,
         };
-    }); // Remove items if product details couldn't be found (safety check)
+    });
 
     const subtotal = cartData.reduce((sum, item) => sum + item.totalPrice, 0);
+    const totalItemCount = cartData.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ cartItems: cartData, subtotal, addToCart, removeItem }}>
+        <CartContext.Provider value={{ cartItems: cartData, subtotal, totalItemCount, addToCart, removeItem, updateQuantity, clearCart }}>
             {children}
         </CartContext.Provider>
     );

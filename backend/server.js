@@ -7,6 +7,7 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(cookieParser()); // Allows parsing of cookies (like JWT)
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Make the uploads folder accessible statically for the browser to load
 import { fileURLToPath } from 'url';
