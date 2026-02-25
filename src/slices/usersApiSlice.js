@@ -22,7 +22,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
             }),
         }),
+        getUserProfile: builder.query({
+            query: () => ({ url: '/users/profile' }),
+            providesTags: ['User'],
+        }),
+        updateProfile: builder.mutation({
+            query: (data) => ({
+                url: '/users/profile',
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } = usersApiSlice;
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useGetUserProfileQuery, useUpdateProfileMutation } = usersApiSlice;
+
