@@ -103,7 +103,7 @@ const AdminOrderDetailPage = () => {
                     <div>
                         <Link to="/admin/orders" className="text-amber-700 text-sm hover:underline">← All Orders</Link>
                         <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                            Order #{order._id.slice(-8).toUpperCase()}
+                            Order #{order?._id?.slice(-8).toUpperCase()}
                         </h1>
                         <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleString()}</p>
                     </div>

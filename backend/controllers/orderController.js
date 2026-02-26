@@ -179,7 +179,8 @@ const getOrderById = async (req, res) => {
         }
 
         // Only allow the owner or admin to view the order
-        if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+        // order.user can be null for guest orders — admins can always view
+        if (!req.user.isAdmin && (!order.user || order.user._id.toString() !== req.user._id.toString())) {
             return res.status(403).json({ message: 'Not authorised to view this order' });
         }
 
