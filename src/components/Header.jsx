@@ -190,7 +190,7 @@ const Header = ({ toggleCart }) => {
                 <Link to="/profile" title="My Profile" className="text-stone-400 hover:text-gray-900 transition">
                   <User className="w-[18px] h-[18px]" />
                 </Link>
-                <button onClick={logoutHandler} title="Logout" className="text-stone-400 hover:text-red-500 transition">
+                <button onClick={logoutHandler} title="Logout" className="cursor-pointer text-stone-400 hover:text-red-500 transition">
                   <LogOut className="w-[18px] h-[18px]" />
                 </button>
               </div>
@@ -284,7 +284,7 @@ const Header = ({ toggleCart }) => {
                   <div className="border-t border-stone-100 my-1" />
                   <button
                     onClick={() => { logoutHandler(); setMobileMenuOpen(false); }}
-                    className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded w-full transition"
+                    className="cursor-pointer flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded w-full transition"
                   >
                     <LogOut className="w-4 h-4" /> Sign Out
                   </button>
