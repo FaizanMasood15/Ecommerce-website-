@@ -23,16 +23,13 @@ const getLabel = (item, period) => {
 };
 
 // ── Components ────────────────────────────────────────────────────────────────
-const StatCard = ({ title, value, subtitle, icon: Icon, color }) => (
-    <div className={`bg-white rounded-xl shadow-sm p-5 flex items-center gap-4 border-l-4 ${color}`}>
-        <div className={`p-3 rounded-lg ${color.replace('border-', 'bg-').replace('-600', '-100').replace('-500', '-100')}`}>
-            <Icon className={`w-6 h-6 ${color.replace('border-', 'text-')}`} />
-        </div>
-        <div>
-            <p className="text-sm text-gray-500">{title}</p>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
-            {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
-        </div>
+const StatCard = ({ title, value, subtitle, icon: Icon, bg }) => (
+    <div className="relative overflow-hidden rounded-2xl p-5 shadow-md" style={{ background: bg }}>
+        {/* Watermark icon */}
+        <Icon className="absolute -bottom-3 -right-3 w-20 h-20 text-white opacity-10" />
+        <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-1">{title}</p>
+        <p className="text-3xl font-extrabold text-white">{value}</p>
+        {subtitle && <p className="text-xs text-white/60 mt-1">{subtitle}</p>}
     </div>
 );
 
@@ -54,15 +51,12 @@ const BarChart = ({ data, period }) => {
     const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(yMax * f));
     const CHART_HEIGHT = 190;
 
-    // Label thinning: daily shows every 3rd, monthly every 2nd, others all
-    const showLabel = (i) => {
-        if (period === 'daily') return i % 3 === 0 || i === data.length - 1;
-        if (period === 'monthly') return i % 2 === 0 || i === data.length - 1;
-        return true;
-    };
-
-    // Cap bar width so bars don't get too wide when few data points
-    const maxBarPx = period === 'yearly' ? 40 : period === 'monthly' ? 36 : 28;
+    // ── Professional label logic ───────────────────────────────────────────────
+    // Daily  → show a dim "anchor" label every 7 days for timeline context,
+    //          plus a highlighted amber label directly under any bar with revenue.
+    // Others → every bar gets a label (≤12 items always fit).
+    const showAnchor = (i) => period !== 'daily' || i === 0 || i % 7 === 0 || i === data.length - 1;
+    const isRevenueDay = (i) => period === 'daily' && data[i].revenue > 0;
 
     return (
         <div className="flex gap-3">
@@ -76,7 +70,7 @@ const BarChart = ({ data, period }) => {
                 ))}
             </div>
 
-            {/* Chart */}
+            {/* Chart body */}
             <div className="flex-1 min-w-0 relative">
                 {/* Gridlines */}
                 <div className="absolute inset-x-0" style={{ height: CHART_HEIGHT }}>
@@ -95,28 +89,19 @@ const BarChart = ({ data, period }) => {
                         const pct = (item.revenue / yMax) * 100;
                         const empty = item.revenue === 0;
                         return (
-                            <div
-                                key={i}
-                                className="flex-1 flex flex-col items-center justify-end h-full relative group"
-                                style={{ maxWidth: `${maxBarPx}px` }}
-                            >
-                                {/* Tooltip */}
+                            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full relative group">
+                                {/* Hover tooltip */}
                                 <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-2.5 py-1.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none shadow-lg">
                                     <p className="font-bold">Rs. {item.revenue.toLocaleString()}</p>
                                     <p className="text-gray-300">{item.orders} order{item.orders !== 1 ? 's' : ''}</p>
                                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
                                 </div>
-
-                                {/* Value label above bar */}
+                                {/* Revenue value above bar */}
                                 {!empty && (
-                                    <span
-                                        className="absolute text-xs font-bold text-amber-700"
-                                        style={{ bottom: `calc(${pct}% + 6px)` }}
-                                    >
+                                    <span className="absolute text-xs font-bold text-amber-700" style={{ bottom: `calc(${pct}% + 6px)` }}>
                                         {fmtRevenue(item.revenue)}
                                     </span>
                                 )}
-
                                 {/* Bar */}
                                 <div
                                     className={`w-full rounded-t-md cursor-pointer transition-all duration-700 ${empty
@@ -134,11 +119,17 @@ const BarChart = ({ data, period }) => {
                 <div className="flex gap-1 mt-2 border-t border-gray-100 pt-1.5">
                     {data.map((item, i) => (
                         <div key={i} className="flex-1 text-center overflow-hidden">
-                            {showLabel(i) && (
+                            {isRevenueDay(i) ? (
+                                // Revenue day → amber highlight so it visually "belongs" to the bar
+                                <span className="text-[10px] font-semibold text-amber-600 leading-none">
+                                    {getLabel(item, period)}
+                                </span>
+                            ) : showAnchor(i) ? (
+                                // Week / period anchor → dim gray
                                 <span className="text-xs text-gray-400 leading-none">
                                     {getLabel(item, period)}
                                 </span>
-                            )}
+                            ) : null}
                         </div>
                     ))}
                 </div>
@@ -146,6 +137,11 @@ const BarChart = ({ data, period }) => {
         </div>
     );
 };
+
+
+
+
+
 
 const StatusBadge = ({ status }) => {
     const colors = {
@@ -216,10 +212,34 @@ const AdminDashboardPage = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <StatCard title="Total Revenue" value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`} subtitle="From delivered orders" icon={DollarSign} color="border-green-600" />
-                    <StatCard title="Total Orders" value={analytics.totalOrders} subtitle={`${analytics.deliveredOrders} delivered`} icon={ShoppingBag} color="border-blue-600" />
-                    <StatCard title="Pending Orders" value={analytics.pendingOrders} subtitle="Awaiting processing" icon={Clock} color="border-yellow-500" />
-                    <StatCard title="Processing" value={analytics.processingOrders} subtitle="In progress" icon={TrendingUp} color="border-amber-600" />
+                    <StatCard
+                        title="Total Revenue"
+                        value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`}
+                        subtitle="From delivered orders"
+                        icon={DollarSign}
+                        bg="linear-gradient(135deg, #4ade80, #22c55e)"
+                    />
+                    <StatCard
+                        title="Total Orders"
+                        value={analytics.totalOrders}
+                        subtitle={`${analytics.deliveredOrders} delivered`}
+                        icon={ShoppingBag}
+                        bg="linear-gradient(135deg, #60a5fa, #3b82f6)"
+                    />
+                    <StatCard
+                        title="Pending Orders"
+                        value={analytics.pendingOrders}
+                        subtitle="Awaiting processing"
+                        icon={Clock}
+                        bg="linear-gradient(135deg, #fcd34d, #fbbf24)"
+                    />
+                    <StatCard
+                        title="Processing"
+                        value={analytics.processingOrders}
+                        subtitle="In progress"
+                        icon={TrendingUp}
+                        bg="linear-gradient(135deg, #fb923c, #f97316)"
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -241,8 +261,8 @@ const AdminDashboardPage = () => {
                                         key={key}
                                         onClick={() => setPeriod(key)}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${period === key
-                                                ? 'bg-white text-amber-700 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-800'
+                                            ? 'bg-white text-amber-700 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-800'
                                             }`}
                                     >
                                         {label}
