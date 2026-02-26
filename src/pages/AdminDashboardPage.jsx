@@ -1,17 +1,31 @@
 // src/pages/AdminDashboardPage.jsx
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetAnalyticsQuery } from '../slices/ordersApiSlice';
 import {
     ShoppingBag, DollarSign, Clock, TrendingUp,
-    Loader, AlertCircle, Package, Eye, Tag, Ticket, Box
+    Loader, AlertCircle, Eye, Tag, Ticket, Box
 } from 'lucide-react';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const fmtRevenue = (v) => v >= 1000 ? `${(v / 1000).toFixed(1)}K` : v;
+
+const getLabel = (item, period) => {
+    if (period === 'daily') {
+        const d = new Date(item._id.year, item._id.month - 1, item._id.day);
+        return `${item._id.day} ${MONTH_NAMES[item._id.month - 1]}`;
+    }
+    if (period === 'weekly') return item._id.weekLabel || `W${item._id.week}`;
+    if (period === 'yearly') return `${item._id.year}`;
+    return `${MONTH_NAMES[(item._id.month || 1) - 1]} '${String(item._id.year).slice(-2)}`;
+};
+
+// ── Components ────────────────────────────────────────────────────────────────
 const StatCard = ({ title, value, subtitle, icon: Icon, color }) => (
     <div className={`bg-white rounded-xl shadow-sm p-5 flex items-center gap-4 border-l-4 ${color}`}>
-        <div className={`p-3 rounded-lg ${color.replace('border-', 'bg-').replace('-600', '-100')}`}>
+        <div className={`p-3 rounded-lg ${color.replace('border-', 'bg-').replace('-600', '-100').replace('-500', '-100')}`}>
             <Icon className={`w-6 h-6 ${color.replace('border-', 'text-')}`} />
         </div>
         <div>
@@ -22,35 +36,113 @@ const StatCard = ({ title, value, subtitle, icon: Icon, color }) => (
     </div>
 );
 
-// Simple pure CSS bar chart — no external library needed
-const BarChart = ({ data }) => {
+const PERIODS = [
+    { key: 'daily', label: 'Daily', sub: 'Last 30 days' },
+    { key: 'weekly', label: 'Weekly', sub: 'Last 12 weeks' },
+    { key: 'monthly', label: 'Monthly', sub: 'Last 12 months' },
+    { key: 'yearly', label: 'Yearly', sub: 'Last 10 years' },
+];
+
+const BarChart = ({ data, period }) => {
     if (!data || data.length === 0) {
-        return <p className="text-center text-gray-400 py-8">No revenue data yet.</p>;
+        return <p className="text-center text-gray-400 py-10">No revenue data yet.</p>;
     }
 
     const maxRevenue = Math.max(...data.map(d => d.revenue), 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(maxRevenue)));
+    const yMax = Math.ceil(maxRevenue / magnitude) * magnitude;
+    const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(yMax * f));
+    const CHART_HEIGHT = 190;
+
+    // Label thinning: daily shows every 3rd, monthly every 2nd, others all
+    const showLabel = (i) => {
+        if (period === 'daily') return i % 3 === 0 || i === data.length - 1;
+        if (period === 'monthly') return i % 2 === 0 || i === data.length - 1;
+        return true;
+    };
+
+    // Cap bar width so bars don't get too wide when few data points
+    const maxBarPx = period === 'yearly' ? 40 : period === 'monthly' ? 36 : 28;
 
     return (
-        <div className="flex items-end gap-2 h-48 pt-4">
-            {data.map((item, i) => {
-                const heightPercent = (item.revenue / maxRevenue) * 100;
-                const label = `${MONTH_NAMES[item._id.month - 1]} '${String(item._id.year).slice(-2)}`;
-                return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <span className="text-xs text-gray-500 font-semibold">
-                            {item.revenue >= 1000 ? `${(item.revenue / 1000).toFixed(1)}K` : item.revenue}
-                        </span>
-                        <div className="w-full flex items-end" style={{ height: '140px' }}>
+        <div className="flex gap-3">
+            {/* Y-axis */}
+            <div
+                className="flex flex-col-reverse justify-between text-right pr-2 border-r border-gray-100 flex-shrink-0"
+                style={{ height: CHART_HEIGHT + 24 }}
+            >
+                {gridLines.map((v, i) => (
+                    <span key={i} className="text-xs text-gray-400 leading-none w-10">{fmtRevenue(v)}</span>
+                ))}
+            </div>
+
+            {/* Chart */}
+            <div className="flex-1 min-w-0 relative">
+                {/* Gridlines */}
+                <div className="absolute inset-x-0" style={{ height: CHART_HEIGHT }}>
+                    {gridLines.map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute w-full border-t border-dashed border-gray-100"
+                            style={{ bottom: `${(i / (gridLines.length - 1)) * 100}%` }}
+                        />
+                    ))}
+                </div>
+
+                {/* Bars */}
+                <div className="flex items-end gap-1" style={{ height: CHART_HEIGHT }}>
+                    {data.map((item, i) => {
+                        const pct = (item.revenue / yMax) * 100;
+                        const empty = item.revenue === 0;
+                        return (
                             <div
-                                className="w-full bg-amber-500 hover:bg-amber-600 rounded-t transition-all duration-500"
-                                style={{ height: `${Math.max(heightPercent, 4)}%` }}
-                                title={`Rs. ${item.revenue.toLocaleString()} — ${item.orders} orders`}
-                            />
+                                key={i}
+                                className="flex-1 flex flex-col items-center justify-end h-full relative group"
+                                style={{ maxWidth: `${maxBarPx}px` }}
+                            >
+                                {/* Tooltip */}
+                                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-2.5 py-1.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none shadow-lg">
+                                    <p className="font-bold">Rs. {item.revenue.toLocaleString()}</p>
+                                    <p className="text-gray-300">{item.orders} order{item.orders !== 1 ? 's' : ''}</p>
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                                </div>
+
+                                {/* Value label above bar */}
+                                {!empty && (
+                                    <span
+                                        className="absolute text-xs font-bold text-amber-700"
+                                        style={{ bottom: `calc(${pct}% + 6px)` }}
+                                    >
+                                        {fmtRevenue(item.revenue)}
+                                    </span>
+                                )}
+
+                                {/* Bar */}
+                                <div
+                                    className={`w-full rounded-t-md cursor-pointer transition-all duration-700 ${empty
+                                        ? 'bg-gray-100'
+                                        : 'bg-gradient-to-t from-amber-600 to-amber-400 hover:from-amber-700 hover:to-amber-500'
+                                        }`}
+                                    style={{ height: `${empty ? 1.5 : Math.max(pct, 2)}%` }}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* X-axis labels */}
+                <div className="flex gap-1 mt-2 border-t border-gray-100 pt-1.5">
+                    {data.map((item, i) => (
+                        <div key={i} className="flex-1 text-center overflow-hidden">
+                            {showLabel(i) && (
+                                <span className="text-xs text-gray-400 leading-none">
+                                    {getLabel(item, period)}
+                                </span>
+                            )}
                         </div>
-                        <span className="text-xs text-gray-400 text-center leading-tight">{label}</span>
-                    </div>
-                );
-            })}
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };
@@ -69,8 +161,10 @@ const StatusBadge = ({ status }) => {
     );
 };
 
+// ── Page ──────────────────────────────────────────────────────────────────────
 const AdminDashboardPage = () => {
-    const { data: analytics, isLoading, error } = useGetAnalyticsQuery();
+    const [period, setPeriod] = useState('monthly');
+    const { data: analytics, isLoading, error, isFetching } = useGetAnalyticsQuery(period);
 
     if (isLoading) {
         return (
@@ -89,9 +183,12 @@ const AdminDashboardPage = () => {
         );
     }
 
+    const currentPeriodMeta = PERIODS.find(p => p.key === period);
+
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="container mx-auto max-w-7xl px-4">
+
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
@@ -119,45 +216,54 @@ const AdminDashboardPage = () => {
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <StatCard
-                        title="Total Revenue"
-                        value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`}
-                        subtitle="From delivered orders"
-                        icon={DollarSign}
-                        color="border-green-600"
-                    />
-                    <StatCard
-                        title="Total Orders"
-                        value={analytics.totalOrders}
-                        subtitle={`${analytics.deliveredOrders} delivered`}
-                        icon={ShoppingBag}
-                        color="border-blue-600"
-                    />
-                    <StatCard
-                        title="Pending Orders"
-                        value={analytics.pendingOrders}
-                        subtitle="Awaiting processing"
-                        icon={Clock}
-                        color="border-yellow-500"
-                    />
-                    <StatCard
-                        title="Processing"
-                        value={analytics.processingOrders}
-                        subtitle="In progress"
-                        icon={TrendingUp}
-                        color="border-amber-600"
-                    />
+                    <StatCard title="Total Revenue" value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`} subtitle="From delivered orders" icon={DollarSign} color="border-green-600" />
+                    <StatCard title="Total Orders" value={analytics.totalOrders} subtitle={`${analytics.deliveredOrders} delivered`} icon={ShoppingBag} color="border-blue-600" />
+                    <StatCard title="Pending Orders" value={analytics.pendingOrders} subtitle="Awaiting processing" icon={Clock} color="border-yellow-500" />
+                    <StatCard title="Processing" value={analytics.processingOrders} subtitle="In progress" icon={TrendingUp} color="border-amber-600" />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Revenue Chart */}
                     <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
-                        <h2 className="font-bold text-gray-900 mb-1">Revenue (Last 6 Months)</h2>
-                        <p className="text-xs text-gray-400 mb-4">From delivered orders</p>
-                        <BarChart data={analytics.monthlyRevenue} />
+                        {/* Chart header + period toggle */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                            <div>
+                                <h2 className="font-bold text-gray-900 text-lg">Revenue Overview</h2>
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                    {currentPeriodMeta?.sub} · From delivered orders
+                                </p>
+                            </div>
+
+                            {/* Period Toggle Pill */}
+                            <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5 self-start sm:self-auto">
+                                {PERIODS.map(({ key, label }) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setPeriod(key)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${period === key
+                                                ? 'bg-white text-amber-700 shadow-sm'
+                                                : 'text-gray-500 hover:text-gray-800'
+                                            }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Chart */}
+                        <div className={`transition-opacity duration-300 ${isFetching ? 'opacity-40' : 'opacity-100'}`}>
+                            {isFetching && !analytics ? (
+                                <div className="flex items-center justify-center h-48">
+                                    <Loader className="w-6 h-6 animate-spin text-amber-600" />
+                                </div>
+                            ) : (
+                                <BarChart data={analytics?.chartData} period={period} />
+                            )}
+                        </div>
                     </div>
 
-                    {/* Order Stats */}
+                    {/* Order Breakdown */}
                     <div className="bg-white rounded-xl shadow-sm p-6">
                         <h2 className="font-bold text-gray-900 mb-4">Order Breakdown</h2>
                         <div className="space-y-3">

@@ -347,36 +347,88 @@ const getAnalytics = async (req, res) => {
         const deliveredOrders = await Order.countDocuments({ status: 'Delivered' });
         const cancelledOrders = await Order.countDocuments({ status: 'Cancelled' });
 
-        // Total revenue: count all non-cancelled orders' total prices
-        // (covers COD where isPaid may not be set until manual action)
         const revenueResult = await Order.aggregate([
             { $match: { status: 'Delivered' } },
             { $group: { _id: null, totalRevenue: { $sum: '$totalPrice' } } },
         ]);
         const totalRevenue = revenueResult[0]?.totalRevenue || 0;
 
-        // Monthly revenue for the last 6 months — based on Delivered orders
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        const period = req.query.period || 'monthly';
+        const now = new Date();
+        let chartData = [];
 
-        const monthlyRevenue = await Order.aggregate([
-            {
-                $match: {
-                    status: 'Delivered',
-                    createdAt: { $gte: sixMonthsAgo },
-                }
-            },
-            {
-                $group: {
-                    _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
-                    revenue: { $sum: '$totalPrice' },
-                    orders: { $sum: 1 },
-                },
-            },
-            { $sort: { '_id.year': 1, '_id.month': 1 } },
-        ]);
+        if (period === 'daily') {
+            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
+            const raw = await Order.aggregate([
+                { $match: { status: 'Delivered', createdAt: { $gte: start } } },
+                { $group: { _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' }, day: { $dayOfMonth: '$createdAt' } }, revenue: { $sum: '$totalPrice' }, orders: { $sum: 1 } } },
+                { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } },
+            ]);
+            const map = {};
+            raw.forEach(r => { map[`${r._id.year}-${r._id.month}-${r._id.day}`] = r; });
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+                const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+                chartData.push(map[key] || { _id: { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() }, revenue: 0, orders: 0 });
+            }
 
-        // Recent 5 orders
+        } else if (period === 'weekly') {
+            const dayOfWeek = now.getDay();
+            const daysSinceMonday = (dayOfWeek + 6) % 7;
+            const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday);
+            const start = new Date(thisMonday.getTime() - 11 * 7 * 24 * 60 * 60 * 1000);
+            const raw = await Order.aggregate([
+                { $match: { status: 'Delivered', createdAt: { $gte: start } } },
+                { $group: { _id: { year: { $isoWeekYear: '$createdAt' }, week: { $isoWeek: '$createdAt' } }, revenue: { $sum: '$totalPrice' }, orders: { $sum: 1 } } },
+                { $sort: { '_id.year': 1, '_id.week': 1 } },
+            ]);
+            const map = {};
+            raw.forEach(r => { map[`${r._id.year}-${r._id.week}`] = r; });
+            for (let i = 11; i >= 0; i--) {
+                const weekStart = new Date(thisMonday.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+                const tmp = new Date(Date.UTC(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate()));
+                tmp.setUTCDate(tmp.getUTCDate() + 4 - (tmp.getUTCDay() || 7));
+                const yearStart = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 1));
+                const isoWeek = Math.ceil((((tmp - yearStart) / 86400000) + 1) / 7);
+                const isoYear = tmp.getUTCFullYear();
+                const key = `${isoYear}-${isoWeek}`;
+                const dayLabel = `${weekStart.getDate()}/${weekStart.getMonth() + 1}`;
+                const entry = map[key] ? { ...map[key], _id: { ...map[key]._id, weekLabel: dayLabel } }
+                    : { _id: { year: isoYear, week: isoWeek, weekLabel: dayLabel }, revenue: 0, orders: 0 };
+                chartData.push(entry);
+            }
+
+        } else if (period === 'yearly') {
+            const startYear = now.getFullYear() - 9; // last 10 years
+            const raw = await Order.aggregate([
+                { $match: { status: 'Delivered', createdAt: { $gte: new Date(`${startYear}-01-01`) } } },
+                { $group: { _id: { year: { $year: '$createdAt' } }, revenue: { $sum: '$totalPrice' }, orders: { $sum: 1 } } },
+                { $sort: { '_id.year': 1 } },
+            ]);
+            const map = {};
+            raw.forEach(r => { map[`${r._id.year}`] = r; });
+            for (let y = startYear; y <= now.getFullYear(); y++) {
+                chartData.push(map[`${y}`] || { _id: { year: y }, revenue: 0, orders: 0 });
+            }
+
+        } else {
+            // monthly — last 12 months
+            const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+            const raw = await Order.aggregate([
+                { $match: { status: 'Delivered', createdAt: { $gte: twelveMonthsAgo } } },
+                { $group: { _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } }, revenue: { $sum: '$totalPrice' }, orders: { $sum: 1 } } },
+                { $sort: { '_id.year': 1, '_id.month': 1 } },
+            ]);
+            const map = {};
+            raw.forEach(r => { map[`${r._id.year}-${r._id.month}`] = r; });
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const year = d.getFullYear();
+                const month = d.getMonth() + 1;
+                chartData.push(map[`${year}-${month}`] || { _id: { year, month }, revenue: 0, orders: 0 });
+            }
+        }
+
         const recentOrders = await Order.find({})
             .populate('user', 'name email')
             .sort({ createdAt: -1 })
@@ -389,13 +441,15 @@ const getAnalytics = async (req, res) => {
             deliveredOrders,
             cancelledOrders,
             totalRevenue,
-            monthlyRevenue,
+            chartData,
+            period,
             recentOrders,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 export {
     createOrder,

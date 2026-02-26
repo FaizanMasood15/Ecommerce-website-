@@ -57,7 +57,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: ['Order'],
         }),
         getAnalytics: builder.query({
-            query: () => ({ url: '/orders/analytics' }),
+            query: (period = 'monthly') => ({ url: `/orders/analytics?period=${period}` }),
             providesTags: ['Order'],
         }),
     }),
