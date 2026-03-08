@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'; // <-- Import Link
 import { Share2, Scale, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { formatUsd } from '../utils/price';
+import { sanitizeRichHtml } from '../utils/sanitizeHtml';
 
 // The goToProduct prop is no longer strictly needed here since we use Link
 const ProductCard = ({ product }) => {
@@ -76,7 +77,7 @@ const ProductCard = ({ product }) => {
         {/* ... (rest of the info) ... */}
         <div
           className="text-sm text-gray-500 mb-2 line-clamp-2"
-          dangerouslySetInnerHTML={{ __html: product.description }}
+          dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
         />
         <div className="flex items-center space-x-3">
           <span className="text-xl font-semibold text-gray-900">

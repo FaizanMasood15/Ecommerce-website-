@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetProductDetailsQuery, useUpdateProductMutation, useUploadProductImageMutation } from '../slices/productsApiSlice';
+import { useGetAdminProductDetailsQuery, useUpdateProductMutation, useUploadProductImageMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -32,7 +32,7 @@ const AdminProductEditPage = () => {
     const [description, setDescription] = useState('');
     const [isDraft, setIsDraft] = useState(false);
 
-    const { data: product, isLoading, error } = useGetProductDetailsQuery({ id: productId, all: true });
+    const { data: product, isLoading, error } = useGetAdminProductDetailsQuery({ id: productId });
     const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
     const [uploadProductImage, { isLoading: isUploading }] = useUploadProductImageMutation();
 

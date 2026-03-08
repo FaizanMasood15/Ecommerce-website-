@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import { MapPin, CreditCard, Truck, Tag, CheckCircle, AlertCircle, Loader, Mail, LogIn } from 'lucide-react';
 import { useValidateCouponMutation } from '../slices/couponApiSlice';
+import { createClientOrderRef, getDeviceId } from '../utils/clientIds';
 
 const PAYMENT_METHODS = [
     { id: 'COD', label: 'Cash on Delivery', icon: '💵' },
@@ -35,6 +36,7 @@ const CheckoutPage = () => {
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [couponError, setCouponError] = useState('');
     const [validateCoupon, { isLoading: isCouponLoading }] = useValidateCouponMutation();
+    const [clientOrderRef] = useState(() => createClientOrderRef());
 
     const shippingCost = subtotal > 5000 ? 0 : 250;
     const tax = 0;
@@ -46,6 +48,8 @@ const CheckoutPage = () => {
         if (!shippingAddress.fullName.trim()) newErrors.fullName = 'Full name is required';
         if (!shippingAddress.address.trim()) newErrors.address = 'Address is required';
         if (!shippingAddress.city.trim()) newErrors.city = 'City is required';
+        if (!shippingAddress.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
+        if (!shippingAddress.country.trim()) newErrors.country = 'Country is required';
         if (!shippingAddress.phone.trim()) newErrors.phone = 'Phone number is required';
         // Guest email required only if not logged in
         if (!userInfo && (!guestEmail.trim() || !/\S+@\S+\.\S+/.test(guestEmail))) {
@@ -59,6 +63,7 @@ const CheckoutPage = () => {
         e.preventDefault();
         if (!validate()) return;
 
+        const deviceId = getDeviceId();
         sessionStorage.setItem('checkoutData', JSON.stringify({
             shippingAddress,
             paymentMethod,
@@ -67,6 +72,8 @@ const CheckoutPage = () => {
             discountAmount,
             couponCode: appliedCoupon?.code || '',
             guestEmail: userInfo ? '' : guestEmail.trim(),
+            clientOrderRef,
+            deviceId,
         }));
         navigate('/place-order');
     };
@@ -166,9 +173,10 @@ const CheckoutPage = () => {
                                             name="postalCode"
                                             value={shippingAddress.postalCode}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.postalCode ? 'border-red-400' : 'border-gray-300'}`}
                                             placeholder="54000"
                                         />
+                                        {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
@@ -177,8 +185,9 @@ const CheckoutPage = () => {
                                             name="country"
                                             value={shippingAddress.country}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.country ? 'border-red-400' : 'border-gray-300'}`}
                                         />
+                                        {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
@@ -254,8 +263,18 @@ const CheckoutPage = () => {
                                             onClick={async () => {
                                                 setCouponError('');
                                                 setAppliedCoupon(null);
+                                                if (!userInfo && !guestEmail.trim()) {
+                                                    setCouponError('Enter guest email before applying coupon');
+                                                    return;
+                                                }
                                                 try {
-                                                    const result = await validateCoupon({ code: couponCode, orderTotal: subtotal }).unwrap();
+                                                    const result = await validateCoupon({
+                                                        code: couponCode,
+                                                        orderTotal: subtotal,
+                                                        guestEmail: userInfo ? userInfo.email : guestEmail.trim(),
+                                                        deviceId: getDeviceId(),
+                                                        clientOrderRef,
+                                                    }).unwrap();
                                                     setAppliedCoupon(result);
                                                 } catch (err) {
                                                     setCouponError(err?.data?.message || 'Invalid coupon');

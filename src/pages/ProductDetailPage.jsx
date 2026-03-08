@@ -14,6 +14,7 @@ import ProductReviews from '../components/ProductReviews';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { formatUsd, parsePriceValue } from '../utils/price';
+import { sanitizeRichHtml } from '../utils/sanitizeHtml';
 
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
@@ -139,7 +140,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
           <div className="space-y-4 text-gray-700">
             <div
               className="mt-4 prose prose-sm max-w-none text-gray-700"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
             />
             <p>
               {product.fullDescription || "Detailed description is coming soon. Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
@@ -271,7 +272,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
             <div
               className="text-gray-700 text-base max-w-lg prose prose-sm"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
             />
 
             {/* Size Selector */}

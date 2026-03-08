@@ -1,19 +1,18 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
+const resolveUserFromToken = async (token) => {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return User.findById(decoded.userId).select('-password');
+};
+
 // Protect routes
 const protect = async (req, res, next) => {
-    let token;
-
-    // Read the JWT from the cookie
-    token = req.cookies.jwt;
+    const token = req.cookies.jwt;
 
     if (token) {
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            // Get user from the token, excluding the password
-            req.user = await User.findById(decoded.userId).select('-password');
+            req.user = await resolveUserFromToken(token);
             next();
         } catch (error) {
             console.error(error);
@@ -22,6 +21,21 @@ const protect = async (req, res, next) => {
     } else {
         res.status(401).json({ message: 'Not authorized, no token' });
     }
+};
+
+// Optional auth: attach req.user if valid JWT exists, but never block request.
+const optionalProtect = async (req, _res, next) => {
+    const token = req.cookies.jwt;
+    if (!token) {
+        return next();
+    }
+
+    try {
+        req.user = await resolveUserFromToken(token);
+    } catch {
+        req.user = null;
+    }
+    next();
 };
 
 // Admin middleware
@@ -33,4 +47,4 @@ const admin = (req, res, next) => {
     }
 };
 
-export { protect, admin };
+export { protect, optionalProtect, admin };

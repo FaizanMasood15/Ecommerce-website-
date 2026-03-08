@@ -1,17 +1,30 @@
 // src/pages/GuestOrderConfirmationPage.jsx
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useGetGuestOrderQuery } from '../slices/ordersApiSlice';
 import { CheckCircle, Loader, AlertCircle, ShoppingBag, MapPin, UserPlus } from 'lucide-react';
 
 const GuestOrderConfirmationPage = () => {
     const { id } = useParams();
-    const { data: order, isLoading, error } = useGetGuestOrderQuery(id);
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token') || '';
+    const { data: order, isLoading, error } = useGetGuestOrderQuery({ id, token }, { skip: !id || !token });
 
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <Loader className="w-8 h-8 animate-spin text-amber-700" />
+            </div>
+        );
+    }
+
+    if (!token) {
+        return (
+            <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
+                <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
+                <h2 className="text-xl font-bold text-gray-800 mb-2">Invalid Guest Link</h2>
+                <p className="text-gray-500 mb-6">This order link is missing its access token.</p>
+                <Link to="/" className="text-amber-700 hover:underline font-medium">Return to Home</Link>
             </div>
         );
     }

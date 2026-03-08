@@ -1,23 +1,24 @@
 import Product from '../models/productModel.js';
 
+const findProductBySlugOrId = async (idOrSlug) => {
+    let product = await Product.findOne({ slug: idOrSlug });
+    if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
+        product = await Product.findById(idOrSlug);
+    }
+    return product;
+};
+
+const sanitizeDescription = (description = '') =>
+    String(description || '')
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+        .replace(/\son\w+="[^"]*"/gi, '')
+        .replace(/\son\w+='[^']*'/gi, '');
+
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-    // If admin is requesting, send all. Otherwise send only published.
-    // NOTE: This assumes the route uses the auth middleware to set req.user if logged in.
-    // Since getProducts is usually public, req.user might be undefined.
-    // Let's check for an 'isAdmin' query parameter securely, or just let the API rely on the fact that 
-    // public frontend shouldn't request drafts.
-    // To be perfectly secure, we should create a separate Admin route, but for now, 
-    // we'll check if the query includes an explicit admin flag or if req.user is an admin.
-
-    let query = { isDraft: { $ne: true } };
-
-    // If an admin requests it from the admin panel, they might pass a query parameter like ?all=true
-    if (req.query.all === 'true') {
-        query = {}; // fetch all
-    }
+    const query = req.includeDrafts ? {} : { isDraft: { $ne: true } };
 
     const products = await Product.find(query);
     res.json(products);
@@ -28,19 +29,11 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductById = async (req, res) => {
     const { id: idOrSlug } = req.params;
-    let product;
+    const product = await findProductBySlugOrId(idOrSlug);
 
-    // First try to find by exact slug match
-    product = await Product.findOne({ slug: idOrSlug });
-
-    // If no slug match and it's a valid Mongo ObjectId, try ID lookup
-    if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
-        product = await Product.findById(idOrSlug);
-    }
-
-    // If it's a draft, don't show it unless explicitly requested by admin logic
-    if (product && product.isDraft && req.query.all !== 'true') {
-        product = null;
+    // Public routes should never expose drafts.
+    if (product && product.isDraft && !req.includeDrafts) {
+        return res.status(404).json({ message: 'Product not found' });
     }
 
     if (product) {
@@ -55,13 +48,7 @@ const getProductById = async (req, res) => {
 // @access  Private/Admin
 const deleteProduct = async (req, res) => {
     const { id: idOrSlug } = req.params;
-    let product;
-
-    product = await Product.findOne({ slug: idOrSlug });
-
-    if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
-        product = await Product.findById(idOrSlug);
-    }
+    const product = await findProductBySlugOrId(idOrSlug);
 
     if (product) {
         await Product.deleteOne({ _id: product._id });
@@ -107,19 +94,13 @@ const updateProduct = async (req, res) => {
     try {
         const { name, sku, price, description, image, images, colors, sizes, variants, category, countInStock, isDraft, isNewProduct, discount } = req.body;
         const { id: idOrSlug } = req.params;
-        let product;
-
-        product = await Product.findOne({ slug: idOrSlug });
-
-        if (!product && idOrSlug.match(/^[0-9a-fA-F]{24}$/)) {
-            product = await Product.findById(idOrSlug);
-        }
+        const product = await findProductBySlugOrId(idOrSlug);
 
         if (product) {
             product.name = name;
             product.sku = sku || '';
             product.price = price;
-            product.description = description;
+            product.description = sanitizeDescription(description);
             product.image = image;
             product.images = images || [];
             product.colors = colors || [];

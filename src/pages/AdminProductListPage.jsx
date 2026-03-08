@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGetProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
+import { useGetAdminProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
 import { Trash2, Edit2, Check, X, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -17,7 +17,7 @@ const CustomSwal = Swal.mixin({
 
 const AdminProductListPage = () => {
     const navigate = useNavigate();
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery({ all: true });
+    const { data: products, isLoading, error, refetch } = useGetAdminProductsQuery();
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
     const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
     const [updateProduct] = useUpdateProductMutation(); // For inline edits

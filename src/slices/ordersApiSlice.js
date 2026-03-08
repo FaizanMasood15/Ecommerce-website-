@@ -19,7 +19,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getGuestOrder: builder.query({
-            query: (id) => ({ url: `/orders/guest/${id}` }),
+            query: ({ id, token }) => ({ url: `/orders/guest/${id}?token=${encodeURIComponent(token)}` }),
         }),
         getOrderDetails: builder.query({
             query: (id) => ({ url: `/orders/${id}` }),
