@@ -10,7 +10,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
 
-    const formatCurrency = (amount) => `Rs. ${Number(amount).toLocaleString('en-IN')}`;
+    const formatCurrency = (amount) => `$${Number(amount).toLocaleString('en-US')}`;
 
     const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
 

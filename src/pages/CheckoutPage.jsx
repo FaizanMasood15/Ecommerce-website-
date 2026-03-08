@@ -232,7 +232,7 @@ const CheckoutPage = () => {
                                     {cartItems.map((item, i) => (
                                         <div key={i} className="flex justify-between gap-2">
                                             <span className="truncate pr-2">{item.product?.name} × {item.quantity}</span>
-                                            <span className="flex-shrink-0">Rs. {item.totalPrice?.toLocaleString()}</span>
+                                            <span className="flex-shrink-0">${item.totalPrice?.toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -267,32 +267,32 @@ const CheckoutPage = () => {
                                         </button>
                                     </div>
                                     {couponError && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {couponError}</p>}
-                                    {appliedCoupon && <p className="text-green-600 text-xs mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> {appliedCoupon.description || `${appliedCoupon.discountValue}${appliedCoupon.discountType === 'percentage' ? '%' : ' Rs.'} off applied!`}</p>}
+                                    {appliedCoupon && <p className="text-green-600 text-xs mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> {appliedCoupon.description || `${appliedCoupon.discountValue}${appliedCoupon.discountType === 'percentage' ? '%' : ' $'} off applied!`}</p>}
                                 </div>
 
                                 <div className="space-y-2 text-sm text-gray-600 mt-3">
                                     <div className="flex justify-between">
                                         <span>Subtotal</span>
-                                        <span>Rs. {subtotal?.toLocaleString()}</span>
+                                        <span>${subtotal?.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Shipping</span>
-                                        <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `Rs. ${shippingCost}`}</span>
+                                        <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `$${shippingCost}`}</span>
                                     </div>
                                     {discountAmount > 0 && (
                                         <div className="flex justify-between text-green-600 font-medium">
                                             <span>Coupon ({appliedCoupon.code})</span>
-                                            <span>- Rs. {discountAmount.toLocaleString()}</span>
+                                            <span>- ${discountAmount.toLocaleString()}</span>
                                         </div>
                                     )}
                                     <hr />
                                     <div className="flex justify-between font-bold text-gray-900 text-base">
                                         <span>Total</span>
-                                        <span>Rs. {total?.toLocaleString()}</span>
+                                        <span>${total?.toLocaleString()}</span>
                                     </div>
                                     {shippingCost > 0 && (
                                         <p className="text-xs text-green-600 text-center mt-1">
-                                            Add Rs. {(5001 - subtotal).toLocaleString()} more for free shipping!
+                                            Add ${(5001 - subtotal).toLocaleString()} more for free shipping!
                                         </p>
                                     )}
                                 </div>
@@ -313,3 +313,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+

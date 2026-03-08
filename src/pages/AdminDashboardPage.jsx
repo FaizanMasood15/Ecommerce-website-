@@ -92,7 +92,7 @@ const BarChart = ({ data, period }) => {
                             <div key={i} className="flex-1 flex flex-col items-center justify-end h-full relative group">
                                 {/* Hover tooltip */}
                                 <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-2.5 py-1.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none shadow-lg">
-                                    <p className="font-bold">Rs. {item.revenue.toLocaleString()}</p>
+                                    <p className="font-bold">${item.revenue.toLocaleString()}</p>
                                     <p className="text-gray-300">{item.orders} order{item.orders !== 1 ? 's' : ''}</p>
                                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
                                 </div>
@@ -214,7 +214,7 @@ const AdminDashboardPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <StatCard
                         title="Total Revenue"
-                        value={`Rs. ${analytics.totalRevenue?.toLocaleString()}`}
+                        value={`$${analytics.totalRevenue?.toLocaleString()}`}
                         subtitle="From delivered orders"
                         icon={DollarSign}
                         bg="linear-gradient(135deg, #4ade80, #22c55e)"
@@ -332,7 +332,7 @@ const AdminDashboardPage = () => {
                                     <tr key={order._id} className="hover:bg-gray-50">
                                         <td className="py-2.5 font-mono font-bold text-gray-700">#{order._id.slice(-6).toUpperCase()}</td>
                                         <td className="py-2.5 text-gray-600">{order.user?.name || 'Guest'}</td>
-                                        <td className="py-2.5 font-semibold text-gray-900">Rs. {order.totalPrice?.toLocaleString()}</td>
+                                        <td className="py-2.5 font-semibold text-gray-900">${order.totalPrice?.toLocaleString()}</td>
                                         <td className="py-2.5"><StatusBadge status={order.status} /></td>
                                         <td className="py-2.5">
                                             <Link to={`/admin/orders/${order._id}`} className="text-amber-700 hover:text-amber-800">
@@ -351,3 +351,4 @@ const AdminDashboardPage = () => {
 };
 
 export default AdminDashboardPage;
+

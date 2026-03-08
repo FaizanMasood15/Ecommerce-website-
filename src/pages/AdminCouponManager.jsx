@@ -140,7 +140,7 @@ const AdminCouponManager = () => {
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Discount Type *</label>
                                 <select value={form.discountType} onChange={e => setForm(f => ({ ...f, discountType: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                     <option value="percentage">Percentage (%)</option>
-                                    <option value="fixed">Fixed Amount (Rs.)</option>
+                                    <option value="fixed">Fixed Amount (USD)</option>
                                 </select>
                             </div>
                             <div>
@@ -148,7 +148,7 @@ const AdminCouponManager = () => {
                                 <input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 500'} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" required min={0} />
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Min Order (Rs.)</label>
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Min Order (USD)</label>
                                 <input type="number" value={form.minOrderAmount} onChange={e => setForm(f => ({ ...f, minOrderAmount: e.target.value }))} placeholder="0" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={0} />
                             </div>
                             <div>
@@ -203,10 +203,10 @@ const AdminCouponManager = () => {
                                             {coupon.description && <p className="text-xs text-gray-400 mt-0.5 ml-6">{coupon.description}</p>}
                                         </td>
                                         <td className="px-5 py-3 font-semibold text-green-700">
-                                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `Rs. ${coupon.discountValue?.toLocaleString()}`}
+                                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `$${coupon.discountValue?.toLocaleString()}`}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
-                                            {coupon.minOrderAmount > 0 ? `Rs. ${coupon.minOrderAmount?.toLocaleString()}` : '—'}
+                                            {coupon.minOrderAmount > 0 ? `$${coupon.minOrderAmount?.toLocaleString()}` : '—'}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
                                             {coupon.usedCount}/{coupon.maxUses ?? '∞'}
@@ -238,3 +238,4 @@ const AdminCouponManager = () => {
 };
 
 export default AdminCouponManager;
+

@@ -152,8 +152,8 @@ const AdminOrderDetailPage = () => {
                                                 {item.selectedColor && `Color: ${item.selectedColor}`}
                                             </p>
                                         </div>
-                                        <p className="text-sm text-gray-600">{item.qty} × Rs. {item.price?.toLocaleString()}</p>
-                                        <p className="font-bold text-gray-900 text-sm w-24 text-right">Rs. {(item.qty * item.price)?.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-600">{item.qty} × ${item.price?.toLocaleString()}</p>
+                                        <p className="font-bold text-gray-900 text-sm w-24 text-right">${(item.qty * item.price)?.toLocaleString()}</p>
                                     </div>
                                 ))}
                             </div>
@@ -186,10 +186,10 @@ const AdminOrderDetailPage = () => {
                             <h2 className="font-bold text-gray-900 mb-3">Payment</h2>
                             <div className="space-y-1.5 text-sm text-gray-600">
                                 <div className="flex justify-between"><span>Method</span><span className="font-medium text-gray-800">{order.paymentMethod}</span></div>
-                                <div className="flex justify-between"><span>Subtotal</span><span>Rs. {order.itemsPrice?.toLocaleString()}</span></div>
-                                <div className="flex justify-between"><span>Shipping</span><span>{order.shippingPrice === 0 ? 'Free' : `Rs. ${order.shippingPrice}`}</span></div>
+                                <div className="flex justify-between"><span>Subtotal</span><span>${order.itemsPrice?.toLocaleString()}</span></div>
+                                <div className="flex justify-between"><span>Shipping</span><span>{order.shippingPrice === 0 ? 'Free' : `$${order.shippingPrice}`}</span></div>
                                 <hr />
-                                <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>Rs. {order.totalPrice?.toLocaleString()}</span></div>
+                                <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>${order.totalPrice?.toLocaleString()}</span></div>
                             </div>
                             <div className={`mt-3 text-sm font-semibold ${order.isPaid ? 'text-green-600' : 'text-yellow-600'}`}>
                                 {order.isPaid ? `✓ Paid on ${new Date(order.paidAt).toLocaleDateString()}` : '⚠ Not paid yet'}
@@ -249,3 +249,4 @@ const AdminOrderDetailPage = () => {
 };
 
 export default AdminOrderDetailPage;
+

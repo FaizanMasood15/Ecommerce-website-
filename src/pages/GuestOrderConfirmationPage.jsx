@@ -87,8 +87,8 @@ const GuestOrderConfirmationPage = () => {
                                     )}
                                 </div>
                                 <div className="text-right text-sm flex-shrink-0">
-                                    <p className="text-gray-500">{item.qty} × Rs. {item.price?.toLocaleString()}</p>
-                                    <p className="font-bold text-gray-900">Rs. {(item.qty * item.price)?.toLocaleString()}</p>
+                                    <p className="text-gray-500">{item.qty} × ${item.price?.toLocaleString()}</p>
+                                    <p className="font-bold text-gray-900">${(item.qty * item.price)?.toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}
@@ -97,21 +97,21 @@ const GuestOrderConfirmationPage = () => {
                     <div className="border-t mt-4 pt-3 space-y-1 text-sm text-gray-600">
                         <div className="flex justify-between">
                             <span>Subtotal</span>
-                            <span>Rs. {order.itemsPrice?.toLocaleString()}</span>
+                            <span>${order.itemsPrice?.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Shipping</span>
-                            <span>{order.shippingPrice === 0 ? <span className="text-green-600">Free</span> : `Rs. ${order.shippingPrice}`}</span>
+                            <span>{order.shippingPrice === 0 ? <span className="text-green-600">Free</span> : `$${order.shippingPrice}`}</span>
                         </div>
                         {order.discountAmount > 0 && (
                             <div className="flex justify-between text-green-600">
                                 <span>Discount ({order.couponCode})</span>
-                                <span>− Rs. {order.discountAmount?.toLocaleString()}</span>
+                                <span>− ${order.discountAmount?.toLocaleString()}</span>
                             </div>
                         )}
                         <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t">
                             <span>Total</span>
-                            <span>Rs. {order.totalPrice?.toLocaleString()}</span>
+                            <span>${order.totalPrice?.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -139,3 +139,4 @@ const GuestOrderConfirmationPage = () => {
 };
 
 export default GuestOrderConfirmationPage;
+

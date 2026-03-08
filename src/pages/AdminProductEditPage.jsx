@@ -266,7 +266,7 @@ const AdminProductEditPage = () => {
                     </div>
 
                     <div>
-                        <label className="block text-gray-700 font-semibold mb-2">Price (Rs)</label>
+                        <label className="block text-gray-700 font-semibold mb-2">Price (USD)</label>
                         <input
                             type="number"
                             placeholder="Enter price"
@@ -421,7 +421,7 @@ const AdminProductEditPage = () => {
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-600">
                                         <th className="p-3 font-semibold">Variant (Size / Color)</th>
-                                        <th className="p-3 font-semibold w-24">Price (Rs)</th>
+                                        <th className="p-3 font-semibold w-24">Price (USD)</th>
                                         <th className="p-3 font-semibold w-24">Stock</th>
                                         <th className="p-3 font-semibold">SKU (Optional)</th>
                                     </tr>
@@ -506,3 +506,4 @@ const AdminProductEditPage = () => {
 };
 
 export default AdminProductEditPage;
+

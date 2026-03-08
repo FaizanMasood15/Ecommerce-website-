@@ -6,6 +6,7 @@ import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
 import { images } from '../data/productImages';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
+import { parsePriceValue } from '../utils/price';
 
 // Constants for pagination
 const PRODUCTS_PER_PAGE = 16;
@@ -34,14 +35,14 @@ const ShopPage = ({ goToProduct }) => {
     const sortedProducts = [...products];
     if (sortOrder === 'price-asc') {
       sortedProducts.sort((a, b) => {
-        const priceA = parseFloat(a.price.replace(/[Rp\.]/g, ''));
-        const priceB = parseFloat(b.price.replace(/[Rp\.]/g, ''));
+        const priceA = parsePriceValue(a.price);
+        const priceB = parsePriceValue(b.price);
         return priceA - priceB;
       });
     } else if (sortOrder === 'price-desc') {
       sortedProducts.sort((a, b) => {
-        const priceA = parseFloat(a.price.replace(/[Rp\.]/g, ''));
-        const priceB = parseFloat(b.price.replace(/[Rp\.]/g, ''));
+        const priceA = parsePriceValue(a.price);
+        const priceB = parsePriceValue(b.price);
         return priceB - priceA;
       });
     }

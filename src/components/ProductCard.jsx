@@ -4,6 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'; // <-- Import Link
 import { Share2, Scale, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { formatUsd } from '../utils/price';
 
 // The goToProduct prop is no longer strictly needed here since we use Link
 const ProductCard = ({ product }) => {
@@ -79,11 +80,11 @@ const ProductCard = ({ product }) => {
         />
         <div className="flex items-center space-x-3">
           <span className="text-xl font-semibold text-gray-900">
-            Rp {product.price}
+            {formatUsd(product.price)}
           </span>
           {isDiscounted && (
             <span className="text-base text-sale-red line-through">
-              Rp {product.originalPrice}
+              {formatUsd(product.originalPrice)}
             </span>
           )}
         </div>

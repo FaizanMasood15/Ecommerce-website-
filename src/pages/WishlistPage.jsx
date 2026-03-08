@@ -82,7 +82,7 @@ const WishlistPage = () => {
                                         <Link to={`/shop/${product._id}`}>
                                             <h3 className="font-semibold text-gray-900 hover:text-amber-700 transition text-sm truncate">{product.name}</h3>
                                         </Link>
-                                        <p className="text-amber-700 font-bold mt-1">Rs. {Number(product.price).toLocaleString()}</p>
+                                        <p className="text-amber-700 font-bold mt-1">${Number(product.price).toLocaleString()}</p>
                                         <p className="text-xs text-gray-400 mt-1">
                                             Added {new Date(addedAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short' })}
                                         </p>
@@ -107,3 +107,4 @@ const WishlistPage = () => {
 };
 
 export default WishlistPage;
+

@@ -13,6 +13,7 @@ import WishlistHeart from '../components/WishlistHeart';
 import ProductReviews from '../components/ProductReviews';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { formatUsd, parsePriceValue } from '../utils/price';
 
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
@@ -69,7 +70,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
       sku: selectedProduct.sku || selectedProduct._id.toString().substring(0, 4).padStart(4, '0'),
       category: selectedProduct.category,
       mainImage: validImages[0], // Set first array item as main image
-      basePrice: parseFloat(selectedProduct.price?.toString().replace(/[Rp\.]/g, '') || 0),
+      basePrice: parsePriceValue(selectedProduct.price),
     };
   } else {
     const defaultAsgaard = {
@@ -128,7 +129,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
     ? currentVariant.countInStock
     : product.countInStock;
 
-  const formattedPrice = `Rs. ${displayPrice.toLocaleString('en-IN')}.00`;
+  const formattedPrice = formatUsd(displayPrice);
   const ratingStars = [...Array(Math.floor(product?.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
 
   const TabContent = () => {

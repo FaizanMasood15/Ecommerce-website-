@@ -151,8 +151,8 @@ const PlaceOrderPage = () => {
                                             </p>
                                         </div>
                                         <div className="text-right text-sm">
-                                            <p className="text-gray-600">{item.quantity} × Rs. {item.price?.toLocaleString()}</p>
-                                            <p className="font-bold text-gray-900">Rs. {item.totalPrice?.toLocaleString()}</p>
+                                            <p className="text-gray-600">{item.quantity} × ${item.price?.toLocaleString()}</p>
+                                            <p className="font-bold text-gray-900">${item.totalPrice?.toLocaleString()}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -167,22 +167,22 @@ const PlaceOrderPage = () => {
                             <div className="space-y-2 text-sm text-gray-600">
                                 <div className="flex justify-between">
                                     <span>Subtotal</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
-                                    <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `Rs. ${shippingCost}`}</span>
+                                    <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `$${shippingCost}`}</span>
                                 </div>
                                 {discountAmount > 0 && (
                                     <div className="flex justify-between text-green-600 font-medium">
                                         <span>Coupon {couponCode && `(${couponCode})`}</span>
-                                        <span>− Rs. {discountAmount.toLocaleString()}</span>
+                                        <span>− ${discountAmount.toLocaleString()}</span>
                                     </div>
                                 )}
                                 <hr />
                                 <div className="flex justify-between font-bold text-gray-900 text-base">
                                     <span>Total</span>
-                                    <span>Rs. {total?.toLocaleString()}</span>
+                                    <span>${total?.toLocaleString()}</span>
                                 </div>
                             </div>
                             <button
@@ -210,3 +210,4 @@ const PlaceOrderPage = () => {
 };
 
 export default PlaceOrderPage;
+

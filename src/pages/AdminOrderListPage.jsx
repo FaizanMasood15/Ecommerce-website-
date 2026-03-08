@@ -113,7 +113,7 @@ const AdminOrderListPage = () => {
                                             {new Date(order.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </td>
                                         <td className="px-5 py-3 font-bold text-gray-900">
-                                            Rs. {order.totalPrice?.toLocaleString()}
+                                            ${order.totalPrice?.toLocaleString()}
                                         </td>
                                         <td className="px-5 py-3">
                                             {order.isPaid
@@ -152,3 +152,4 @@ const AdminOrderListPage = () => {
 };
 
 export default AdminOrderListPage;
+

@@ -314,7 +314,7 @@ const AdminProductListPage = () => {
                                     <td className="p-4">
                                         {editingCell.id === product._id && editingCell.field === 'price' ? (
                                             <div className="flex items-center space-x-1">
-                                                <span className="text-gray-500 text-sm">Rs.</span>
+                                                <span className="text-gray-500 text-sm">$</span>
                                                 <input
                                                     type="number"
                                                     className="w-20 border border-primary rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -331,7 +331,7 @@ const AdminProductListPage = () => {
                                             </div>
                                         ) : (
                                             <div className="group flex items-center space-x-2 cursor-pointer" onClick={() => handleInlineEditStart(product, 'price')}>
-                                                <span>Rs. {product.price.toLocaleString()}</span>
+                                                <span>${product.price.toLocaleString()}</span>
                                                 <Edit2 className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         )}
@@ -422,3 +422,4 @@ const AdminProductListPage = () => {
 };
 
 export default AdminProductListPage;
+

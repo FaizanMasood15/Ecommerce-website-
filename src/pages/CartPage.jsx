@@ -66,7 +66,7 @@ const CartPage = () => {
                                         </p>
                                     )}
                                     <p className="text-amber-700 font-bold mt-1">
-                                        Rs. {item.price?.toLocaleString()}
+                                        ${item.price?.toLocaleString()}
                                     </p>
 
                                     <div className="flex items-center gap-3 mt-3">
@@ -98,7 +98,7 @@ const CartPage = () => {
                                 </div>
                                 <div className="text-right flex-shrink-0">
                                     <p className="font-bold text-gray-900">
-                                        Rs. {item.totalPrice?.toLocaleString()}
+                                        ${item.totalPrice?.toLocaleString()}
                                     </p>
                                 </div>
                             </div>
@@ -112,7 +112,7 @@ const CartPage = () => {
                             <div className="space-y-3 text-sm text-gray-600">
                                 <div className="flex justify-between">
                                     <span>Subtotal ({cartItems.reduce((a, i) => a + i.quantity, 0)} items)</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
@@ -121,7 +121,7 @@ const CartPage = () => {
                                 <hr className="my-2" />
                                 <div className="flex justify-between text-base font-bold text-gray-900">
                                     <span>Subtotal</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                             </div>
 
@@ -146,3 +146,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
