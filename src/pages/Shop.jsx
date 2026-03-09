@@ -1,7 +1,7 @@
 // src/pages/Shop.jsx (Updated to use imported image)
 
-import React, { useMemo, useState } from 'react';
-import { SlidersHorizontal, Grid3X3, List } from 'lucide-react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { SlidersHorizontal, Grid3X3, List, ChevronDown, Check } from 'lucide-react';
 import FeatureStrip from '../components/FeatureStrip';
 import ProductCard from '../components/ProductCard';
 import { images } from '../data/productImages';
@@ -11,6 +11,61 @@ import { parsePriceValue } from '../utils/price';
 
 // Constants for pagination
 const PRODUCTS_PER_PAGE = 16;
+
+const ElegantSelect = ({ label, value, options, onChange, minWidth = 'min-w-[190px]' }) => {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  const selectedOption = options.find((option) => option.value === value) || options[0];
+
+  return (
+    <div ref={containerRef} className={`relative h-12 ${minWidth}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="h-12 w-full bg-white border border-stone-300/90 shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:border-stone-500 px-4 flex items-center justify-between transition"
+      >
+        <span className="text-[13px] tracking-[0.1em] uppercase text-stone-900 truncate">
+          {label ? `${label}  ${selectedOption?.label}` : selectedOption?.label}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-stone-500 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 bg-white border border-stone-200 shadow-xl">
+          <ul className="max-h-72 overflow-y-auto py-1">
+            {options.map((option) => (
+              <li key={option.value}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className="w-full px-4 py-2.5 text-left text-[13px] tracking-[0.08em] uppercase text-stone-700 hover:bg-stone-50 hover:text-black flex items-center justify-between"
+                >
+                  <span>{option.label}</span>
+                  {option.value === value && <Check className="w-4 h-4 text-black" />}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ShopPage = ({ goToProduct }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -111,10 +166,14 @@ const ShopPage = ({ goToProduct }) => {
   };
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+    setSelectedCategory(e);
     setCurrentPage(1);
   };
-
+  const sortOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'price-asc', label: 'Price A-Z' },
+    { value: 'price-desc', label: 'Price Z-A' },
+  ];
 
   return (
     <>
@@ -142,17 +201,11 @@ const ShopPage = ({ goToProduct }) => {
               <SlidersHorizontal className="w-5 h-5 text-stone-700" />
               <span className="text-sm tracking-[0.1em] uppercase font-semibold text-stone-800">Filter By</span>
             </div>
-            <select
+            <ElegantSelect
               value={selectedCategory}
+              options={categoryOptions}
               onChange={handleCategoryChange}
-              className="h-12 min-w-[180px] bg-white border border-stone-300 px-4 text-sm tracking-[0.08em] uppercase text-stone-900"
-            >
-              {categoryOptions.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
+            />
 
             <div className="h-12 px-4 bg-white border border-stone-300 hidden sm:flex items-center gap-3">
               <Grid3X3 className="w-5 h-5 text-stone-900" />
@@ -167,26 +220,19 @@ const ShopPage = ({ goToProduct }) => {
           <div className="flex flex-wrap items-center gap-3 lg:gap-4">
             <div className="h-12 px-4 bg-white border border-stone-300 flex items-center gap-3">
               <span className="text-sm tracking-[0.08em] uppercase text-stone-800">Show</span>
-              <select className="h-10 bg-transparent px-1 text-sm tracking-[0.08em] uppercase text-stone-900">
-                <option value="16">16</option>
-              </select>
+              <span className="text-[15px] font-medium text-stone-900">16</span>
             </div>
 
-            <div className="h-12 px-4 bg-white border border-stone-300 flex items-center gap-3">
-              <span className="text-sm tracking-[0.08em] uppercase text-stone-800">Sort by</span>
-              <select
-                value={sortOrder}
-                onChange={(e) => {
-                  setSortOrder(e.target.value);
-                  handlePageChange(1);
-                }}
-                className="h-10 bg-transparent px-1 text-sm tracking-[0.08em] uppercase text-stone-900"
-              >
-                <option value="default">Default</option>
-                <option value="price-asc">Price A-Z</option>
-                <option value="price-desc">Price Z-A</option>
-              </select>
-            </div>
+            <ElegantSelect
+              label="Sort By"
+              value={sortOrder}
+              options={sortOptions}
+              onChange={(nextValue) => {
+                setSortOrder(nextValue);
+                handlePageChange(1);
+              }}
+              minWidth="min-w-[210px]"
+            />
           </div>
         </div>
       </div>

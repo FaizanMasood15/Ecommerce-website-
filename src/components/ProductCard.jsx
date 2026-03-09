@@ -1,96 +1,112 @@
-// src/components/ProductCard.jsx - Updated to be clickable
-
 import React from 'react';
-import { Link } from 'react-router-dom'; // <-- Import Link
-import { Share2, Scale, Heart } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 import { formatUsd } from '../utils/price';
-import { sanitizeRichHtml } from '../utils/sanitizeHtml';
+import WishlistHeart from './WishlistHeart';
 
-// The goToProduct prop is no longer strictly needed here since we use Link
 const ProductCard = ({ product }) => {
-  const isDiscounted = product.discount > 0;
-  const isNew = product.isNew;
+  const productId = product?._id || product?.id;
+  const productPath = `/shop/${product?.slug || productId}`;
+  const imageSrc = Array.isArray(product?.images) && product.images.length > 0
+    ? product.images[0]
+    : product?.image;
+  const brandLabel = typeof product?.brand === 'string'
+    ? product.brand
+    : product?.brand?.name || (typeof product?.category === 'string' ? product.category : product?.category?.name || '');
 
-  // Define the target path using the product URL slug
-  const productPath = `/shop/${product.slug || product.id}`;
-  const { addToCart } = useCart();
+  const swatchesFromColors = Array.isArray(product?.colors)
+    ? product.colors.map((color, index) => {
+      if (typeof color === 'string' && color.trim().startsWith('#')) {
+        return { key: `color-${index}`, hex: color.trim() };
+      }
+      if (typeof color === 'object' && color?.hex) {
+        return { key: `color-${index}`, hex: color.hex };
+      }
+      if (typeof color === 'object' && color?.colorHex) {
+        return { key: `color-${index}`, hex: color.colorHex };
+      }
+      return null;
+    }).filter(Boolean)
+    : [];
 
-  const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent navigating to the product detail page when clicking the button
-    const defaultColor = product.colors && product.colors.length > 0 ? product.colors[0].name : '';
-    const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : '';
-    addToCart(product, 1, defaultColor, defaultSize);
-  };
+  const swatchesFromVariants = Array.isArray(product?.variants)
+    ? product.variants
+      .filter((variant) => variant?.colorHex)
+      .map((variant, index) => ({ key: `variant-${index}`, hex: variant.colorHex }))
+    : [];
+
+  const swatches = [...swatchesFromColors, ...swatchesFromVariants]
+    .filter((swatch, index, arr) => arr.findIndex((item) => item.hex?.toLowerCase() === swatch.hex?.toLowerCase()) === index)
+    .slice(0, 3);
 
   return (
-    // Use Link to wrap the entire card for navigation
-    <Link
-      to={productPath}
-      className="group relative overflow-hidden"
-    >
-
-      {/* Product Image and Badges */}
-      <div
-        className="relative h-[22rem] w-full overflow-hidden bg-[#f3f4f6]" // Remove cursor-pointer and onClick
-      >
+    <article className="group">
+      <div className="relative overflow-hidden bg-[#ececf0] aspect-[4/6]">
+        <Link to={productPath} className="block h-full w-full">
         <img
-          src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          src={imageSrc}
+          alt={product?.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
         />
-        {/* ... Badges and Hover Overlay (unchanged) ... */}
+        </Link>
 
-        {/* Hover Overlay Actions - Keep button logic separate from card click for clarity */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 
-                    flex flex-col items-center justify-center space-y-4 
-                    opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {productId && (
+          <div className="absolute bottom-4 left-4 z-20 transition-opacity duration-200 group-hover:opacity-0">
+            <WishlistHeart
+              productId={productId}
+              variant="card"
+              className="bg-transparent !p-0 text-black hover:text-black"
+            />
+          </div>
+        )}
 
-          <button
-            onClick={handleAddToCart}
-            className="bg-white text-black text-xs tracking-[0.18em] uppercase font-semibold py-3 px-8 hover:bg-gray-100 transition duration-300 border border-black">
-            Add to cart
-          </button>
-
-          <div className="flex space-x-4 text-white font-semibold text-sm">
-            <span className="flex items-center hover:text-primary transition duration-300 cursor-pointer">
-              <Share2 className="w-4 h-4 mr-1" /> Share
-            </span>
-            <span className="flex items-center hover:text-primary transition duration-300 cursor-pointer">
-              <Scale className="w-4 h-4 mr-1" /> Compare
-            </span>
-            <span className="flex items-center hover:text-primary transition duration-300 cursor-pointer">
-              <Heart className="w-4 h-4 mr-1" /> Like
-            </span>
+        <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <div className="flex h-14 items-center justify-center bg-black/95 px-4 text-white">
+            <Link
+              to={productPath}
+              className="pointer-events-auto text-lg font-light leading-none"
+              aria-label={`Quick view ${product?.name}`}
+            >
+              Quick view
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Product Info */}
-      <div
-        className="px-5 pt-6 pb-5 bg-[#f4f5f7]" // Remove cursor-pointer and onClick
-      >
-        {/* Name */}
-        <h3 className="font-display text-[18px] leading-snug font-semibold tracking-[0.11em] uppercase text-[#0b1f47] mb-1 text-center">
-          {product.name}
+      <div className="pt-4 text-center">
+        {brandLabel && (
+          <p className="text-[13px] leading-none font-light text-[#2f2f2f] lowercase">
+            {brandLabel}
+          </p>
+        )}
+
+        <h3 className="mt-2 min-h-[3.2rem] text-[18px] leading-[1.2] tracking-[0.24em] uppercase text-[#1f1f1f]">
+          <Link to={productPath}>{product?.name}</Link>
         </h3>
-        {/* ... (rest of the info) ... */}
-        <div
-          className="text-sm text-gray-500 mb-4 line-clamp-2 text-center"
-          dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
-        />
-        <div className="flex items-center space-x-3">
-          <span className="font-display text-[22px] font-semibold tracking-[0.02em] text-[#0b1f47]">
-            {formatUsd(product.price)}
-          </span>
-          {isDiscounted && (
-            <span className="text-base text-sale-red line-through">
-              {formatUsd(product.originalPrice)}
-            </span>
-          )}
-        </div>
+
+        <p className="mt-2 text-[14px] leading-none text-[#3a3a3a]">
+          {formatUsd(product?.price)}
+        </p>
+
+        {swatches.length > 0 && (
+          <div className="mt-4 flex justify-center gap-2">
+            {swatches.map((swatch) => (
+              <span
+                key={swatch.key}
+                className="h-10 w-10 border border-black/10"
+                style={{ backgroundColor: swatch.hex }}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        )}
+
+        {product?.discount > 0 && (
+          <p className="mt-2 text-[13px] text-gray-400 line-through">
+            {formatUsd(product?.originalPrice)}
+          </p>
+        )}
       </div>
-    </Link> // <-- End of Link wrapper
+    </article>
   );
 };
 
