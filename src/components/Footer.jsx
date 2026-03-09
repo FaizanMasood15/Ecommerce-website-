@@ -1,13 +1,11 @@
-// src/components/Footer.jsx - Updated with your name
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const links = [
-    { title: 'Home', link: '#' },
-    { title: 'Shop', link: '#' },
-    { title: 'About', link: '#' },
-    { title: 'Contact', link: '#' },
+    { title: 'Home', to: '/' },
+    { title: 'Shop', to: '/shop' },
+    { title: 'Contact', to: '/contact' },
   ];
 
   const help = [
@@ -21,25 +19,34 @@ const Footer = () => {
       <div className="container mx-auto max-w-7xl px-4 lg:px-8">
         
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-gray-200 pb-10 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 border-b border-gray-200 pb-10 mb-8">
           
           {/* Column 1: Company Info (Updated to Faizan Masood 15) */}
           <div>
-            <h3 className="font-display text-3xl tracking-[0.14em] font-medium text-gray-900 mb-6">FAMA</h3>
+            <h3 className="font-display text-2xl tracking-[0.14em] font-medium text-gray-900 mb-6">FB15</h3>
             <p className="text-sm text-gray-500 mb-2">
-              400 University Drive Suite 200 Coral Gables, FL 33134 USA
+              Sialkot, Punjab, Pakistan
+            </p>
+            <p className="text-sm text-gray-500 mb-2">
+              Email:{' '}
+              <a href="mailto:faizanbutt15@yahoo.com" className="text-gray-900 hover:text-black underline underline-offset-2">
+                faizanbutt15@yahoo.com
+              </a>
+            </p>
+            <p className="text-sm text-gray-500">
+              Phone: +92 300 0000000
             </p>
           </div>
-{/* ... (rest of the columns are unchanged) */}
+
           {/* Column 2: Links */}
           <div>
             <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Links</h4>
             <ul className="space-y-4">
               {links.map((item) => (
                 <li key={item.title}>
-                  <a href={item.link} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
+                  <Link to={item.to} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
                     {item.title}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -59,7 +66,19 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: Newsletter */}
+          {/* Column 4: Contact */}
+          <div>
+            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Contact</h4>
+            <p className="text-sm text-gray-600 mb-3">Need help with an order or product inquiry?</p>
+            <Link
+              to="/contact"
+              className="inline-flex items-center border border-black text-black hover:bg-black hover:text-white text-xs tracking-[0.12em] uppercase font-semibold py-3 px-5 transition duration-200"
+            >
+              Contact Us
+            </Link>
+          </div>
+
+          {/* Column 5: Newsletter */}
           <div>
             <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Newsletter</h4>
             <div className="flex space-x-3">
@@ -77,7 +96,7 @@ const Footer = () => {
         
         {/* Copyright */}
         <p className="text-sm text-gray-900 tracking-[0.04em]">
-          2023 Faizan Masood 15. All rights reserved
+          2026 Faizan Masood 15. All rights reserved
         </p>
       </div>
     </footer>

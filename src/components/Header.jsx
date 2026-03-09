@@ -119,7 +119,7 @@ const Header = ({ toggleCart }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
             <Gem className="w-6 h-6 text-amber-600" />
-            <span className="font-display text-[44px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
+            <span className="font-display text-[30px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
           </Link>
 
           {/* Desktop nav */}

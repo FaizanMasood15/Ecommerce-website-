@@ -13,6 +13,7 @@ import ShopPage from './pages/Shop';
 import ProductDetailPage from './pages/ProductDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ContactPage from './pages/ContactPage';
 
 // Cart & Checkout
 import CartPage from './pages/CartPage';
@@ -63,6 +64,7 @@ function App() {
             <Route path="/shop/:productId" element={<ProductDetailPage goToProduct={goToProduct} goToShop={goToShop} toggleCart={toggleCart} />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
             {/* Cart (no auth required) */}
             <Route path="/cart" element={<CartPage />} />
