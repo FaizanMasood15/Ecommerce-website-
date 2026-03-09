@@ -15,10 +15,10 @@ const RangeSection = () => {
       <div className="container mx-auto max-w-7xl px-4 lg:px-8 text-center">
         
         {/* Title and Description */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+        <h2 className="font-display text-3xl md:text-4xl font-medium tracking-[0.12em] uppercase text-gray-900 mb-2">
           Browse The Range
         </h2>
-        <p className="text-gray-500 mb-10 md:mb-16 max-w-xl mx-auto">
+        <p className="text-gray-500 text-sm tracking-[0.04em] mb-10 md:mb-16 max-w-xl mx-auto">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </p>
 
@@ -38,7 +38,7 @@ const RangeSection = () => {
               </div>
               
               {/* Category Name */}
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="font-display text-xl font-medium tracking-[0.12em] uppercase text-gray-900">
                 {category.name}
               </h3>
             </div>

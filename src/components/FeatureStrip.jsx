@@ -13,17 +13,17 @@ const features = [
 const FeatureStrip = () => {
   return (
     // Uses the light background color we defined
-    <section className="bg-hero-box py-16 md:py-20"> 
+    <section className="bg-background-light py-16 md:py-20 border-y border-stone-200"> 
       <div className="container mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="flex items-center space-x-4">
               <feature.icon className="w-10 h-10 text-gray-800" />
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="font-display text-lg font-medium tracking-[0.1em] uppercase text-gray-900">
                   {feature.title}
                 </h3>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 text-xs tracking-[0.06em] uppercase">
                   {feature.description}
                 </p>
               </div>

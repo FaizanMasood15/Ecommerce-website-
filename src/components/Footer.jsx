@@ -17,27 +17,27 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white border-t border-gray-200 pt-16 pb-8">
+    <footer className="bg-white border-t border-stone-200 pt-16 pb-8">
       <div className="container mx-auto max-w-7xl px-4 lg:px-8">
         
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-gray-200 pb-10 mb-8">
           
-          {/* Column 1: Company Info (Updated to Faizan Butt) */}
+          {/* Column 1: Company Info (Updated to Faizan Masood 15) */}
           <div>
-            <h3 className="text-2xl font-bold text-primary mb-6">Faizan Butt.</h3>
-            <p className="text-base text-gray-500 mb-2">
+            <h3 className="font-display text-3xl tracking-[0.14em] font-medium text-gray-900 mb-6">FAMA</h3>
+            <p className="text-sm text-gray-500 mb-2">
               400 University Drive Suite 200 Coral Gables, FL 33134 USA
             </p>
           </div>
 {/* ... (rest of the columns are unchanged) */}
           {/* Column 2: Links */}
           <div>
-            <h4 className="text-lg font-semibold text-gray-500 mb-6">Links</h4>
+            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Links</h4>
             <ul className="space-y-4">
               {links.map((item) => (
                 <li key={item.title}>
-                  <a href={item.link} className="text-base text-gray-900 hover:text-primary transition duration-150">
+                  <a href={item.link} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
                     {item.title}
                   </a>
                 </li>
@@ -47,11 +47,11 @@ const Footer = () => {
 
           {/* Column 3: Help */}
           <div>
-            <h4 className="text-lg font-semibold text-gray-500 mb-6">Help</h4>
+            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Help</h4>
             <ul className="space-y-4">
               {help.map((item) => (
                 <li key={item.title}>
-                  <a href={item.link} className="text-base text-gray-900 hover:text-primary transition duration-150">
+                  <a href={item.link} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
                     {item.title}
                   </a>
                 </li>
@@ -61,14 +61,14 @@ const Footer = () => {
 
           {/* Column 4: Newsletter */}
           <div>
-            <h4 className="text-lg font-semibold text-gray-500 mb-6">Newsletter</h4>
+            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-6">Newsletter</h4>
             <div className="flex space-x-3">
               <input 
                 type="email" 
                 placeholder="Enter Your Email Address" 
-                className="px-4 py-2 border-b border-gray-400 focus:border-primary focus:outline-none flex-grow text-base"
+                className="px-4 py-2 border-b border-gray-400 focus:border-black focus:outline-none flex-grow text-sm"
               />
-              <button className="text-base font-medium border-b border-black hover:border-primary hover:text-primary transition duration-150">
+              <button className="text-xs tracking-[0.16em] uppercase font-semibold border-b border-black hover:text-black transition duration-150">
                 SUBSCRIBE
               </button>
             </div>
@@ -76,8 +76,8 @@ const Footer = () => {
         </div>
         
         {/* Copyright */}
-        <p className="text-base text-gray-900">
-          2023 Faizan Butt. All rights reserved
+        <p className="text-sm text-gray-900 tracking-[0.04em]">
+          2023 Faizan Masood 15. All rights reserved
         </p>
       </div>
     </footer>

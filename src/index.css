@@ -1,16 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @tailwind components;
 @tailwind utilities;
 @theme {
-  --color-primary: #B88E2F;
+  --color-primary: #1f2937;
   --color-secondary-accent: #1B5E20;
   --color-sale-red: #E57373;
-  --color-background-light: #F4F5F7;
-  --color-hero-box: #F9F1E7;
+  --color-background-light: #f7f7f5;
+  --color-hero-box: #f2f2f0;
   --color-my-custom-color: #fff3e3;
   
-  --font-family-sans: 'Poppins', sans-serif;
+  --font-family-sans: 'Manrope', sans-serif;
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+@layer base {
+  body {
+    font-family: 'Manrope', sans-serif;
+    color: #111827;
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: 'Jost', sans-serif;
+  }
+
+  button,
+  select,
+  input,
+  textarea {
+    font-family: inherit;
+  }
+}
+
 /* Apply a global font family */
 /*body {
   font-family: 'Poppins', sans-serif;

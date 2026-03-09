@@ -27,17 +27,17 @@ const ProductCard = ({ product }) => {
     // Use Link to wrap the entire card for navigation
     <Link
       to={productPath}
-      className="bg-white rounded-lg group relative overflow-hidden"
+      className="group relative overflow-hidden"
     >
 
       {/* Product Image and Badges */}
       <div
-        className="relative h-72 w-full overflow-hidden" // Remove cursor-pointer and onClick
+        className="relative h-[22rem] w-full overflow-hidden bg-[#f3f4f6]" // Remove cursor-pointer and onClick
       >
         <img
           src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
           alt={product.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
         {/* ... Badges and Hover Overlay (unchanged) ... */}
 
@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
 
           <button
             onClick={handleAddToCart}
-            className="bg-white text-primary font-semibold py-2 px-8 hover:bg-gray-200 transition duration-300">
+            className="bg-white text-black text-xs tracking-[0.18em] uppercase font-semibold py-3 px-8 hover:bg-gray-100 transition duration-300 border border-black">
             Add to cart
           </button>
 
@@ -68,19 +68,19 @@ const ProductCard = ({ product }) => {
 
       {/* Product Info */}
       <div
-        className="p-4" // Remove cursor-pointer and onClick
+        className="px-5 pt-6 pb-5 bg-[#f4f5f7]" // Remove cursor-pointer and onClick
       >
         {/* Name */}
-        <h3 className="text-xl font-semibold text-gray-900 mb-1">
+        <h3 className="font-display text-[18px] leading-snug font-semibold tracking-[0.11em] uppercase text-[#0b1f47] mb-1 text-center">
           {product.name}
         </h3>
         {/* ... (rest of the info) ... */}
         <div
-          className="text-sm text-gray-500 mb-2 line-clamp-2"
+          className="text-sm text-gray-500 mb-4 line-clamp-2 text-center"
           dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
         />
         <div className="flex items-center space-x-3">
-          <span className="text-xl font-semibold text-gray-900">
+          <span className="font-display text-[22px] font-semibold tracking-[0.02em] text-[#0b1f47]">
             {formatUsd(product.price)}
           </span>
           {isDiscounted && (
