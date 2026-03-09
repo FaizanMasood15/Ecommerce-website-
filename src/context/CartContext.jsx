@@ -4,13 +4,24 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const CartContext = createContext();
 
-const CART_STORAGE_KEY = 'faizanbutt_cart';
+const LEGACY_CART_STORAGE_KEY = 'faizanbutt_cart';
+const CART_STORAGE_KEY = 'faizanmasood15_cart';
 
 // Load persisted cart from localStorage on startup
 const loadCart = () => {
     try {
         const saved = localStorage.getItem(CART_STORAGE_KEY);
-        return saved ? JSON.parse(saved) : [];
+        if (saved) return JSON.parse(saved);
+
+        // One-time migration from legacy key to the new project key
+        const legacySaved = localStorage.getItem(LEGACY_CART_STORAGE_KEY);
+        if (legacySaved) {
+            localStorage.setItem(CART_STORAGE_KEY, legacySaved);
+            localStorage.removeItem(LEGACY_CART_STORAGE_KEY);
+            return JSON.parse(legacySaved);
+        }
+
+        return [];
     } catch {
         return [];
     }
