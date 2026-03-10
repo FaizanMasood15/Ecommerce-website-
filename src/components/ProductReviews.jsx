@@ -192,7 +192,7 @@ const ProductReviews = ({ productId, productRating = 0, numReviews = 0 }) => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-amber-700 hover:bg-amber-800 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50 text-sm"
+                            className="bg-black hover:bg-stone-800 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50 text-sm"
                         >
                             {isSubmitting ? 'Submitting...' : 'Submit Review'}
                         </button>
@@ -209,3 +209,4 @@ const ProductReviews = ({ productId, productRating = 0, numReviews = 0 }) => {
 
 export { StarRating };
 export default ProductReviews;
+

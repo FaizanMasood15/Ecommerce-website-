@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 
 const Footer = () => {
   const links = [
@@ -9,9 +10,16 @@ const Footer = () => {
   ];
 
   const help = [
-    { title: 'Payment Options', link: '#' },
-    { title: 'Returns', link: '#' },
-    { title: 'Privacy Policies', link: '#' },
+    { title: 'Payment Options', href: '#' },
+    { title: 'Returns', to: '/returns' },
+    { title: 'Privacy Policy', to: '/privacy-policy' },
+  ];
+
+  const socialLinks = [
+    { title: 'Facebook', href: '#', icon: Facebook },
+    { title: 'Instagram', href: '#', icon: Instagram },
+    { title: 'YouTube', href: '#', icon: Youtube },
+    { title: 'Twitter', href: '#', icon: Twitter },
   ];
 
   return (
@@ -34,8 +42,25 @@ const Footer = () => {
               </a>
             </p>
             <p className="text-sm text-gray-500">
-              Phone: +92 300 0000000
+              Phone: 03027959570
             </p>
+            <div className="mt-4 flex items-center gap-3">
+              {socialLinks.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.title}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={item.title}
+                    className="inline-flex items-center justify-center w-9 h-9 border border-stone-200 text-gray-700 hover:text-black hover:border-black transition"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
+            </div>
           </div>
 
           {/* Column 2: Links */}
@@ -58,9 +83,15 @@ const Footer = () => {
             <ul className="space-y-4">
               {help.map((item) => (
                 <li key={item.title}>
-                  <a href={item.link} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
-                    {item.title}
-                  </a>
+                  {item.to ? (
+                    <Link to={item.to} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
+                      {item.title}
+                    </Link>
+                  ) : (
+                    <a href={item.href} className="text-sm tracking-[0.08em] uppercase text-gray-900 hover:text-black transition duration-150">
+                      {item.title}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

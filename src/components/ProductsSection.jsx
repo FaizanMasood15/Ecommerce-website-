@@ -36,7 +36,7 @@ const ProductsSection = ({ goToShop, goToProduct }) => {
         {/* Show More Button (Uses the goToShop routing function) */}
         <button
           onClick={goToShop}
-          className="border border-black text-black hover:bg-black hover:text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase"
+          className="bg-black hover:bg-stone-800 text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase"
         >
           Show More
         </button>

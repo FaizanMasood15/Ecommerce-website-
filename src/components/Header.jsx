@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  User, ShoppingCart, LogOut, LayoutDashboard, ShoppingBag,
+  User, ShoppingBag, LogOut, LayoutDashboard,
   Heart, Menu, X, ChevronDown, ArrowRight, Search,
 } from 'lucide-react';
 import { useLogoutMutation } from '../slices/usersApiSlice';
@@ -267,7 +267,7 @@ const Header = ({ toggleCart }) => {
 
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={toggleCart}>
-              <ShoppingCart className="w-[22px] h-[22px] text-gray-700 hover:text-black transition" />
+              <ShoppingBag className="w-[22px] h-[22px] text-gray-700 hover:text-black transition" />
               {totalItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center leading-none">
                   {totalItemCount > 9 ? '9+' : totalItemCount}
@@ -367,39 +367,45 @@ const Header = ({ toggleCart }) => {
       {searchOpen && (
         <div
           ref={searchOverlayRef}
-          className="fixed inset-0 z-[70] bg-[#e8e8e8]/88 px-4 md:px-8 pt-16 md:pt-20"
+          className="fixed inset-0 z-[70] bg-[#dedede] px-4 md:px-8 pt-14 md:pt-16"
           onClick={(event) => {
             if (event.target === searchOverlayRef.current) closeSearch();
           }}
         >
-          <div className="mx-auto w-full max-w-[1500px]">
-            <div className="flex items-center bg-white border border-black/70 h-14 md:h-[62px] px-4 md:px-5">
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder=""
-                className="w-full bg-transparent text-[18px] md:text-[22px] leading-none text-gray-900 placeholder:text-gray-400 outline-none font-light"
-              />
-              <Search className="w-8 h-8 text-slate-600 flex-shrink-0 stroke-[1.5]" />
+          <div className="mx-auto w-full max-w-[980px]">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center bg-white border border-black/70 h-12 md:h-14 px-4 md:px-5 flex-grow">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder=""
+                  className="w-full bg-transparent text-[18px] md:text-[20px] leading-none text-gray-900 placeholder:text-gray-400 outline-none font-light"
+                />
+                <Search className="w-6 h-6 text-slate-600 flex-shrink-0 stroke-[1.5]" />
+              </div>
+              <button
+                onClick={closeSearch}
+                className="text-slate-600 hover:text-black transition"
+                aria-label="Close search"
+              >
+                <X className="w-6 h-6 stroke-[1.5]" />
+              </button>
             </div>
 
-            <div className="mt-5 bg-[#f1f1f1] border border-stone-300/70">
-              <div className="flex justify-between items-center px-5 md:px-10 py-4 border-b border-stone-300/60">
-                <p className="text-[12px] md:text-[14px] tracking-[0.2em] uppercase text-slate-500">Products</p>
-                <button onClick={closeSearch} className="text-slate-500 hover:text-black transition" aria-label="Close search">
-                  <X className="w-8 h-8 stroke-[1.5]" />
-                </button>
+            <div className="mt-4 bg-white border border-stone-300/70 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+              <div className="flex justify-between items-center px-6 md:px-10 py-4 border-b border-stone-200">
+                <p className="text-[12px] md:text-[13px] tracking-[0.24em] uppercase text-slate-400">Products</p>
               </div>
 
               <div className="max-h-[58vh] overflow-y-auto">
                 {!normalizedSearch && (
-                  <p className="px-5 md:px-10 py-8 text-slate-500 text-base">Type to search products...</p>
+                  <p className="px-6 md:px-10 py-8 text-slate-500 text-base">Type to search products...</p>
                 )}
 
                 {normalizedSearch && filteredProducts.length === 0 && (
-                  <p className="px-5 md:px-10 py-8 text-slate-600 text-base">No products found for "{searchTerm}".</p>
+                  <p className="px-6 md:px-10 py-8 text-slate-600 text-base">No products found for "{searchTerm}".</p>
                 )}
 
                 {filteredProducts.map((product) => (
@@ -407,27 +413,27 @@ const Header = ({ toggleCart }) => {
                     key={product._id}
                     to={`/shop/${product.slug || product._id}`}
                     onClick={closeSearch}
-                    className="grid grid-cols-[74px,1fr,120px] md:grid-cols-[84px,1fr,160px] gap-4 md:gap-6 px-5 md:px-10 py-4 md:py-5 border-b border-stone-300/50 hover:bg-stone-100/50 transition"
+                    className="grid grid-cols-[70px,1fr,140px] md:grid-cols-[80px,1fr,160px] gap-4 md:gap-6 px-6 md:px-10 py-4 md:py-5 border-b border-stone-200/70 hover:bg-stone-50 transition"
                   >
                     <img
                       src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
                       alt={product.name}
-                      className="w-[74px] h-[74px] md:w-[84px] md:h-[84px] object-cover bg-stone-100"
+                      className="w-[70px] h-[70px] md:w-[80px] md:h-[80px] object-cover bg-stone-100"
                     />
                     <div className="min-w-0 self-center">
-                      <p className="text-[18px] md:text-[20px] leading-none tracking-[0.06em] uppercase text-slate-800 truncate font-light">
+                      <p className="text-[16px] md:text-[18px] leading-none tracking-[0.08em] uppercase text-slate-800 truncate font-light">
                         {product.name}
                       </p>
-                      <p className="text-[14px] md:text-[16px] text-slate-500 mt-2 leading-none truncate font-light">
+                      <p className="text-[13px] md:text-[14px] text-slate-500 mt-2 leading-none truncate font-light">
                         {typeof product.category === 'string' ? product.category : product.category?.name}
                       </p>
                     </div>
-                    <div className="self-end text-right pb-1">
-                      <p className="text-[18px] md:text-[20px] leading-none font-semibold text-slate-800">
+                    <div className="self-center text-right">
+                      <p className="text-[16px] md:text-[18px] leading-none font-semibold text-slate-800">
                         {formatUsd(product.price)}
                       </p>
                       {product.originalPrice && (
-                        <p className="text-[13px] md:text-[14px] leading-none text-slate-400 line-through mt-1.5">
+                        <p className="text-[12px] md:text-[13px] leading-none text-slate-400 line-through mt-2">
                           {formatUsd(product.originalPrice)}
                         </p>
                       )}

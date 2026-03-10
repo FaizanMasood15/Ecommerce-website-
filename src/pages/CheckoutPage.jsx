@@ -280,7 +280,7 @@ const CheckoutPage = () => {
                                                     setCouponError(err?.data?.message || 'Invalid coupon');
                                                 }
                                             }}
-                                            className="px-3 py-2 bg-amber-700 text-white text-xs font-semibold rounded-lg hover:bg-amber-800 transition disabled:opacity-50 flex items-center gap-1"
+                                            className="px-3 py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-stone-800 transition disabled:opacity-50 flex items-center gap-1"
                                         >
                                             {isCouponLoading ? <Loader className="w-3.5 h-3.5 animate-spin" /> : 'Apply'}
                                         </button>
@@ -318,7 +318,7 @@ const CheckoutPage = () => {
 
                                 <button
                                     type="submit"
-                                    className="mt-6 w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-4 rounded-lg transition"
+                                    className="mt-6 w-full bg-black hover:bg-stone-800 text-white font-bold py-3 px-4 rounded-lg transition"
                                 >
                                     Review Order
                                 </button>
@@ -332,4 +332,5 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+
 

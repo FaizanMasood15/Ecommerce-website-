@@ -19,7 +19,7 @@ const WishlistPage = () => {
             <div className="min-h-screen flex flex-col items-center justify-center gap-4">
                 <Heart className="w-16 h-16 text-gray-200" />
                 <p className="text-gray-500 text-lg">Please log in to view your wishlist</p>
-                <Link to="/login" className="bg-amber-700 text-white px-6 py-2 rounded-lg font-semibold hover:bg-amber-800 transition">Login</Link>
+                <Link to="/login" className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-stone-800 transition">Login</Link>
             </div>
         );
     }
@@ -48,7 +48,7 @@ const WishlistPage = () => {
                         <Heart className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h2 className="text-xl font-semibold text-gray-700 mb-2">Your wishlist is empty</h2>
                         <p className="text-gray-400 mb-6">Save products you love and come back to them later</p>
-                        <Link to="/shop" className="bg-amber-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-800 transition">
+                        <Link to="/shop" className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-stone-800 transition">
                             Explore Products
                         </Link>
                     </div>
@@ -80,4 +80,5 @@ const WishlistPage = () => {
 };
 
 export default WishlistPage;
+
 

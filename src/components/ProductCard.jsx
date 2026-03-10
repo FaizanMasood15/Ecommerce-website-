@@ -50,26 +50,23 @@ const ProductCard = ({ product }) => {
         </Link>
 
         {productId && (
-          <div className="absolute bottom-4 left-4 z-20 transition-opacity duration-200 group-hover:opacity-0">
-            <WishlistHeart
-              productId={productId}
-              variant="card"
-              className="bg-transparent !p-0 text-black hover:text-black"
-            />
+          <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <div className="pointer-events-auto flex h-12 items-center gap-3 bg-black/95 px-4 text-white">
+              <WishlistHeart
+                productId={productId}
+                variant="card"
+                className="bg-transparent !p-0 text-white hover:text-white"
+              />
+              <Link
+                to={productPath}
+                className="flex-1 text-center text-[12px] tracking-[0.18em] uppercase"
+                aria-label={`Quick view ${product?.name}`}
+              >
+                Quick view
+              </Link>
+            </div>
           </div>
         )}
-
-        <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <div className="flex h-14 items-center justify-center bg-black/95 px-4 text-white">
-            <Link
-              to={productPath}
-              className="pointer-events-auto text-lg font-light leading-none"
-              aria-label={`Quick view ${product?.name}`}
-            >
-              Quick view
-            </Link>
-          </div>
-        </div>
       </div>
 
       <div className="pt-4 text-center">

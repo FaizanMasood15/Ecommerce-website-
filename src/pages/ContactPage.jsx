@@ -32,7 +32,7 @@ const ContactPage = () => {
                 </a>
               </p>
               <p>
-                <span className="font-semibold text-gray-900">Phone:</span> +92 300 0000000
+                <span className="font-semibold text-gray-900">Phone:</span> 03027959570
               </p>
               <p>
                 <span className="font-semibold text-gray-900">Working Hours:</span> Mon - Sat, 10:00 AM - 7:00 PM

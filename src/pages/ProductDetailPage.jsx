@@ -438,7 +438,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
         <button
           onClick={handleAddToCart}
           disabled={displayStock === 0 || !displayStock}
-          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-amber-700 text-white shadow-lg'
+          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-black text-white shadow-lg'
             }`}
         >
           {displayStock === 0 || !displayStock ? 'Out of Stock' : 'Add To Cart'}
@@ -456,3 +456,4 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 };
 
 export default ProductDetailPage;
+

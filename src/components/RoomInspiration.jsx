@@ -43,7 +43,7 @@ const RoomInspiration = () => {
             </p>
             {/* Primary Button */}
             <button 
-              className="bg-primary hover:bg-amber-700 text-white font-bold py-3 px-8 
+              className="bg-black hover:bg-stone-800 text-white font-bold py-3 px-8 
                          transition duration-300 uppercase"
             >
               Explore More
@@ -68,7 +68,7 @@ const RoomInspiration = () => {
                     {/* Overlay Arrow Button */}
                     <button 
                         onClick={handleNext} // <-- Arrow button uses the next handler
-                        className="absolute -right-12 bottom-0 p-4 bg-primary hover:bg-amber-700 transition duration-300"
+                        className="absolute -right-12 bottom-0 p-4 bg-black hover:bg-stone-800 transition duration-300"
                     >
                         <ArrowRight className="w-5 h-5 text-white" />
                     </button>
@@ -82,7 +82,7 @@ const RoomInspiration = () => {
                     key={index}
                     onClick={() => setActiveIndex(index)} // <-- Dot click changes activeIndex
                     className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                        activeIndex === index ? 'bg-primary' : 'bg-gray-400 opacity-50 hover:opacity-100'
+                        activeIndex === index ? 'bg-black' : 'bg-gray-400 opacity-50 hover:opacity-100'
                     }`}
                 />
               ))}
@@ -104,3 +104,4 @@ const RoomInspiration = () => {
 };
 
 export default RoomInspiration;
+

@@ -4,15 +4,16 @@ import { Link } from 'react-router-dom';
 import { useGetAllOrdersQuery } from '../slices/ordersApiSlice';
 import { Loader, Eye, AlertCircle } from 'lucide-react';
 
+const STATUS_BASE = 'inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide border shadow-sm';
 const STATUS_COLORS = {
-    Pending: 'bg-yellow-100 text-yellow-800',
-    Processing: 'bg-blue-100 text-blue-800',
-    Packed: 'bg-purple-100 text-purple-800',
-    Shipped: 'bg-indigo-100 text-indigo-800',
-    'Out for Delivery': 'bg-orange-100 text-orange-800',
-    Delivered: 'bg-green-100 text-green-800',
-    Cancelled: 'bg-red-100 text-red-800',
-    Refunded: 'bg-gray-100 text-gray-700',
+    Pending: 'bg-amber-200 text-amber-950 border-amber-300',
+    Processing: 'bg-sky-200 text-sky-950 border-sky-300',
+    Packed: 'bg-violet-200 text-violet-950 border-violet-300',
+    Shipped: 'bg-indigo-200 text-indigo-950 border-indigo-300',
+    'Out for Delivery': 'bg-orange-200 text-orange-950 border-orange-300',
+    Delivered: 'bg-emerald-200 text-emerald-950 border-emerald-300',
+    Cancelled: 'bg-rose-200 text-rose-950 border-rose-300',
+    Refunded: 'bg-slate-200 text-slate-900 border-slate-300',
 };
 
 const AdminOrderListPage = () => {
@@ -122,7 +123,7 @@ const AdminOrderListPage = () => {
                                             }
                                         </td>
                                         <td className="px-5 py-3">
-                                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-700'}`}>
+                                            <span className={`${STATUS_BASE} ${STATUS_COLORS[order.status] || 'bg-slate-200 text-slate-900 border-slate-300'}`}>
                                                 {order.status}
                                             </span>
                                         </td>

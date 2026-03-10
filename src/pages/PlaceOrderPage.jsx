@@ -189,7 +189,7 @@ const PlaceOrderPage = () => {
                             <button
                                 onClick={handlePlaceOrder}
                                 disabled={isLoading}
-                                className="mt-6 w-full bg-amber-700 hover:bg-amber-800 disabled:bg-gray-300 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+                                className="mt-6 w-full bg-black hover:bg-stone-800 disabled:bg-gray-300 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <><Loader className="w-4 h-4 animate-spin" /> Placing Order...</>
@@ -211,3 +211,4 @@ const PlaceOrderPage = () => {
 };
 
 export default PlaceOrderPage;
+
