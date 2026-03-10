@@ -259,7 +259,7 @@ const ShopPage = ({ goToProduct }) => {
                 onClick={() => handlePageChange(pageNumber)}
                 className={`${currentPage === pageNumber
                     ? 'bg-black text-white border-black'
-                    : 'bg-white text-gray-900 hover:bg-black hover:text-white border-gray-300'
+                    : 'bg-white text-gray-900 hover:bg-gray-500 hover:text-white border-gray-300'
                     } border text-sm tracking-[0.08em] uppercase font-semibold py-3 px-5 transition duration-200`}
               >
                 {pageNumber}
@@ -270,7 +270,7 @@ const ShopPage = ({ goToProduct }) => {
             {currentPage < currentTotalPages && (
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="bg-white border border-gray-300 text-gray-900 text-sm tracking-[0.08em] uppercase font-semibold py-3 px-5 hover:bg-black hover:text-white transition duration-200"
+                className="bg-white border border-gray-300 text-gray-900 text-sm tracking-[0.08em] uppercase font-semibold py-3 px-5 hover:bg-gray-500 hover:text-white transition duration-200"
               >
                 Next
               </button>
@@ -286,3 +286,4 @@ const ShopPage = ({ goToProduct }) => {
 };
 
 export default ShopPage;
+

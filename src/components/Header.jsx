@@ -53,7 +53,7 @@ const CategoryDropdown = ({ category, onClose }) => {
                   onClick={onClose}
                   className="flex items-center gap-3 px-6 py-2.5 text-sm text-gray-600 hover:text-black hover:bg-stone-50 transition group"
                 >
-                  <span className="w-1 h-1 rounded-full bg-gray-300 group-hover:bg-black flex-shrink-0 transition-colors" />
+                  <span className="w-1 h-1 rounded-full bg-gray-300 group-hover:bg-gray-500 flex-shrink-0 transition-colors" />
                   {sub.name}
                 </Link>
               </li>
@@ -168,7 +168,7 @@ const Header = ({ toggleCart }) => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-             <span className="font-display text-[30px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
+             <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
           </Link>
 
           {/* Desktop nav */}
@@ -367,13 +367,13 @@ const Header = ({ toggleCart }) => {
       {searchOpen && (
         <div
           ref={searchOverlayRef}
-          className="fixed inset-0 z-[70] bg-[#dedede] px-4 md:px-8 pt-14 md:pt-16"
+          className="fixed inset-0 z-[70] bg-[#dedede] px-4 md:px-8 pt-12 md:pt-14"
           onClick={(event) => {
             if (event.target === searchOverlayRef.current) closeSearch();
           }}
         >
-          <div className="mx-auto w-full max-w-[980px]">
-            <div className="flex items-center gap-4">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <div className="flex items-center gap-5 px-4 md:px-8">
               <div className="flex items-center bg-white border border-black/70 h-12 md:h-14 px-4 md:px-5 flex-grow">
                 <input
                   ref={searchInputRef}
@@ -394,52 +394,54 @@ const Header = ({ toggleCart }) => {
               </button>
             </div>
 
-            <div className="mt-4 bg-white border border-stone-300/70 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
-              <div className="flex justify-between items-center px-6 md:px-10 py-4 border-b border-stone-200">
-                <p className="text-[12px] md:text-[13px] tracking-[0.24em] uppercase text-slate-400">Products</p>
-              </div>
-
-              <div className="max-h-[58vh] overflow-y-auto">
-                {!normalizedSearch && (
-                  <p className="px-6 md:px-10 py-8 text-slate-500 text-base">Type to search products...</p>
-                )}
-
-                {normalizedSearch && filteredProducts.length === 0 && (
-                  <p className="px-6 md:px-10 py-8 text-slate-600 text-base">No products found for "{searchTerm}".</p>
-                )}
-
-                {filteredProducts.map((product) => (
-                  <Link
-                    key={product._id}
-                    to={`/shop/${product.slug || product._id}`}
-                    onClick={closeSearch}
-                    className="grid grid-cols-[70px,1fr,140px] md:grid-cols-[80px,1fr,160px] gap-4 md:gap-6 px-6 md:px-10 py-4 md:py-5 border-b border-stone-200/70 hover:bg-stone-50 transition"
-                  >
-                    <img
-                      src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
-                      alt={product.name}
-                      className="w-[70px] h-[70px] md:w-[80px] md:h-[80px] object-cover bg-stone-100"
-                    />
-                    <div className="min-w-0 self-center">
-                      <p className="text-[16px] md:text-[18px] leading-none tracking-[0.08em] uppercase text-slate-800 truncate font-light">
-                        {product.name}
-                      </p>
-                      <p className="text-[13px] md:text-[14px] text-slate-500 mt-2 leading-none truncate font-light">
-                        {typeof product.category === 'string' ? product.category : product.category?.name}
-                      </p>
-                    </div>
-                    <div className="self-center text-right">
-                      <p className="text-[16px] md:text-[18px] leading-none font-semibold text-slate-800">
-                        {formatUsd(product.price)}
-                      </p>
-                      {product.originalPrice && (
-                        <p className="text-[12px] md:text-[13px] leading-none text-slate-400 line-through mt-2">
-                          {formatUsd(product.originalPrice)}
+            <div className="mt-4 px-4 md:px-8">
+              <div className="bg-white border border-stone-300/70 shadow-[0_8px_24px_rgba(0,0,0,0.12)] w-full md:w-[56%]">
+                <div className="flex justify-between items-center px-6 md:px-8 py-4 border-b border-stone-200">
+                  <p className="text-[12px] md:text-[13px] tracking-[0.24em] uppercase text-slate-400">Products</p>
+                </div>
+  
+                <div className="max-h-[58vh] overflow-y-auto">
+                  {!normalizedSearch && (
+                    <p className="px-6 md:px-8 py-8 text-slate-500 text-base">Type to search products...</p>
+                  )}
+  
+                  {normalizedSearch && filteredProducts.length === 0 && (
+                    <p className="px-6 md:px-8 py-8 text-slate-600 text-base">No products found for "{searchTerm}".</p>
+                  )}
+  
+                  {filteredProducts.map((product) => (
+                    <Link
+                      key={product._id}
+                      to={`/shop/${product.slug || product._id}`}
+                      onClick={closeSearch}
+                      className="flex items-center gap-4 md:gap-6 px-6 md:px-8 py-4 md:py-5 border-b border-stone-200/70 hover:bg-stone-50 transition"
+                    >
+                      <img
+                        src={(product.images && product.images.length > 0) ? product.images[0] : product.image}
+                        alt={product.name}
+                        className="w-[70px] h-[70px] md:w-[80px] md:h-[80px] object-cover bg-stone-100"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[16px] md:text-[18px] leading-none tracking-[0.08em] uppercase text-slate-800 truncate font-light">
+                          {product.name}
                         </p>
-                      )}
-                    </div>
-                  </Link>
-                ))}
+                        <p className="text-[13px] md:text-[14px] text-slate-500 mt-2 leading-none truncate font-light">
+                          {typeof product.category === 'string' ? product.category : product.category?.name}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <p className="text-[16px] md:text-[18px] leading-none font-semibold text-slate-800">
+                          {formatUsd(product.price)}
+                        </p>
+                        {product.originalPrice && (
+                          <p className="text-[12px] md:text-[13px] leading-none text-slate-400 line-through">
+                            {formatUsd(product.originalPrice)}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -450,3 +452,4 @@ const Header = ({ toggleCart }) => {
 };
 
 export default Header;
+

@@ -217,7 +217,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                 setLightboxOpen(true);
               }}
             >
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-gray-500/5 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
                 <span className="opacity-0 group-hover:opacity-100 bg-white/80 text-gray-800 text-sm font-semibold px-4 py-2 rounded-full shadow-sm backdrop-blur-sm transition-opacity duration-300">
                   Click to Expand
                 </span>
@@ -343,7 +343,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               <button
                 onClick={handleAddToCart}
                 disabled={displayStock === 0 || !displayStock}
-                className={`border text-black text-sm tracking-[0.2em] uppercase font-semibold py-4 px-10 transition duration-300 ${(displayStock === 0 || !displayStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-black hover:bg-black hover:text-white'
+                className={`border text-black text-sm tracking-[0.2em] uppercase font-semibold py-4 px-10 transition duration-300 ${(displayStock === 0 || !displayStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-black hover:bg-gray-500 hover:text-white'
                   }`}
               >
                 Add To Cart
@@ -421,7 +421,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               />
             ))}
           </div>
-          <button onClick={goToShop} className="border border-black text-black hover:bg-black hover:text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase">
+          <button onClick={goToShop} className="border border-black text-black hover:bg-gray-500 hover:text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase">
             Show More
           </button>
         </div>
@@ -438,7 +438,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
         <button
           onClick={handleAddToCart}
           disabled={displayStock === 0 || !displayStock}
-          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-black text-white shadow-lg'
+          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-gray-500 text-white shadow-lg'
             }`}
         >
           {displayStock === 0 || !displayStock ? 'Out of Stock' : 'Add To Cart'}
@@ -456,4 +456,5 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 };
 
 export default ProductDetailPage;
+
 

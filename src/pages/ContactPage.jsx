@@ -1,4 +1,5 @@
 import React from 'react';
+import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 
 const ContactPage = () => {
   return (
@@ -35,8 +36,46 @@ const ContactPage = () => {
                 <span className="font-semibold text-gray-900">Phone:</span> 03027959570
               </p>
               <p>
-                <span className="font-semibold text-gray-900">Working Hours:</span> Mon - Sat, 10:00 AM - 7:00 PM
+                <span className="font-semibold text-gray-900">Working Hours:</span> Mon - Sat, 8:00 AM - 11:00 PM
               </p>
+            </div>
+            <div className="mt-6 flex items-center gap-3">
+              <a
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Twitter"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+              >
+                <Twitter className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
@@ -69,7 +108,7 @@ const ContactPage = () => {
               </div>
               <button
                 type="button"
-                className="border border-black text-black hover:bg-black hover:text-white text-xs tracking-[0.14em] uppercase font-semibold py-3 px-6 transition duration-200"
+                className="bg-black text-white  hover:bg-gray-500 text-xs tracking-[0.14em] uppercase font-semibold py-3 px-6 transition duration-200"
               >
                 Send
               </button>
@@ -82,3 +121,4 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
