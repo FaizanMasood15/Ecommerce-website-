@@ -20,7 +20,7 @@ const CartPage = () => {
                 <p className="text-gray-500">Looks like you haven't added any items yet.</p>
                 <Link
                     to="/shop"
-                    className="mt-2 bg-black text-white px-8 py-3 font-semibold hover:bg-stone-800 transition"
+                    className="mt-2 bg-black text-white px-8 py-3 font-semibold hover:bg-gray-500 transition"
                 >
                     Continue Shopping
                 </Link>
@@ -127,7 +127,7 @@ const CartPage = () => {
 
                             <button
                                 onClick={handleCheckout}
-                                className="mt-6 w-full bg-black hover:bg-stone-800 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+                                className="mt-6 w-full bg-black hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
                             >
                                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
                             </button>
@@ -146,5 +146,6 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
 
 

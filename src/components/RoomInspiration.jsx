@@ -43,7 +43,7 @@ const RoomInspiration = () => {
             </p>
             {/* Primary Button */}
             <button 
-              className="bg-black hover:bg-stone-800 text-white font-bold py-3 px-8 
+              className="bg-black hover:bg-gray-500 text-white font-bold py-3 px-8 
                          transition duration-300 uppercase"
             >
               Explore More
@@ -68,7 +68,7 @@ const RoomInspiration = () => {
                     {/* Overlay Arrow Button */}
                     <button 
                         onClick={handleNext} // <-- Arrow button uses the next handler
-                        className="absolute -right-12 bottom-0 p-4 bg-black hover:bg-stone-800 transition duration-300"
+                        className="absolute -right-12 bottom-0 p-4 bg-black hover:bg-gray-500 transition duration-300"
                     >
                         <ArrowRight className="w-5 h-5 text-white" />
                     </button>
@@ -104,4 +104,5 @@ const RoomInspiration = () => {
 };
 
 export default RoomInspiration;
+
 

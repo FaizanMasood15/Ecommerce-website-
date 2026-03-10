@@ -30,7 +30,7 @@ const HeroSection = ({ goToShop }) => {
           </p>
           <button 
             onClick={goToShop} 
-            className="bg-black hover:bg-stone-800 text-white text-sm tracking-[0.2em] font-semibold py-4 px-10 
+            className="bg-black hover:bg-gray-500 text-white text-sm tracking-[0.2em] font-semibold py-4 px-10 
                        transition duration-300 uppercase"
           >
             BUY NOW
@@ -42,3 +42,4 @@ const HeroSection = ({ goToShop }) => {
 };
 
 export default HeroSection;
+

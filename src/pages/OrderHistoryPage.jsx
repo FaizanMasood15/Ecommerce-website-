@@ -50,7 +50,7 @@ const OrderHistoryPage = () => {
                         <p className="text-gray-500 mb-6">Start shopping to place your first order!</p>
                         <Link
                             to="/shop"
-                            className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-stone-800 transition"
+                            className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-500 transition"
                         >
                             Browse Products
                         </Link>
@@ -118,5 +118,6 @@ const OrderHistoryPage = () => {
 };
 
 export default OrderHistoryPage;
+
 
 

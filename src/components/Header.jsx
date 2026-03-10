@@ -175,13 +175,13 @@ const Header = ({ toggleCart }) => {
           <nav className="hidden md:flex items-center gap-3 flex-grow ml-6">
             <Link
               to="/"
-              className="px-2 py-2 text-[16px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
+              className="px-2 py-2 text-[18px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
             >
               Home
             </Link>
             <Link
               to="/shop"
-              className="px-2 py-2 text-[16px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
+              className="px-2 py-2 text-[18px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
             >
               Shop
             </Link>
@@ -195,7 +195,7 @@ const Header = ({ toggleCart }) => {
                 onMouseLeave={handleMouseLeave}
               >
                 <button
-                  className={`flex items-center gap-1.5 px-2 py-2 text-[16px] font-medium tracking-[0.08em] uppercase rounded-md transition ${activeDropdown === cat.slug
+                  className={`flex items-center gap-1.5 px-2 py-2 text-[18px] font-medium tracking-[0.08em] uppercase rounded-md transition ${activeDropdown === cat.slug
                     ? 'text-black'
                     : 'text-stone-700 hover:text-black'
                     }`}

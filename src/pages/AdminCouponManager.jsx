@@ -11,7 +11,7 @@ import { Plus, Trash2, Edit2, X, Tag } from 'lucide-react';
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-amber-700 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -114,7 +114,7 @@ const AdminCouponManager = () => {
                     </div>
                     <button
                         onClick={() => { resetForm(); setShowForm(true); }}
-                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-800 transition text-sm shadow-sm"
+                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-500 transition text-sm shadow-sm"
                     >
                         <Plus className="w-4 h-4" /> Add Coupon
                     </button>
@@ -164,7 +164,7 @@ const AdminCouponManager = () => {
                                 <label htmlFor="couponIsActive" className="text-sm font-medium text-gray-700 cursor-pointer">Active</label>
                             </div>
                             <div className="sm:col-span-2 flex gap-3">
-                                <button type="submit" disabled={isCreating} className="bg-amber-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-amber-800 transition text-sm disabled:opacity-50">
+                                <button type="submit" disabled={isCreating} className="bg-amber-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-500 transition text-sm disabled:opacity-50">
                                     {isCreating ? 'Saving...' : (editId ? 'Save Changes' : 'Create Coupon')}
                                 </button>
                                 <button type="button" onClick={resetForm} className="border border-gray-300 text-gray-600 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50 transition text-sm">Cancel</button>
@@ -238,4 +238,5 @@ const AdminCouponManager = () => {
 };
 
 export default AdminCouponManager;
+
 

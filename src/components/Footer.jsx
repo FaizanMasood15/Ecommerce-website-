@@ -103,7 +103,7 @@ const Footer = () => {
             <p className="text-sm text-gray-600 mb-3">Need help with an order or product inquiry?</p>
             <Link
               to="/contact"
-              className="inline-flex items-center bg-black text-white hover:bg-stone-800 text-xs tracking-[0.12em] uppercase font-semibold py-3 px-5 transition duration-200"
+              className="inline-flex items-center bg-black text-white hover:bg-gray-500 text-xs tracking-[0.12em] uppercase font-semibold py-3 px-5 transition duration-200"
             >
               Contact Us
             </Link>
@@ -135,4 +135,5 @@ const Footer = () => {
 };
 
 export default Footer;
+
 
