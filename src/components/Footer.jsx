@@ -54,7 +54,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={item.title}
-                    className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+                    className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -103,7 +103,7 @@ const Footer = () => {
             <p className="text-sm text-gray-600 mb-3">Need help with an order or product inquiry?</p>
             <Link
               to="/contact"
-              className="inline-flex items-center bg-black text-white hover:bg-gray-500 text-xs tracking-[0.12em] uppercase font-semibold py-3 px-5 transition duration-200"
+              className="inline-flex items-center bg-black text-white hover:bg-gray-700 text-xs tracking-[0.12em] uppercase font-semibold py-3 px-5 transition duration-200"
             >
               Contact Us
             </Link>

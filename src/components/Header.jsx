@@ -19,47 +19,30 @@ const CategoryDropdown = ({ category, onClose }) => {
   const hasChildren = category.subcategories && category.subcategories.length > 0;
 
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50">
-      <div className="bg-white shadow-xl border-t-2 border-black overflow-hidden"
-        style={{ minWidth: hasChildren ? '280px' : '220px' }}>
-
-        {/* "Shop All" header row */}
-        <Link
-          to={`/shop?category=${category.slug}`}
-          onClick={onClose}
-          className="flex items-center justify-between px-6 py-4 bg-stone-50 hover:bg-stone-100 border-b border-stone-100 transition group"
-        >
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-gray-500 font-semibold mb-0.5">
-              Collection
-            </p>
-            <p className="font-bold text-gray-900 text-base">
-              Shop All {category.name}
-            </p>
-            {category.description && (
-              <p className="text-xs text-gray-500 mt-0.5">{category.description}</p>
-            )}
-          </div>
-          <ArrowRight className="w-4 h-4 text-gray-900 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1 flex-shrink-0 ml-4" />
-        </Link>
-
-        {/* Subcategory list */}
-        {hasChildren && (
-          <ul className="py-2">
-            {category.subcategories.map(sub => (
-              <li key={sub._id}>
-                <Link
-                  to={`/shop?category=${sub.slug}`}
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-6 py-2.5 text-sm text-gray-600 hover:text-black hover:bg-stone-50 transition group"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-300 group-hover:bg-gray-500 flex-shrink-0 transition-colors" />
-                  {sub.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="absolute top-full left-0 pt-0 z-50">
+      <div className="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-4 min-w-[240px]">
+        <ul className="flex flex-col">
+          {hasChildren && category.subcategories.map(sub => (
+            <li key={sub._id}>
+              <Link
+                to={`/shop?category=${sub.slug}`}
+                onClick={onClose}
+                className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-600 hover:text-black hover:bg-stone-50 transition"
+              >
+                {sub.name}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link
+              to={`/shop?category=${category.slug}`}
+              onClick={onClose}
+              className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-600 hover:text-black hover:bg-stone-50 transition"
+            >
+              Shop All
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   );
@@ -158,7 +141,7 @@ const Header = ({ toggleCart }) => {
       <div className="bg-black text-white">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8 h-9 flex items-center justify-center">
           <p className="text-xs md:text-[13px] tracking-[0.28em] uppercase font-semibold">
-            Free Shipping On Orders Above Rs. 2500
+            Free Shipping On Orders Above $100
           </p>
         </div>
       </div>
@@ -168,22 +151,24 @@ const Header = ({ toggleCart }) => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-             <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
+            <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-3 flex-grow ml-6">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 flex-grow ml-8 lg:ml-12">
             <Link
               to="/"
-              className="px-2 py-2 text-[18px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
+              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-800 hover:text-black transition relative group"
             >
-              Home
+              <span className="leading-none">Home</span>
+              <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
             <Link
               to="/shop"
-              className="px-2 py-2 text-[18px] tracking-[0.08em] uppercase font-medium text-stone-700 hover:text-black rounded transition"
+              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-800 hover:text-black transition relative group"
             >
-              Shop
+              <span className="leading-none">Shop</span>
+              <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
 
             {/* Dynamic category dropdowns */}
@@ -194,18 +179,16 @@ const Header = ({ toggleCart }) => {
                 onMouseEnter={() => handleMouseEnter(cat.slug)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button
-                  className={`flex items-center gap-1.5 px-2 py-2 text-[18px] font-medium tracking-[0.08em] uppercase rounded-md transition ${activeDropdown === cat.slug
+                <Link
+                  to={`/shop?category=${cat.slug}`}
+                  className={`flex items-center py-6 text-[15px] lg:text-[16px] font-medium tracking-wider uppercase transition relative ${activeDropdown === cat.slug
                     ? 'text-black'
-                    : 'text-stone-700 hover:text-black'
+                    : 'text-stone-800 hover:text-black'
                     }`}
                 >
                   <span className="leading-none">{cat.name}</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${activeDropdown === cat.slug ? 'rotate-180 opacity-100' : ''
-                      }`}
-                  />
-                </button>
+                  <span className={`absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left ${activeDropdown === cat.slug ? 'scale-x-100' : 'scale-x-0'}`}></span>
+                </Link>
 
                 {activeDropdown === cat.slug && (
                   <CategoryDropdown
@@ -399,16 +382,16 @@ const Header = ({ toggleCart }) => {
                 <div className="flex justify-between items-center px-6 md:px-8 py-4 border-b border-stone-200">
                   <p className="text-[12px] md:text-[13px] tracking-[0.24em] uppercase text-slate-400">Products</p>
                 </div>
-  
+
                 <div className="max-h-[58vh] overflow-y-auto">
                   {!normalizedSearch && (
                     <p className="px-6 md:px-8 py-8 text-slate-500 text-base">Type to search products...</p>
                   )}
-  
+
                   {normalizedSearch && filteredProducts.length === 0 && (
                     <p className="px-6 md:px-8 py-8 text-slate-600 text-base">No products found for "{searchTerm}".</p>
                   )}
-  
+
                   {filteredProducts.map((product) => (
                     <Link
                       key={product._id}

@@ -111,7 +111,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             </button>
                             <button
                                 onClick={handleCheckout}
-                                className="flex-1 bg-black text-white hover:bg-gray-500 py-2.5 rounded-lg font-semibold transition text-sm"
+                                className="flex-1 bg-black text-white hover:bg-gray-700 py-2.5 rounded-lg font-semibold transition text-sm"
                             >
                                 Checkout
                             </button>
