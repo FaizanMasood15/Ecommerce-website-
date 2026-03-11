@@ -73,6 +73,8 @@ const registerUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        sameSite: 'strict',
         expires: new Date(0),
     });
 

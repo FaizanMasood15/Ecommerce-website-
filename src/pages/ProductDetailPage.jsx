@@ -13,6 +13,8 @@ import WishlistHeart from '../components/WishlistHeart';
 import ProductReviews from '../components/ProductReviews';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { formatUsd, parsePriceValue } from '../utils/price';
+import { sanitizeRichHtml } from '../utils/sanitizeHtml';
 
 // --- DUMMY DATA FOR COMPLEX DETAILS ---
 const productDetails = {
@@ -69,7 +71,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
       sku: selectedProduct.sku || selectedProduct._id.toString().substring(0, 4).padStart(4, '0'),
       category: selectedProduct.category,
       mainImage: validImages[0], // Set first array item as main image
-      basePrice: parseFloat(selectedProduct.price?.toString().replace(/[Rp\.]/g, '') || 0),
+      basePrice: parsePriceValue(selectedProduct.price),
     };
   } else {
     const defaultAsgaard = {
@@ -128,7 +130,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
     ? currentVariant.countInStock
     : product.countInStock;
 
-  const formattedPrice = `Rs. ${displayPrice.toLocaleString('en-IN')}.00`;
+  const formattedPrice = formatUsd(displayPrice);
   const ratingStars = [...Array(Math.floor(product?.rating || 5))].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary" />);
 
   const TabContent = () => {
@@ -138,7 +140,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
           <div className="space-y-4 text-gray-700">
             <div
               className="mt-4 prose prose-sm max-w-none text-gray-700"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
             />
             <p>
               {product.fullDescription || "Detailed description is coming soon. Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
@@ -179,9 +181,9 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
   return (
     <>
       {/* Breadcrumb Section */}
-      <div className="bg-hero-box py-6 md:py-8">
+      <div className="bg-background-light py-6 md:py-8 border-y border-stone-200">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-          <p className="text-gray-900 text-sm">
+          <p className="text-gray-900 text-xs tracking-[0.1em] uppercase">
             Home &gt; Shop &gt; <span className="font-semibold text-gray-900">{product.name}</span>
           </p>
         </div>
@@ -215,7 +217,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                 setLightboxOpen(true);
               }}
             >
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-gray-500/5 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
                 <span className="opacity-0 group-hover:opacity-100 bg-white/80 text-gray-800 text-sm font-semibold px-4 py-2 rounded-full shadow-sm backdrop-blur-sm transition-opacity duration-300">
                   Click to Expand
                 </span>
@@ -231,11 +233,11 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
           {/* Right Side: Details and Controls */}
           <div className="space-y-6">
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-4xl font-semibold text-gray-900">{product.name}</h1>
+              <h1 className="font-display text-4xl md:text-5xl font-medium tracking-[0.1em] uppercase text-gray-900">{product.name}</h1>
               {selectedProduct && <WishlistHeart productId={selectedProduct._id} className="flex-shrink-0 mt-1" />}
             </div>
             <div className="flex flex-col space-y-2">
-              <p className="text-2xl font-medium text-gray-900">{formattedPrice}</p>
+              <p className="font-display text-4xl font-medium tracking-[0.03em] text-gray-900">{formattedPrice}</p>
 
               {/* Urgency/Stock Badge */}
               <div className="flex items-center">
@@ -270,22 +272,22 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 
             <div
               className="text-gray-700 text-base max-w-lg prose prose-sm"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(product.description) }}
             />
 
             {/* Size Selector */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-base font-semibold text-gray-500">Size</h3>
+                <h3 className="text-xs tracking-[0.22em] uppercase font-semibold text-gray-500">Size</h3>
                 <div className="flex flex-wrap gap-3">
                   {product.sizes.map(size => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`w-10 h-10 rounded-lg text-sm font-semibold flex items-center justify-center transition-all 
+                      className={`min-w-16 h-10 px-3 rounded-none text-xs tracking-[0.12em] uppercase font-semibold flex items-center justify-center transition-all 
                         ${selectedSize === size
-                          ? 'bg-primary text-white shadow-md border-transparent'
-                          : 'bg-white text-gray-900 border border-gray-300 hover:border-primary hover:text-primary'}`}
+                          ? 'bg-black text-white shadow-md border-black'
+                          : 'bg-white text-gray-900 border border-gray-300 hover:border-black hover:text-black'}`}
                     >
                       {size}
                     </button>
@@ -297,7 +299,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
             {/* Color Selector */}
             {product.colors && product.colors.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-base font-semibold text-gray-500">Color</h3>
+                <h3 className="text-xs tracking-[0.22em] uppercase font-semibold text-gray-500">Color</h3>
                 <div className="flex flex-wrap gap-4">
                   {product.colors.map(color => (
                     <button
@@ -305,7 +307,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                       onClick={() => setSelectedColor(color.name)}
                       className={`flex flex-col items-center space-y-1 p-2 rounded-lg border transition-all 
                         ${selectedColor === color.name
-                          ? 'bg-blue-50 border-primary shadow-sm'
+                          ? 'bg-stone-100 border-black shadow-sm'
                           : 'bg-white border-transparent hover:border-gray-300'}`}
                     >
                       <span
@@ -314,7 +316,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
                       >
                         {selectedColor === color.name && <span className={color.hex === '#ffffff' || color.hex === '#FFFFFF' ? 'text-black text-sm' : 'text-white text-sm'}>✓</span>}
                       </span>
-                      <span className={`text-xs ${selectedColor === color.name ? 'font-semibold text-primary' : 'text-gray-600'}`}>{color.name}</span>
+                      <span className={`text-xs tracking-[0.08em] uppercase ${selectedColor === color.name ? 'font-semibold text-black' : 'text-gray-600'}`}>{color.name}</span>
                     </button>
                   ))}
                 </div>
@@ -324,7 +326,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
             {/* Quantity and Action Buttons */}
             <div className="flex items-center space-x-4 pt-6 border-t border-gray-200">
 
-              <div className="flex items-center space-x-2 border border-gray-400 rounded-lg">
+              <div className="flex items-center space-x-2 border border-gray-300">
                 <button onClick={decreaseQuantity} className="p-3 text-lg text-gray-900 hover:bg-gray-100 transition duration-150">
                   <Minus className="w-4 h-4" />
                 </button>
@@ -341,13 +343,13 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               <button
                 onClick={handleAddToCart}
                 disabled={displayStock === 0 || !displayStock}
-                className={`border text-primary font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-primary hover:bg-primary hover:text-white'
+                className={`border text-black text-sm tracking-[0.2em] uppercase font-semibold py-4 px-10 transition duration-300 ${(displayStock === 0 || !displayStock) ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-black hover:bg-gray-500 hover:text-white'
                   }`}
               >
                 Add To Cart
               </button>
 
-              <button className="hidden sm:flex border border-gray-400 text-gray-900 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition duration-300 uppercase items-center">
+              <button className="hidden sm:flex border border-gray-300 text-gray-900 text-xs tracking-[0.16em] hover:bg-gray-100 font-semibold py-4 px-6 transition duration-300 uppercase items-center">
                 + Compare
               </button>
             </div>
@@ -372,13 +374,13 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
       <div className="border-t border-gray-200 py-16">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
 
-          <div className="flex space-x-10 border-b pb-4">
+          <div className="flex flex-wrap gap-x-10 gap-y-2 border-b pb-4">
             {['Description', 'Additional Information', 'Reviews'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`text-xl font-medium transition duration-150 ${activeTab === tab
-                  ? 'text-gray-900 border-b-2 border-primary'
+                className={`text-sm tracking-[0.12em] uppercase font-semibold transition duration-150 ${activeTab === tab
+                  ? 'text-gray-900 border-b-2 border-black'
                   : 'text-gray-500 hover:text-gray-900'
                   }`}
               >
@@ -408,7 +410,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
       {/* Related Products Section (Dynamic and Clickable) */}
       <div className="py-16 bg-background-light text-center">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+          <h2 className="font-display text-3xl md:text-4xl tracking-[0.12em] uppercase font-medium text-gray-900 mb-8">
             Related Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -419,7 +421,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
               />
             ))}
           </div>
-          <button onClick={goToShop} className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-10 mt-10 transition duration-300 uppercase">
+          <button onClick={goToShop} className="border border-black text-black hover:bg-gray-500 hover:text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase">
             Show More
           </button>
         </div>
@@ -436,7 +438,7 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
         <button
           onClick={handleAddToCart}
           disabled={displayStock === 0 || !displayStock}
-          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-amber-700 text-white shadow-lg'
+          className={`font-semibold py-3 px-8 rounded-lg transition duration-300 uppercase ${(displayStock === 0 || !displayStock) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-gray-500 text-white shadow-lg'
             }`}
         >
           {displayStock === 0 || !displayStock ? 'Out of Stock' : 'Add To Cart'}
@@ -454,3 +456,5 @@ const ProductDetailPage = ({ goToProduct, goToShop, toggleCart }) => {
 };
 
 export default ProductDetailPage;
+
+

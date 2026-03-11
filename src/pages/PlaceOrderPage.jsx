@@ -36,11 +36,22 @@ const PlaceOrderPage = () => {
 
     if (!checkoutData) return null;
 
-    const { shippingAddress, paymentMethod, shippingCost, tax, discountAmount, couponCode, guestEmail } = checkoutData;
+    const {
+        shippingAddress,
+        paymentMethod,
+        shippingCost,
+        tax,
+        discountAmount,
+        couponCode,
+        guestEmail,
+        deviceId,
+        clientOrderRef,
+    } = checkoutData;
+
     const total = subtotal + shippingCost + tax - (discountAmount || 0);
 
     const handlePlaceOrder = async () => {
-        const orderItems = cartItems.map(item => ({
+        const orderItems = cartItems.map((item) => ({
             name: item.product?.name,
             qty: item.quantity,
             image: item.product?.image,
@@ -56,27 +67,22 @@ const PlaceOrderPage = () => {
             orderItems,
             shippingAddress,
             paymentMethod,
-            itemsPrice: subtotal,
-            taxPrice: tax,
-            shippingPrice: shippingCost,
-            discountAmount: discountAmount || 0,
             couponCode: couponCode || '',
-            totalPrice: total,
+            deviceId: deviceId || '',
+            clientOrderRef: clientOrderRef || '',
         };
 
         try {
             if (userInfo) {
-                // Logged-in user — use authenticated endpoint
                 const res = await createOrder(payload).unwrap();
                 clearCart();
                 sessionStorage.removeItem('checkoutData');
                 navigate(`/orders/${res._id}`);
             } else {
-                // Guest user — use public guest endpoint
                 const res = await createGuestOrder({ ...payload, guestEmail }).unwrap();
                 clearCart();
                 sessionStorage.removeItem('checkoutData');
-                navigate(`/guest-order/${res._id}`);
+                navigate(`/guest-order/${res.order._id}?token=${encodeURIComponent(res.guestAccessToken)}`);
             }
         } catch (err) {
             console.error(err);
@@ -97,7 +103,6 @@ const PlaceOrderPage = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Guest email reminder */}
                         {!userInfo && guestEmail && (
                             <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
                                 <CheckCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -105,7 +110,6 @@ const PlaceOrderPage = () => {
                             </div>
                         )}
 
-                        {/* Shipping Info */}
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="font-bold text-gray-900">Shipping Address</h2>
@@ -115,23 +119,21 @@ const PlaceOrderPage = () => {
                             <p className="text-gray-600 text-sm mt-1">{shippingAddress.address}</p>
                             <p className="text-gray-600 text-sm">{shippingAddress.city}, {shippingAddress.postalCode}</p>
                             <p className="text-gray-600 text-sm">{shippingAddress.country}</p>
-                            <p className="text-gray-600 text-sm">📞 {shippingAddress.phone}</p>
+                            <p className="text-gray-600 text-sm">Phone: {shippingAddress.phone}</p>
                         </div>
 
-                        {/* Payment Method */}
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="font-bold text-gray-900">Payment Method</h2>
                                 <Link to="/checkout" className="text-amber-700 text-sm hover:underline">Edit</Link>
                             </div>
                             <p className="text-gray-700">
-                                {paymentMethod === 'COD' ? '💵 Cash on Delivery' :
-                                    paymentMethod === 'BankTransfer' ? '🏦 Bank Transfer' :
-                                        '📱 EasyPaisa / JazzCash'}
+                                {paymentMethod === 'COD' ? 'Cash on Delivery' :
+                                    paymentMethod === 'BankTransfer' ? 'Bank Transfer' :
+                                        'EasyPaisa / JazzCash'}
                             </p>
                         </div>
 
-                        {/* Order Items */}
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="font-bold text-gray-900 mb-4">Order Items</h2>
                             <div className="space-y-4">
@@ -146,13 +148,13 @@ const PlaceOrderPage = () => {
                                             <p className="font-medium text-gray-900">{item.product?.name}</p>
                                             <p className="text-sm text-gray-500">
                                                 {item.size && `Size: ${item.size}`}
-                                                {item.size && item.color && ' · '}
+                                                {item.size && item.color && ' / '}
                                                 {item.color && `Color: ${item.color}`}
                                             </p>
                                         </div>
                                         <div className="text-right text-sm">
-                                            <p className="text-gray-600">{item.quantity} × Rs. {item.price?.toLocaleString()}</p>
-                                            <p className="font-bold text-gray-900">Rs. {item.totalPrice?.toLocaleString()}</p>
+                                            <p className="text-gray-600">{item.quantity} x ${item.price?.toLocaleString()}</p>
+                                            <p className="font-bold text-gray-900">${item.totalPrice?.toLocaleString()}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -160,35 +162,34 @@ const PlaceOrderPage = () => {
                         </div>
                     </div>
 
-                    {/* Summary & Confirm */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
                             <h2 className="font-bold text-gray-900 text-lg mb-4">Order Total</h2>
                             <div className="space-y-2 text-sm text-gray-600">
                                 <div className="flex justify-between">
                                     <span>Subtotal</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
-                                    <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `Rs. ${shippingCost}`}</span>
+                                    <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `$${shippingCost}`}</span>
                                 </div>
                                 {discountAmount > 0 && (
                                     <div className="flex justify-between text-green-600 font-medium">
                                         <span>Coupon {couponCode && `(${couponCode})`}</span>
-                                        <span>− Rs. {discountAmount.toLocaleString()}</span>
+                                        <span>- ${discountAmount.toLocaleString()}</span>
                                     </div>
                                 )}
                                 <hr />
                                 <div className="flex justify-between font-bold text-gray-900 text-base">
                                     <span>Total</span>
-                                    <span>Rs. {total?.toLocaleString()}</span>
+                                    <span>${total?.toLocaleString()}</span>
                                 </div>
                             </div>
                             <button
                                 onClick={handlePlaceOrder}
                                 disabled={isLoading}
-                                className="mt-6 w-full bg-amber-700 hover:bg-amber-800 disabled:bg-gray-300 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+                                className="mt-6 w-full bg-black hover:bg-gray-500 disabled:bg-gray-300 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <><Loader className="w-4 h-4 animate-spin" /> Placing Order...</>
@@ -198,7 +199,7 @@ const PlaceOrderPage = () => {
                             </button>
                             {!userInfo && (
                                 <p className="text-xs text-gray-400 text-center mt-3">
-                                    Checking out as guest · <Link to="/login" className="text-amber-700 hover:underline">Sign in</Link>
+                                    Checking out as guest / <Link to="/login" className="text-amber-700 hover:underline">Sign in</Link>
                                 </p>
                             )}
                         </div>
@@ -210,3 +211,5 @@ const PlaceOrderPage = () => {
 };
 
 export default PlaceOrderPage;
+
+

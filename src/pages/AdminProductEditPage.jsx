@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetProductDetailsQuery, useUpdateProductMutation, useUploadProductImageMutation } from '../slices/productsApiSlice';
+import { useGetAdminProductDetailsQuery, useUpdateProductMutation, useUploadProductImageMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-primary hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-primary hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-2xl font-bold text-gray-900',
@@ -32,7 +32,7 @@ const AdminProductEditPage = () => {
     const [description, setDescription] = useState('');
     const [isDraft, setIsDraft] = useState(false);
 
-    const { data: product, isLoading, error } = useGetProductDetailsQuery({ id: productId, all: true });
+    const { data: product, isLoading, error } = useGetAdminProductDetailsQuery({ id: productId });
     const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
     const [uploadProductImage, { isLoading: isUploading }] = useUploadProductImageMutation();
 
@@ -266,7 +266,7 @@ const AdminProductEditPage = () => {
                     </div>
 
                     <div>
-                        <label className="block text-gray-700 font-semibold mb-2">Price (Rs)</label>
+                        <label className="block text-gray-700 font-semibold mb-2">Price (USD)</label>
                         <input
                             type="number"
                             placeholder="Enter price"
@@ -421,7 +421,7 @@ const AdminProductEditPage = () => {
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-600">
                                         <th className="p-3 font-semibold">Variant (Size / Color)</th>
-                                        <th className="p-3 font-semibold w-24">Price (Rs)</th>
+                                        <th className="p-3 font-semibold w-24">Price (USD)</th>
                                         <th className="p-3 font-semibold w-24">Stock</th>
                                         <th className="p-3 font-semibold">SKU (Optional)</th>
                                     </tr>
@@ -495,7 +495,7 @@ const AdminProductEditPage = () => {
                     <button
                         type="submit"
                         disabled={isUpdating}
-                        className="w-full bg-primary hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+                        className="w-full bg-primary hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
                     >
                         {isUpdating ? 'Saving...' : 'Save Product'}
                     </button>
@@ -506,3 +506,5 @@ const AdminProductEditPage = () => {
 };
 
 export default AdminProductEditPage;
+
+

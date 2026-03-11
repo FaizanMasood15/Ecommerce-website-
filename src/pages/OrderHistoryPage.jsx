@@ -40,7 +40,7 @@ const OrderHistoryPage = () => {
                 <p className="text-gray-500 mb-8">Track and manage your orders</p>
 
                 {error && (
-                    <p className="text-red-500">Failed to load orders. Please try again.</p>
+                    <p className="text-red-500">Failed to load orde$Please try again.</p>
                 )}
 
                 {!isLoading && !error && (!orders || orders.length === 0) && (
@@ -50,7 +50,7 @@ const OrderHistoryPage = () => {
                         <p className="text-gray-500 mb-6">Start shopping to place your first order!</p>
                         <Link
                             to="/shop"
-                            className="bg-amber-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-800 transition"
+                            className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-500 transition"
                         >
                             Browse Products
                         </Link>
@@ -74,7 +74,7 @@ const OrderHistoryPage = () => {
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-500">Total</p>
-                                        <p className="font-bold text-gray-900">Rs. {order.totalPrice?.toLocaleString()}</p>
+                                        <p className="font-bold text-gray-900">${order.totalPrice?.toLocaleString()}</p>
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-500">Items</p>
@@ -118,3 +118,6 @@ const OrderHistoryPage = () => {
 };
 
 export default OrderHistoryPage;
+
+
+

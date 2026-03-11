@@ -149,7 +149,7 @@ const ProfilePage = () => {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="mt-2 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2.5 px-6 rounded-lg transition"
+                                    className="mt-2 bg-black hover:bg-gray-500 text-white font-bold py-2.5 px-6 rounded-lg transition"
                                 >
                                     Save Changes
                                 </button>
@@ -163,3 +163,5 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+

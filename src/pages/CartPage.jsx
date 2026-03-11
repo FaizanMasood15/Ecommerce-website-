@@ -20,7 +20,7 @@ const CartPage = () => {
                 <p className="text-gray-500">Looks like you haven't added any items yet.</p>
                 <Link
                     to="/shop"
-                    className="mt-2 bg-amber-700 text-white px-8 py-3 font-semibold hover:bg-amber-800 transition"
+                    className="mt-2 bg-black text-white px-8 py-3 font-semibold hover:bg-gray-500 transition"
                 >
                     Continue Shopping
                 </Link>
@@ -66,7 +66,7 @@ const CartPage = () => {
                                         </p>
                                     )}
                                     <p className="text-amber-700 font-bold mt-1">
-                                        Rs. {item.price?.toLocaleString()}
+                                        ${item.price?.toLocaleString()}
                                     </p>
 
                                     <div className="flex items-center gap-3 mt-3">
@@ -98,7 +98,7 @@ const CartPage = () => {
                                 </div>
                                 <div className="text-right flex-shrink-0">
                                     <p className="font-bold text-gray-900">
-                                        Rs. {item.totalPrice?.toLocaleString()}
+                                        ${item.totalPrice?.toLocaleString()}
                                     </p>
                                 </div>
                             </div>
@@ -112,7 +112,7 @@ const CartPage = () => {
                             <div className="space-y-3 text-sm text-gray-600">
                                 <div className="flex justify-between">
                                     <span>Subtotal ({cartItems.reduce((a, i) => a + i.quantity, 0)} items)</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
@@ -121,13 +121,13 @@ const CartPage = () => {
                                 <hr className="my-2" />
                                 <div className="flex justify-between text-base font-bold text-gray-900">
                                     <span>Subtotal</span>
-                                    <span>Rs. {subtotal?.toLocaleString()}</span>
+                                    <span>${subtotal?.toLocaleString()}</span>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleCheckout}
-                                className="mt-6 w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
+                                className="mt-6 w-full bg-black hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2"
                             >
                                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
                             </button>
@@ -146,3 +146,6 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+
+

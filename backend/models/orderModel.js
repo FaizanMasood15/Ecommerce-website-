@@ -12,6 +12,14 @@ const orderSchema = mongoose.Schema(
             type: String,
             default: '',
         },
+        deviceId: {
+            type: String,
+            default: '',
+        },
+        clientOrderRef: {
+            type: String,
+            default: '',
+        },
         orderItems: [
             {
                 name: { type: String, required: true },

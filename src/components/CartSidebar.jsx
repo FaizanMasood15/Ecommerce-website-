@@ -10,7 +10,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
 
-    const formatCurrency = (amount) => `Rs. ${Number(amount).toLocaleString('en-IN')}`;
+    const formatCurrency = (amount) => `$${Number(amount).toLocaleString('en-US')}`;
 
     const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
 
@@ -111,7 +111,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             </button>
                             <button
                                 onClick={handleCheckout}
-                                className="flex-1 bg-amber-700 text-white hover:bg-amber-800 py-2.5 rounded-lg font-semibold transition text-sm"
+                                className="flex-1 bg-black text-white hover:bg-gray-500 py-2.5 rounded-lg font-semibold transition text-sm"
                             >
                                 Checkout
                             </button>
@@ -124,3 +124,5 @@ const CartSidebar = ({ isOpen, onClose }) => {
 };
 
 export default CartSidebar;
+
+

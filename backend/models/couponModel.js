@@ -43,6 +43,32 @@ const couponSchema = mongoose.Schema(
                 ref: 'User',
             },
         ],
+        usageByEmail: [
+            {
+                email: { type: String, required: true, lowercase: true, trim: true },
+                count: { type: Number, default: 0 },
+            },
+        ],
+        usageByDevice: [
+            {
+                deviceId: { type: String, required: true, trim: true },
+                count: { type: Number, default: 0 },
+            },
+        ],
+        usedOrderRefs: [
+            {
+                type: String,
+                trim: true,
+            },
+        ],
+        maxUsesPerEmail: {
+            type: Number,
+            default: 1,
+        },
+        maxUsesPerDevice: {
+            type: Number,
+            default: 1,
+        },
         expiresAt: {
             type: Date,
             default: null, // null = never expires

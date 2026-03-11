@@ -7,11 +7,11 @@ import {
     updateCoupon,
     deleteCoupon,
 } from '../controllers/couponController.js';
-import { protect, admin } from '../middleware/authMiddleware.js';
+import { optionalProtect, protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/validate', protect, validateCoupon);
+router.post('/validate', optionalProtect, validateCoupon);
 
 router.route('/')
     .get(protect, admin, getAllCoupons)

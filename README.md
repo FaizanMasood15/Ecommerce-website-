@@ -1,6 +1,6 @@
 # Funiro E-Commerce Website
 
-A modern, responsive e-commerce furniture website built using **React** for the front-end logic and **Tailwind CSS** for rapid styling, based on the provided Figma design mockups. The project name has been customized to **Faizan Butt**.
+A modern, responsive e-commerce furniture website built using **React** for the front-end logic and **Tailwind CSS** for rapid styling, based on the provided Figma design mockups. The project name has been customized to **Faizan Masood 15**.
 
 ## 🚀 Project Overview
 

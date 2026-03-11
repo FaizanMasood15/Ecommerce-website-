@@ -129,8 +129,8 @@ const OrderDetailPage = () => {
                                         </p>
                                     )}
                                 </div>
-                                <p className="text-sm text-gray-600">{item.qty} × Rs. {item.price?.toLocaleString()}</p>
-                                <p className="font-bold text-gray-900 w-28 text-right">Rs. {(item.qty * item.price)?.toLocaleString()}</p>
+                                <p className="text-sm text-gray-600">{item.qty} × ${item.price?.toLocaleString()}</p>
+                                <p className="font-bold text-gray-900 w-28 text-right">${(item.qty * item.price)?.toLocaleString()}</p>
                             </div>
                         ))}
                     </div>
@@ -140,12 +140,12 @@ const OrderDetailPage = () => {
                 <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
                     <h2 className="font-bold text-gray-900 mb-3">Price Breakdown</h2>
                     <div className="space-y-2 text-sm text-gray-600 max-w-xs ml-auto">
-                        <div className="flex justify-between"><span>Items</span><span>Rs. {order.itemsPrice?.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span>Shipping</span><span>{order.shippingPrice === 0 ? 'Free' : `Rs. ${order.shippingPrice}`}</span></div>
-                        <div className="flex justify-between"><span>Tax</span><span>Rs. {order.taxPrice?.toLocaleString()}</span></div>
+                        <div className="flex justify-between"><span>Items</span><span>${order.itemsPrice?.toLocaleString()}</span></div>
+                        <div className="flex justify-between"><span>Shipping</span><span>{order.shippingPrice === 0 ? 'Free' : `$${order.shippingPrice}`}</span></div>
+                        <div className="flex justify-between"><span>Tax</span><span>${order.taxPrice?.toLocaleString()}</span></div>
                         <hr />
                         <div className="flex justify-between font-bold text-gray-900 text-base">
-                            <span>Total</span><span>Rs. {order.totalPrice?.toLocaleString()}</span>
+                            <span>Total</span><span>${order.totalPrice?.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -174,3 +174,4 @@ const OrderDetailPage = () => {
 };
 
 export default OrderDetailPage;
+

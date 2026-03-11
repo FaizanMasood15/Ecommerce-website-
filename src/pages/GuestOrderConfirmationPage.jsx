@@ -1,17 +1,30 @@
 // src/pages/GuestOrderConfirmationPage.jsx
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useGetGuestOrderQuery } from '../slices/ordersApiSlice';
 import { CheckCircle, Loader, AlertCircle, ShoppingBag, MapPin, UserPlus } from 'lucide-react';
 
 const GuestOrderConfirmationPage = () => {
     const { id } = useParams();
-    const { data: order, isLoading, error } = useGetGuestOrderQuery(id);
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token') || '';
+    const { data: order, isLoading, error } = useGetGuestOrderQuery({ id, token }, { skip: !id || !token });
 
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <Loader className="w-8 h-8 animate-spin text-amber-700" />
+            </div>
+        );
+    }
+
+    if (!token) {
+        return (
+            <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
+                <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
+                <h2 className="text-xl font-bold text-gray-800 mb-2">Invalid Guest Link</h2>
+                <p className="text-gray-500 mb-6">This order link is missing its access token.</p>
+                <Link to="/" className="text-amber-700 hover:underline font-medium">Return to Home</Link>
             </div>
         );
     }
@@ -87,8 +100,8 @@ const GuestOrderConfirmationPage = () => {
                                     )}
                                 </div>
                                 <div className="text-right text-sm flex-shrink-0">
-                                    <p className="text-gray-500">{item.qty} × Rs. {item.price?.toLocaleString()}</p>
-                                    <p className="font-bold text-gray-900">Rs. {(item.qty * item.price)?.toLocaleString()}</p>
+                                    <p className="text-gray-500">{item.qty} × ${item.price?.toLocaleString()}</p>
+                                    <p className="font-bold text-gray-900">${(item.qty * item.price)?.toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}
@@ -97,21 +110,21 @@ const GuestOrderConfirmationPage = () => {
                     <div className="border-t mt-4 pt-3 space-y-1 text-sm text-gray-600">
                         <div className="flex justify-between">
                             <span>Subtotal</span>
-                            <span>Rs. {order.itemsPrice?.toLocaleString()}</span>
+                            <span>${order.itemsPrice?.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Shipping</span>
-                            <span>{order.shippingPrice === 0 ? <span className="text-green-600">Free</span> : `Rs. ${order.shippingPrice}`}</span>
+                            <span>{order.shippingPrice === 0 ? <span className="text-green-600">Free</span> : `$${order.shippingPrice}`}</span>
                         </div>
                         {order.discountAmount > 0 && (
                             <div className="flex justify-between text-green-600">
                                 <span>Discount ({order.couponCode})</span>
-                                <span>− Rs. {order.discountAmount?.toLocaleString()}</span>
+                                <span>− ${order.discountAmount?.toLocaleString()}</span>
                             </div>
                         )}
                         <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t">
                             <span>Total</span>
-                            <span>Rs. {order.totalPrice?.toLocaleString()}</span>
+                            <span>${order.totalPrice?.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -139,3 +152,4 @@ const GuestOrderConfirmationPage = () => {
 };
 
 export default GuestOrderConfirmationPage;
+

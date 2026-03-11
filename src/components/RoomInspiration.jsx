@@ -43,7 +43,7 @@ const RoomInspiration = () => {
             </p>
             {/* Primary Button */}
             <button 
-              className="bg-primary hover:bg-amber-700 text-white font-bold py-3 px-8 
+              className="bg-black hover:bg-gray-500 text-white font-bold py-3 px-8 
                          transition duration-300 uppercase"
             >
               Explore More
@@ -62,13 +62,13 @@ const RoomInspiration = () => {
                 />
                 
                 {/* Text Overlay Box (Dynamically shows current room details) */}
-                <div className="absolute bottom-6 left-6 bg-white bg-opacity-90 p-4 md:p-6 rounded-lg max-w-[250px]">
+                <div className="absolute bottom-6 left-6 bg-white/90 p-4 md:p-6 rounded-lg max-w-[250px]">
                     <p className="text-gray-500 text-sm">{currentRoom.id.toString().padStart(2, '0')} — {currentRoom.type}</p>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">{currentRoom.name}</h3>
                     {/* Overlay Arrow Button */}
                     <button 
                         onClick={handleNext} // <-- Arrow button uses the next handler
-                        className="absolute bottom-0 right-0 p-4 bg-primary hover:bg-amber-700 transition duration-300"
+                        className="absolute -right-12 bottom-0 p-4 bg-black hover:bg-gray-500 transition duration-300"
                     >
                         <ArrowRight className="w-5 h-5 text-white" />
                     </button>
@@ -82,7 +82,7 @@ const RoomInspiration = () => {
                     key={index}
                     onClick={() => setActiveIndex(index)} // <-- Dot click changes activeIndex
                     className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                        activeIndex === index ? 'bg-primary' : 'bg-gray-400 opacity-50 hover:opacity-100'
+                        activeIndex === index ? 'bg-black' : 'bg-gray-400 opacity-50 hover:opacity-100'
                     }`}
                 />
               ))}
@@ -91,7 +91,7 @@ const RoomInspiration = () => {
             {/* Right Arrow Navigation (Moved outside the card, uses the same handler) */}
             <button 
                 onClick={handleNext} // <-- Main Navigation Arrow uses the next handler
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 p-3 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full shadow-lg hidden lg:block"
+                className="absolute -right-6 top-1/2 -translate-y-1/2 p-4 bg-white hover:bg-stone-50 rounded-full shadow-lg hidden lg:block"
             >
               <ArrowRight className="w-6 h-6 text-gray-900" />
             </button>
@@ -104,3 +104,5 @@ const RoomInspiration = () => {
 };
 
 export default RoomInspiration;
+
+

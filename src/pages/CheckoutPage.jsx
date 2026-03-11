@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import { MapPin, CreditCard, Truck, Tag, CheckCircle, AlertCircle, Loader, Mail, LogIn } from 'lucide-react';
 import { useValidateCouponMutation } from '../slices/couponApiSlice';
+import { createClientOrderRef, getDeviceId } from '../utils/clientIds';
 
 const PAYMENT_METHODS = [
     { id: 'COD', label: 'Cash on Delivery', icon: '💵' },
@@ -35,6 +36,7 @@ const CheckoutPage = () => {
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [couponError, setCouponError] = useState('');
     const [validateCoupon, { isLoading: isCouponLoading }] = useValidateCouponMutation();
+    const [clientOrderRef] = useState(() => createClientOrderRef());
 
     const shippingCost = subtotal > 5000 ? 0 : 250;
     const tax = 0;
@@ -46,6 +48,8 @@ const CheckoutPage = () => {
         if (!shippingAddress.fullName.trim()) newErrors.fullName = 'Full name is required';
         if (!shippingAddress.address.trim()) newErrors.address = 'Address is required';
         if (!shippingAddress.city.trim()) newErrors.city = 'City is required';
+        if (!shippingAddress.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
+        if (!shippingAddress.country.trim()) newErrors.country = 'Country is required';
         if (!shippingAddress.phone.trim()) newErrors.phone = 'Phone number is required';
         // Guest email required only if not logged in
         if (!userInfo && (!guestEmail.trim() || !/\S+@\S+\.\S+/.test(guestEmail))) {
@@ -59,6 +63,7 @@ const CheckoutPage = () => {
         e.preventDefault();
         if (!validate()) return;
 
+        const deviceId = getDeviceId();
         sessionStorage.setItem('checkoutData', JSON.stringify({
             shippingAddress,
             paymentMethod,
@@ -67,6 +72,8 @@ const CheckoutPage = () => {
             discountAmount,
             couponCode: appliedCoupon?.code || '',
             guestEmail: userInfo ? '' : guestEmail.trim(),
+            clientOrderRef,
+            deviceId,
         }));
         navigate('/place-order');
     };
@@ -166,9 +173,10 @@ const CheckoutPage = () => {
                                             name="postalCode"
                                             value={shippingAddress.postalCode}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.postalCode ? 'border-red-400' : 'border-gray-300'}`}
                                             placeholder="54000"
                                         />
+                                        {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
@@ -177,8 +185,9 @@ const CheckoutPage = () => {
                                             name="country"
                                             value={shippingAddress.country}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.country ? 'border-red-400' : 'border-gray-300'}`}
                                         />
+                                        {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
@@ -232,7 +241,7 @@ const CheckoutPage = () => {
                                     {cartItems.map((item, i) => (
                                         <div key={i} className="flex justify-between gap-2">
                                             <span className="truncate pr-2">{item.product?.name} × {item.quantity}</span>
-                                            <span className="flex-shrink-0">Rs. {item.totalPrice?.toLocaleString()}</span>
+                                            <span className="flex-shrink-0">${item.totalPrice?.toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -254,52 +263,62 @@ const CheckoutPage = () => {
                                             onClick={async () => {
                                                 setCouponError('');
                                                 setAppliedCoupon(null);
+                                                if (!userInfo && !guestEmail.trim()) {
+                                                    setCouponError('Enter guest email before applying coupon');
+                                                    return;
+                                                }
                                                 try {
-                                                    const result = await validateCoupon({ code: couponCode, orderTotal: subtotal }).unwrap();
+                                                    const result = await validateCoupon({
+                                                        code: couponCode,
+                                                        orderTotal: subtotal,
+                                                        guestEmail: userInfo ? userInfo.email : guestEmail.trim(),
+                                                        deviceId: getDeviceId(),
+                                                        clientOrderRef,
+                                                    }).unwrap();
                                                     setAppliedCoupon(result);
                                                 } catch (err) {
                                                     setCouponError(err?.data?.message || 'Invalid coupon');
                                                 }
                                             }}
-                                            className="px-3 py-2 bg-amber-700 text-white text-xs font-semibold rounded-lg hover:bg-amber-800 transition disabled:opacity-50 flex items-center gap-1"
+                                            className="px-3 py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-gray-500 transition disabled:opacity-50 flex items-center gap-1"
                                         >
                                             {isCouponLoading ? <Loader className="w-3.5 h-3.5 animate-spin" /> : 'Apply'}
                                         </button>
                                     </div>
                                     {couponError && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {couponError}</p>}
-                                    {appliedCoupon && <p className="text-green-600 text-xs mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> {appliedCoupon.description || `${appliedCoupon.discountValue}${appliedCoupon.discountType === 'percentage' ? '%' : ' Rs.'} off applied!`}</p>}
+                                    {appliedCoupon && <p className="text-green-600 text-xs mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> {appliedCoupon.description || `${appliedCoupon.discountValue}${appliedCoupon.discountType === 'percentage' ? '%' : ' $'} off applied!`}</p>}
                                 </div>
 
                                 <div className="space-y-2 text-sm text-gray-600 mt-3">
                                     <div className="flex justify-between">
                                         <span>Subtotal</span>
-                                        <span>Rs. {subtotal?.toLocaleString()}</span>
+                                        <span>${subtotal?.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Shipping</span>
-                                        <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `Rs. ${shippingCost}`}</span>
+                                        <span>{shippingCost === 0 ? <span className="text-green-600">Free</span> : `$${shippingCost}`}</span>
                                     </div>
                                     {discountAmount > 0 && (
                                         <div className="flex justify-between text-green-600 font-medium">
                                             <span>Coupon ({appliedCoupon.code})</span>
-                                            <span>- Rs. {discountAmount.toLocaleString()}</span>
+                                            <span>- ${discountAmount.toLocaleString()}</span>
                                         </div>
                                     )}
                                     <hr />
                                     <div className="flex justify-between font-bold text-gray-900 text-base">
                                         <span>Total</span>
-                                        <span>Rs. {total?.toLocaleString()}</span>
+                                        <span>${total?.toLocaleString()}</span>
                                     </div>
                                     {shippingCost > 0 && (
                                         <p className="text-xs text-green-600 text-center mt-1">
-                                            Add Rs. {(5001 - subtotal).toLocaleString()} more for free shipping!
+                                            Add ${(5001 - subtotal).toLocaleString()} more for free shipping!
                                         </p>
                                     )}
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className="mt-6 w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-4 rounded-lg transition"
+                                    className="mt-6 w-full bg-black hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition"
                                 >
                                     Review Order
                                 </button>
@@ -313,3 +332,6 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+
+
+

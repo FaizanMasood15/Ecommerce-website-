@@ -1,17 +1,15 @@
 // src/pages/WishlistPage.jsx
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetWishlistQuery, useRemoveFromWishlistMutation } from '../slices/wishlistApiSlice';
-import { useCart } from '../context/CartContext';
-import { Heart, Loader, Trash2, ShoppingCart } from 'lucide-react';
+import { Heart, Loader, Trash2 } from 'lucide-react';
+import ProductCard from '../components/ProductCard';
 
 const WishlistPage = () => {
-    const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
-    const { addToCart } = useCart();
 
-    const { data: wishlist, isLoading, error } = useGetWishlistQuery(undefined, {
+    const { data: wishlist, isLoading } = useGetWishlistQuery(undefined, {
         skip: !userInfo,
     });
     const [removeFromWishlist] = useRemoveFromWishlistMutation();
@@ -21,7 +19,7 @@ const WishlistPage = () => {
             <div className="min-h-screen flex flex-col items-center justify-center gap-4">
                 <Heart className="w-16 h-16 text-gray-200" />
                 <p className="text-gray-500 text-lg">Please log in to view your wishlist</p>
-                <Link to="/login" className="bg-amber-700 text-white px-6 py-2 rounded-lg font-semibold hover:bg-amber-800 transition">Login</Link>
+                <Link to="/login" className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-500 transition">Login</Link>
             </div>
         );
     }
@@ -50,7 +48,7 @@ const WishlistPage = () => {
                         <Heart className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h2 className="text-xl font-semibold text-gray-700 mb-2">Your wishlist is empty</h2>
                         <p className="text-gray-400 mb-6">Save products you love and come back to them later</p>
-                        <Link to="/shop" className="bg-amber-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-800 transition">
+                        <Link to="/shop" className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-500 transition">
                             Explore Products
                         </Link>
                     </div>
@@ -58,44 +56,19 @@ const WishlistPage = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                         {products.map(({ product, addedAt }) => (
                             product && (
-                                <div key={product._id} className="bg-white rounded-xl shadow-sm overflow-hidden group hover:shadow-md transition">
-                                    {/* Product Image */}
-                                    <div className="relative">
-                                        <Link to={`/shop/${product._id}`}>
-                                            <img
-                                                src={product.images?.[0] || product.image}
-                                                alt={product.name}
-                                                className="w-full h-48 object-cover group-hover:scale-105 transition duration-300"
-                                            />
-                                        </Link>
-                                        <button
-                                            onClick={() => removeFromWishlist(product._id)}
-                                            className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow text-red-400 hover:text-red-600 transition"
-                                            title="Remove from wishlist"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
+                                <div key={product._id} className="relative">
+                                    <ProductCard product={product} />
+                                    <button
+                                        onClick={() => removeFromWishlist(product._id)}
+                                        className="absolute top-3 right-3 z-30 p-2 bg-white/90 rounded-full shadow text-red-400 hover:text-red-600 transition"
+                                        title="Remove from wishlist"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
 
-                                    {/* Product Info */}
-                                    <div className="p-4">
-                                        <Link to={`/shop/${product._id}`}>
-                                            <h3 className="font-semibold text-gray-900 hover:text-amber-700 transition text-sm truncate">{product.name}</h3>
-                                        </Link>
-                                        <p className="text-amber-700 font-bold mt-1">Rs. {Number(product.price).toLocaleString()}</p>
-                                        <p className="text-xs text-gray-400 mt-1">
-                                            Added {new Date(addedAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short' })}
-                                        </p>
-                                        <button
-                                            onClick={() => {
-                                                addToCart(product, 1, '', '', '', null);
-                                                navigate('/cart');
-                                            }}
-                                            className="mt-3 w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-amber-700 text-white text-sm font-semibold py-2 rounded-lg transition"
-                                        >
-                                            <ShoppingCart className="w-4 h-4" /> Add to Cart
-                                        </button>
-                                    </div>
+                                    <p className="text-xs text-gray-500 text-center mt-2">
+                                        Added {new Date(addedAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short' })}
+                                    </p>
                                 </div>
                             )
                         ))}
@@ -107,3 +80,6 @@ const WishlistPage = () => {
 };
 
 export default WishlistPage;
+
+
+

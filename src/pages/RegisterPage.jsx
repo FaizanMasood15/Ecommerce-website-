@@ -75,7 +75,7 @@ const RegisterPage = () => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
-                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-primary sm:text-sm"
+                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-black sm:text-sm"
                                 placeholder="John Doe"
                             />
                         </div>
@@ -92,7 +92,7 @@ const RegisterPage = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-primary sm:text-sm"
+                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-black sm:text-sm"
                                 placeholder="you@example.com"
                             />
                         </div>
@@ -109,7 +109,7 @@ const RegisterPage = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-primary sm:text-sm"
+                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-black sm:text-sm"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -126,7 +126,7 @@ const RegisterPage = () => {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-primary sm:text-sm"
+                                className="pl-10 block w-full rounded-md border border-gray-300 py-3 px-4 text-gray-900 focus:border-primary focus:ring-black sm:text-sm"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -135,7 +135,7 @@ const RegisterPage = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-colors mt-6"
+                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 transition-colors mt-6"
                     >
                         {isLoading ? 'Registering...' : 'Register'}
                     </button>
@@ -153,3 +153,5 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+
+

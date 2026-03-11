@@ -13,7 +13,7 @@ const ProductsSection = ({ goToShop, goToProduct }) => {
       <div className="container mx-auto max-w-7xl px-4 lg:px-8 text-center">
 
         {/* Section Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10">
+        <h2 className="font-display text-3xl md:text-4xl tracking-[0.12em] uppercase font-medium text-gray-900 mb-10">
           Our Products
         </h2>
 
@@ -36,7 +36,7 @@ const ProductsSection = ({ goToShop, goToProduct }) => {
         {/* Show More Button (Uses the goToShop routing function) */}
         <button
           onClick={goToShop}
-          className="border border-primary text-primary hover:bg-primary hover:text-white font-semibold py-3 px-10 mt-10 transition duration-300 uppercase"
+          className="bg-black hover:bg-gray-500 text-white text-sm tracking-[0.14em] font-semibold py-4 px-10 mt-10 transition duration-300 uppercase"
         >
           Show More
         </button>
@@ -46,3 +46,4 @@ const ProductsSection = ({ goToShop, goToProduct }) => {
 };
 
 export default ProductsSection;
+

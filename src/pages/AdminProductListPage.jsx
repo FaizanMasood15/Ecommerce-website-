@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGetProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
+import { useGetAdminProductsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation } from '../slices/productsApiSlice';
 import Swal from 'sweetalert2';
 import { Trash2, Edit2, Check, X, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-primary hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-primary hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-2xl font-bold text-gray-900',
@@ -17,7 +17,7 @@ const CustomSwal = Swal.mixin({
 
 const AdminProductListPage = () => {
     const navigate = useNavigate();
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery({ all: true });
+    const { data: products, isLoading, error, refetch } = useGetAdminProductsQuery();
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
     const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
     const [updateProduct] = useUpdateProductMutation(); // For inline edits
@@ -239,7 +239,7 @@ const AdminProductListPage = () => {
                         <button
                             onClick={handleCreateProduct}
                             disabled={isCreating}
-                            className="whitespace-nowrap bg-primary hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200">
+                            className="whitespace-nowrap bg-primary hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200">
                             + Create Product
                         </button>
                     </div>
@@ -314,7 +314,7 @@ const AdminProductListPage = () => {
                                     <td className="p-4">
                                         {editingCell.id === product._id && editingCell.field === 'price' ? (
                                             <div className="flex items-center space-x-1">
-                                                <span className="text-gray-500 text-sm">Rs.</span>
+                                                <span className="text-gray-500 text-sm">$</span>
                                                 <input
                                                     type="number"
                                                     className="w-20 border border-primary rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -331,7 +331,7 @@ const AdminProductListPage = () => {
                                             </div>
                                         ) : (
                                             <div className="group flex items-center space-x-2 cursor-pointer" onClick={() => handleInlineEditStart(product, 'price')}>
-                                                <span>Rs. {product.price.toLocaleString()}</span>
+                                                <span>${product.price.toLocaleString()}</span>
                                                 <Edit2 className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         )}
@@ -422,3 +422,5 @@ const AdminProductListPage = () => {
 };
 
 export default AdminProductListPage;
+
+

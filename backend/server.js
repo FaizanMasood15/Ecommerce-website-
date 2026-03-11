@@ -22,7 +22,7 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors()); // Allows frontend to communicate with backend
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json()); // Allows parsing POST requests with JSON body
 app.use(cookieParser()); // Allows parsing of cookies (like JWT)
 

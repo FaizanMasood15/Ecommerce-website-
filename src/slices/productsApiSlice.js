@@ -3,24 +3,21 @@ import { apiSlice } from './apiSlice';
 export const productsApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getProducts: builder.query({
-            query: (params) => {
-                let url = '/products';
-                if (params && params.all) {
-                    url += '?all=true';
-                }
-                return { url };
-            },
+            query: () => ({ url: '/products' }),
+            providesTags: ['Product'],
+            keepUnusedDataFor: 5,
+        }),
+        getAdminProducts: builder.query({
+            query: () => ({ url: '/products/admin/list' }),
             providesTags: ['Product'],
             keepUnusedDataFor: 5,
         }),
         getProductDetails: builder.query({
-            query: ({ id, all }) => {
-                let url = `/products/${id}`;
-                if (all) {
-                    url += '?all=true';
-                }
-                return { url };
-            },
+            query: ({ id }) => ({ url: `/products/${id}` }),
+            keepUnusedDataFor: 5,
+        }),
+        getAdminProductDetails: builder.query({
+            query: ({ id }) => ({ url: `/products/admin/${id}` }),
             keepUnusedDataFor: 5,
         }),
         deleteProduct: builder.mutation({
@@ -54,4 +51,13 @@ export const productsApiSlice = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useGetProductsQuery, useGetProductDetailsQuery, useDeleteProductMutation, useCreateProductMutation, useUpdateProductMutation, useUploadProductImageMutation } = productsApiSlice;
+export const {
+    useGetProductsQuery,
+    useGetAdminProductsQuery,
+    useGetProductDetailsQuery,
+    useGetAdminProductDetailsQuery,
+    useDeleteProductMutation,
+    useCreateProductMutation,
+    useUpdateProductMutation,
+    useUploadProductImageMutation,
+} = productsApiSlice;
