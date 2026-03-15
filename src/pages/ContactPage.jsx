@@ -45,7 +45,7 @@ const ContactPage = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Facebook"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
               >
                 <Facebook className="w-4 h-4" />
               </a>
@@ -54,7 +54,7 @@ const ContactPage = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -63,7 +63,7 @@ const ContactPage = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
               >
                 <Youtube className="w-4 h-4" />
               </a>
@@ -72,7 +72,7 @@ const ContactPage = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Twitter"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-500 hover:text-white transition"
+                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
               >
                 <Twitter className="w-4 h-4" />
               </a>
@@ -108,7 +108,7 @@ const ContactPage = () => {
               </div>
               <button
                 type="button"
-                className="bg-black text-white  hover:bg-gray-500 text-xs tracking-[0.14em] uppercase font-semibold py-3 px-6 transition duration-200"
+                className="bg-black text-white  hover:bg-gray-700 text-xs tracking-[0.14em] uppercase font-semibold py-3 px-6 transition duration-200"
               >
                 Send
               </button>

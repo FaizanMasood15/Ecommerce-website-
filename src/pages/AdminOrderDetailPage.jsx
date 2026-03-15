@@ -21,7 +21,7 @@ const Toast = Swal.mixin({
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-amber-700 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
+        confirmButton: 'bg-amber-700 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -236,7 +236,7 @@ const AdminOrderDetailPage = () => {
                             <button
                                 onClick={handleStatusUpdate}
                                 disabled={isStatusLoading || !selectedStatus}
-                                className="w-full bg-amber-700 hover:bg-gray-500 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
+                                className="w-full bg-amber-700 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
                             >
                                 {isStatusLoading ? 'Updating...' : 'Update Status'}
                             </button>

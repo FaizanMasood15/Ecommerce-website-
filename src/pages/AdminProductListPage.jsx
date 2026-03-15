@@ -6,7 +6,7 @@ import { Trash2, Edit2, Check, X, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown }
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-primary hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-primary hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-2xl font-bold text-gray-900',
@@ -239,7 +239,7 @@ const AdminProductListPage = () => {
                         <button
                             onClick={handleCreateProduct}
                             disabled={isCreating}
-                            className="whitespace-nowrap bg-primary hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200">
+                            className="whitespace-nowrap bg-primary hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200">
                             + Create Product
                         </button>
                     </div>
