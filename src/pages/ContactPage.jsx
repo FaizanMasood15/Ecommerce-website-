@@ -22,13 +22,15 @@ const ContactPage = () => {
 
   return (
     <>
-      <div className="py-24 text-center bg-background-light border-b border-stone-200">
+      <div className="relative py-24 text-center bg-black text-white border-b border-stone-200 overflow-hidden">
+        <div className="about-stars" aria-hidden="true" />
+        <div className="about-stars about-stars-layer" aria-hidden="true" />
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-          <h1 className="font-display text-4xl md:text-5xl tracking-[0.12em] uppercase font-medium text-gray-900 mb-2">
+          <h1 className="font-display text-4xl md:text-5xl tracking-[0.12em] uppercase font-medium text-white mb-2 relative z-10">
             Contact Us
           </h1>
-          <p className="text-gray-900 text-xs tracking-[0.1em] uppercase">
-            Home <span className="font-semibold text-primary"> &gt; Contact</span>
+          <p className="text-white/70 text-xs tracking-[0.1em] uppercase relative z-10">
+            Home <span className="font-semibold text-white"> &gt; Contact</span>
           </p>
         </div>
       </div>
@@ -116,6 +118,40 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
+      <style>{`
+        .about-stars {
+          position: absolute;
+          inset: 0;
+          background-image:
+            radial-gradient(3px 3px at 20px 30px, rgba(255,255,255,0.95), transparent 55%),
+            radial-gradient(2px 2px at 80px 120px, rgba(255,255,255,0.9), transparent 55%),
+            radial-gradient(3px 3px at 160px 200px, rgba(255,255,255,0.9), transparent 55%),
+            radial-gradient(2px 2px at 220px 80px, rgba(255,255,255,0.95), transparent 55%),
+            radial-gradient(2px 2px at 300px 160px, rgba(255,255,255,0.9), transparent 55%),
+            radial-gradient(3px 3px at 420px 60px, rgba(255,255,255,0.95), transparent 55%),
+            radial-gradient(2px 2px at 520px 180px, rgba(255,255,255,0.9), transparent 55%),
+            radial-gradient(3px 3px at 620px 120px, rgba(255,255,255,0.95), transparent 55%),
+            radial-gradient(2px 2px at 720px 200px, rgba(255,255,255,0.9), transparent 55%),
+            radial-gradient(3px 3px at 860px 80px, rgba(255,255,255,0.95), transparent 55%);
+          background-size: 220px 160px;
+          background-repeat: repeat;
+          opacity: 1;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .about-stars-layer {
+          background-size: 300px 200px;
+          filter: blur(0.3px);
+          opacity: 0.8;
+          animation: star-drift 14s linear infinite;
+        }
+
+        @keyframes star-drift {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(120px); }
+        }
+      `}</style>
     </>
   );
 };
