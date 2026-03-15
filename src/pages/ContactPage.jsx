@@ -1,7 +1,25 @@
 import React from 'react';
-import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Github,
+  Globe,
+  Mail,
+  MessageCircle,
+} from 'lucide-react';
 
 const ContactPage = () => {
+  const socialLinks = [
+    { title: 'LinkedIn', href: 'https://www.linkedin.com/in/faizanbutt15/', icon: Linkedin },
+    { title: 'GitHub', href: 'https://github.com/Faizanbutt15', icon: Github },
+    { title: 'Portfolio', href: 'https://faizan-masood-portfolio.vercel.app', icon: Globe },
+    { title: 'Email', href: 'mailto:buttfaizan875@gmail.com', icon: Mail },
+    { title: 'WhatsApp', href: 'https://wa.me/923027959570', icon: MessageCircle },
+    { title: 'Facebook', href: 'https://www.facebook.com/faizan.butt.172856/', icon: Facebook },
+    { title: 'Instagram', href: 'https://www.instagram.com/faizanbutt_15/', icon: Instagram },
+  ];
+
   return (
     <>
       <div className="py-24 text-center bg-background-light border-b border-stone-200">
@@ -28,54 +46,36 @@ const ContactPage = () => {
               </p>
               <p>
                 <span className="font-semibold text-gray-900">Email:</span>{' '}
-                <a href="mailto:faizanbutt15@yahoo.com" className="underline underline-offset-2">
-                  faizanbutt15@yahoo.com
+                <a href="mailto:buttfaizan875@gmail.com" className="underline underline-offset-2">
+                  buttfaizan875@gmail.com
                 </a>
               </p>
               <p>
-                <span className="font-semibold text-gray-900">Phone:</span> 03027959570
+                <span className="font-semibold text-gray-900">Phone:</span>{' '}
+                <a href="tel:+923027959570" className="underline underline-offset-2">
+                  +92 302 7959570
+                </a>
               </p>
               <p>
                 <span className="font-semibold text-gray-900">Working Hours:</span> Mon - Sat, 8:00 AM - 11:00 PM
               </p>
             </div>
             <div className="mt-6 flex items-center gap-3">
-              <a
-                href="#"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Facebook"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Twitter"
-                className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
+              {socialLinks.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.title}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={item.title}
+                    className="inline-flex items-center justify-center w-9 h-9 border border-black text-black hover:bg-gray-700 hover:text-white transition"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

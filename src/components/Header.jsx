@@ -27,7 +27,7 @@ const CategoryDropdown = ({ category, onClose }) => {
               <Link
                 to={`/shop?category=${sub.slug}`}
                 onClick={onClose}
-                className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-600 hover:text-black hover:bg-stone-50 transition"
+                className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-700 hover:text-black hover:bg-stone-50 transition"
               >
                 {sub.name}
               </Link>
@@ -37,7 +37,7 @@ const CategoryDropdown = ({ category, onClose }) => {
             <Link
               to={`/shop?category=${category.slug}`}
               onClick={onClose}
-              className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-600 hover:text-black hover:bg-stone-50 transition"
+              className="block pl-6 pr-8 py-3.5 text-[15px] tracking-wide uppercase text-gray-700 hover:text-black hover:bg-stone-50 transition"
             >
               Shop All
             </Link>
@@ -136,6 +136,8 @@ const Header = ({ toggleCart }) => {
     dropdownTimerRef.current = setTimeout(() => setActiveDropdown(null), 180);
   };
 
+  const spacedLabel = (label = '') => label.split('').join(' ');
+
   return (
     <header className="sticky top-0 z-40 w-full">
       <div className="bg-black text-white">
@@ -151,23 +153,25 @@ const Header = ({ toggleCart }) => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">FB15</span>
+            <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">Funiro15</span>
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8 flex-grow ml-8 lg:ml-12">
             <Link
               to="/"
-              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-800 hover:text-black transition relative group"
+              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
+              aria-label="Home"
             >
-              <span className="leading-none">Home</span>
+              <span className="leading-none">{spacedLabel('Home')}</span>
               <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
             <Link
               to="/shop"
-              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-800 hover:text-black transition relative group"
+              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
+              aria-label="Shop"
             >
-              <span className="leading-none">Shop</span>
+              <span className="leading-none">{spacedLabel('Shop')}</span>
               <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
 
@@ -183,10 +187,11 @@ const Header = ({ toggleCart }) => {
                   to={`/shop?category=${cat.slug}`}
                   className={`flex items-center py-6 text-[15px] lg:text-[16px] font-medium tracking-wider uppercase transition relative ${activeDropdown === cat.slug
                     ? 'text-black'
-                    : 'text-stone-800 hover:text-black'
+                    : 'text-stone-900 hover:text-black'
                     }`}
+                  aria-label={cat.name}
                 >
-                  <span className="leading-none">{cat.name}</span>
+                  <span className="leading-none">{spacedLabel(cat.name)}</span>
                   <span className={`absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left ${activeDropdown === cat.slug ? 'scale-x-100' : 'scale-x-0'}`}></span>
                 </Link>
 
@@ -273,15 +278,15 @@ const Header = ({ toggleCart }) => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-stone-200 shadow-lg">
           <div className="container mx-auto px-4 py-3 space-y-0.5">
-            <Link to="/" className="block px-3 py-2.5 text-[15px] tracking-[0.12em] uppercase font-medium text-stone-700 hover:bg-stone-50 rounded-md transition">Home</Link>
-            <Link to="/shop" className="block px-3 py-2.5 text-[15px] tracking-[0.12em] uppercase font-medium text-stone-700 hover:bg-stone-50 rounded-md transition">Shop</Link>
+            <Link to="/" className="block px-3 py-2.5 text-[15px] tracking-[0.12em] uppercase font-medium text-stone-800 hover:bg-stone-50 rounded-md transition">Home</Link>
+            <Link to="/shop" className="block px-3 py-2.5 text-[15px] tracking-[0.12em] uppercase font-medium text-stone-800 hover:bg-stone-50 rounded-md transition">Shop</Link>
 
             {/* Category accordion */}
             {navCategories.map(cat => (
               <div key={cat._id}>
                 <button
                   onClick={() => setMobileExpandedCat(mobileExpandedCat === cat._id ? null : cat._id)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 text-[15px] font-medium tracking-[0.12em] uppercase text-stone-700 hover:bg-stone-50 rounded-md transition"
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-[15px] font-medium tracking-[0.12em] uppercase text-stone-800 hover:bg-stone-50 rounded-md transition"
                 >
                   <span className="leading-none">{cat.name}</span>
                   <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${mobileExpandedCat === cat._id ? 'rotate-180' : ''}`} />
@@ -435,4 +440,3 @@ const Header = ({ toggleCart }) => {
 };
 
 export default Header;
-
