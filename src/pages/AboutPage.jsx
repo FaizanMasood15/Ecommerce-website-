@@ -273,7 +273,7 @@ const AboutPage = () => {
                 <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-[#0b0c10]" />
               </div>
               <h3 className="text-center text-2xl font-semibold text-white mt-4">Faizan Butt</h3>
-              <p className="text-center text-sm uppercase tracking-[0.3em] text-[#a1152d] mt-1">Founder & CEO</p>
+              <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[#a1152d] mt-1">Founder & CEO</p>
               <div className="mt-6 space-y-3 text-sm">
                 <div className="flex items-center justify-between rounded-full border border-white/20 px-4 py-2">
                   <span className="text-white/60">Role</span>
