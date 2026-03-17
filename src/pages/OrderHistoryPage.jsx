@@ -6,17 +6,18 @@ import { Loader, ShoppingBag, Eye } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
     const colors = {
-        Pending: 'bg-yellow-100 text-yellow-700',
-        Processing: 'bg-blue-100 text-blue-700',
-        Packed: 'bg-purple-100 text-purple-700',
-        Shipped: 'bg-indigo-100 text-indigo-700',
-        'Out for Delivery': 'bg-orange-100 text-orange-700',
-        Delivered: 'bg-green-100 text-green-700',
-        Cancelled: 'bg-red-100 text-red-700',
-        Refunded: 'bg-gray-100 text-gray-600',
+        pending: 'bg-amber-100 text-amber-800 ring-1 ring-amber-200',
+        processing: 'bg-blue-100 text-blue-700 ring-1 ring-blue-200',
+        packed: 'bg-purple-100 text-purple-700 ring-1 ring-purple-200',
+        shipped: 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-200',
+        'out for delivery': 'bg-orange-100 text-orange-700 ring-1 ring-orange-200',
+        delivered: 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200',
+        cancelled: 'bg-red-100 text-red-700 ring-1 ring-red-200',
+        refunded: 'bg-gray-100 text-gray-600 ring-1 ring-gray-200',
     };
+    const normalizedStatus = (status || '').toLowerCase();
     return (
-        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${colors[status] || 'bg-gray-100 text-gray-700'}`}>
+        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${colors[normalizedStatus] || 'bg-gray-100 text-gray-700 ring-1 ring-gray-200'}`}>
             {status}
         </span>
     );
@@ -40,7 +41,7 @@ const OrderHistoryPage = () => {
                 <p className="text-gray-500 mb-8">Track and manage your orders</p>
 
                 {error && (
-                    <p className="text-red-500">Failed to load orde$Please try again.</p>
+                    <p className="text-red-500">Failed to load orders. Please try again.</p>
                 )}
 
                 {!isLoading && !error && (!orders || orders.length === 0) && (

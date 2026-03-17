@@ -37,7 +37,7 @@ const FurnitureCollage = () => {
       <div className="container mx-auto max-w-7xl px-4 lg:px-8 text-center">
         <p className="text-gray-500 text-sm md:text-base mb-1">Share your setup with</p>
         <h2 className="font-display text-3xl md:text-5xl font-semibold tracking-[0.06em] text-[#0b1f47] mb-10 md:mb-14">
-          Faizan Masood 15
+          Faizan Butt 15
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-5 text-left">

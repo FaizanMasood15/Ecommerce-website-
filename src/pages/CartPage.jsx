@@ -65,7 +65,7 @@ const CartPage = () => {
                                             )}
                                         </p>
                                     )}
-                                    <p className="text-amber-700 font-bold mt-1">
+                                    <p className="text-gray-900 font-bold mt-1">
                                         ${item.price?.toLocaleString()}
                                     </p>
 
@@ -133,7 +133,7 @@ const CartPage = () => {
                             </button>
                             <Link
                                 to="/shop"
-                                className="mt-3 w-full block text-center text-amber-700 hover:text-amber-800 font-medium text-sm"
+                                className="mt-3 w-full block text-center text-gray-900 hover:text-black font-medium text-sm"
                             >
                                 ← Continue Shopping
                             </Link>

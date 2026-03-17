@@ -44,7 +44,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                     <h2 className="text-xl font-bold text-gray-900">
                         Shopping Cart
                         {totalItems > 0 && (
-                            <span className="text-amber-700 text-sm font-medium ml-2">({totalItems} item{totalItems > 1 ? 's' : ''})</span>
+                            <span className="text-gray-900 text-sm font-medium ml-2">({totalItems} item{totalItems > 1 ? 's' : ''})</span>
                         )}
                     </h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition">
@@ -60,7 +60,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             <p className="text-gray-400 font-medium">Your cart is empty</p>
                             <button
                                 onClick={() => { onClose(); navigate('/shop'); }}
-                                className="mt-4 text-amber-700 font-semibold hover:underline text-sm"
+                                className="mt-4 text-gray-900 font-semibold hover:underline text-sm"
                             >
                                 Browse Products →
                             </button>
@@ -81,7 +81,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                                             <span className="ml-1">({[item.size, item.color].filter(Boolean).join('/')})</span>
                                         )}
                                     </p>
-                                    <p className="text-amber-700 font-semibold text-sm mt-0.5">{formatCurrency(item.totalPrice)}</p>
+                                    <p className="text-gray-900 font-semibold text-sm mt-0.5">{formatCurrency(item.totalPrice)}</p>
                                 </div>
                                 <button
                                     onClick={() => removeItem(item.id, item.color, item.size)}
@@ -100,7 +100,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                     <div className="flex-shrink-0 p-5 border-t bg-white">
                         <div className="flex justify-between text-lg font-bold mb-4 text-gray-900">
                             <span>Subtotal</span>
-                            <span className="text-amber-700">{formatCurrency(subtotal)}</span>
+                            <span className="text-gray-900">{formatCurrency(subtotal)}</span>
                         </div>
                         <div className="flex gap-3">
                             <button

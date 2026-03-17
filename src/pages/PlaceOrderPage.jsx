@@ -104,8 +104,8 @@ const PlaceOrderPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         {!userInfo && guestEmail && (
-                            <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-center gap-2">
-                                <CheckCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 flex items-center gap-2">
+                                <CheckCircle className="w-4 h-4 text-gray-700 flex-shrink-0" />
                                 Confirmation will be sent to <strong>{guestEmail}</strong>
                             </div>
                         )}
@@ -113,7 +113,7 @@ const PlaceOrderPage = () => {
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="font-bold text-gray-900">Shipping Address</h2>
-                                <Link to="/checkout" className="text-amber-700 text-sm hover:underline">Edit</Link>
+                                <Link to="/checkout" className="text-gray-900 text-sm hover:underline">Edit</Link>
                             </div>
                             <p className="text-gray-700 font-medium">{shippingAddress.fullName}</p>
                             <p className="text-gray-600 text-sm mt-1">{shippingAddress.address}</p>
@@ -125,7 +125,7 @@ const PlaceOrderPage = () => {
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="font-bold text-gray-900">Payment Method</h2>
-                                <Link to="/checkout" className="text-amber-700 text-sm hover:underline">Edit</Link>
+                                <Link to="/checkout" className="text-gray-900 text-sm hover:underline">Edit</Link>
                             </div>
                             <p className="text-gray-700">
                                 {paymentMethod === 'COD' ? 'Cash on Delivery' :
@@ -199,7 +199,7 @@ const PlaceOrderPage = () => {
                             </button>
                             {!userInfo && (
                                 <p className="text-xs text-gray-400 text-center mt-3">
-                                    Checking out as guest / <Link to="/login" className="text-amber-700 hover:underline">Sign in</Link>
+                                    Checking out as guest / <Link to="/login" className="text-gray-900 hover:underline">Sign in</Link>
                                 </p>
                             )}
                         </div>

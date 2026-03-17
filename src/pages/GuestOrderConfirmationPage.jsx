@@ -13,7 +13,7 @@ const GuestOrderConfirmationPage = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <Loader className="w-8 h-8 animate-spin text-amber-700" />
+                <Loader className="w-8 h-8 animate-spin text-gray-900" />
             </div>
         );
     }
@@ -24,7 +24,7 @@ const GuestOrderConfirmationPage = () => {
                 <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Invalid Guest Link</h2>
                 <p className="text-gray-500 mb-6">This order link is missing its access token.</p>
-                <Link to="/" className="text-amber-700 hover:underline font-medium">Return to Home</Link>
+                <Link to="/" className="text-gray-900 hover:underline font-medium">Return to Home</Link>
             </div>
         );
     }
@@ -35,7 +35,7 @@ const GuestOrderConfirmationPage = () => {
                 <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Order Not Found</h2>
                 <p className="text-gray-500 mb-6">We couldn't find this order. It may have expired or the link is invalid.</p>
-                <Link to="/" className="text-amber-700 hover:underline font-medium">← Return to Home</Link>
+                <Link to="/" className="text-gray-900 hover:underline font-medium">← Return to Home</Link>
             </div>
         );
     }
@@ -69,7 +69,7 @@ const GuestOrderConfirmationPage = () => {
                 {/* Shipping */}
                 <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
                     <div className="flex items-center gap-2 mb-3">
-                        <MapPin className="w-4 h-4 text-amber-700" />
+                        <MapPin className="w-4 h-4 text-gray-900" />
                         <h2 className="font-bold text-gray-900 text-sm uppercase tracking-wide">Shipping To</h2>
                     </div>
                     <p className="font-semibold text-gray-800">{order.shippingAddress.fullName}</p>
@@ -82,7 +82,7 @@ const GuestOrderConfirmationPage = () => {
                 {/* Items */}
                 <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
                     <div className="flex items-center gap-2 mb-3">
-                        <ShoppingBag className="w-4 h-4 text-amber-700" />
+                        <ShoppingBag className="w-4 h-4 text-gray-900" />
                         <h2 className="font-bold text-gray-900 text-sm uppercase tracking-wide">Items ({order.orderItems.length})</h2>
                     </div>
                     <div className="space-y-3">
@@ -130,16 +130,16 @@ const GuestOrderConfirmationPage = () => {
                 </div>
 
                 {/* CTA — non-aggressive account suggestion */}
-                <div className="bg-amber-50 rounded-xl border border-amber-100 p-5 flex items-start gap-3">
-                    <UserPlus className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+                <div className="bg-gray-50 rounded-xl border border-gray-200 p-5 flex items-start gap-3">
+                    <UserPlus className="w-5 h-5 text-gray-900 flex-shrink-0 mt-0.5" />
                     <div>
-                        <p className="font-semibold text-amber-900 text-sm">Want to track your orders?</p>
-                        <p className="text-xs text-amber-700 mt-0.5">Create a free account to view your order history and get faster checkout next time.</p>
+                        <p className="font-semibold text-gray-900 text-sm">Want to track your orders?</p>
+                        <p className="text-xs text-gray-700 mt-0.5">Create a free account to view your order history and get faster checkout next time.</p>
                         <div className="flex gap-4 mt-3">
-                            <Link to="/register" className="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-full transition">
+                            <Link to="/register" className="text-xs font-bold text-white bg-black hover:bg-gray-800 px-3 py-1.5 rounded-full transition">
                                 Create Account
                             </Link>
-                            <Link to="/shop" className="text-xs font-medium text-amber-600 hover:underline self-center">
+                            <Link to="/shop" className="text-xs font-medium text-gray-900 hover:underline self-center">
                                 Continue Shopping →
                             </Link>
                         </div>

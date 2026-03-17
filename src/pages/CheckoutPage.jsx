@@ -96,9 +96,9 @@ const CheckoutPage = () => {
 
                 {/* Guest email section — only shown when not logged in */}
                 {!userInfo && (
-                    <div className="bg-white rounded-xl shadow-sm p-5 mb-6 border border-amber-100">
+                    <div className="bg-white rounded-xl shadow-sm p-5 mb-6 border border-gray-200">
                         <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-amber-700" /> Your Email
+                            <Mail className="w-4 h-4 text-gray-900" /> Your Email
                         </h2>
                         <p className="text-sm text-gray-500 mb-3">
                             We'll use this to send your order confirmation. No account needed.
@@ -108,13 +108,13 @@ const CheckoutPage = () => {
                             value={guestEmail}
                             onChange={e => { setGuestEmail(e.target.value); if (errors.guestEmail) setErrors(p => ({ ...p, guestEmail: '' })); }}
                             placeholder="your@email.com"
-                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.guestEmail ? 'border-red-400' : 'border-gray-300'}`}
+                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.guestEmail ? 'border-red-400' : 'border-gray-300'}`}
                         />
                         {errors.guestEmail && <p className="text-red-500 text-xs mt-1">{errors.guestEmail}</p>}
                         <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
                             <LogIn className="w-3.5 h-3.5" />
                             Already have an account?{' '}
-                            <Link to="/login" className="text-amber-700 font-medium hover:underline">Sign in</Link>{' '}for order tracking &amp; faster checkout.
+                            <Link to="/login" className="text-gray-900 font-medium hover:underline">Sign in</Link>{' '}for order tracking &amp; faster checkout.
                         </p>
                     </div>
                 )}
@@ -127,7 +127,7 @@ const CheckoutPage = () => {
                             {/* Shipping Address */}
                             <div className="bg-white rounded-xl shadow-sm p-6">
                                 <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-amber-700" /> Shipping Address
+                                    <MapPin className="w-5 h-5 text-gray-900" /> Shipping Address
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="sm:col-span-2">
@@ -137,8 +137,8 @@ const CheckoutPage = () => {
                                             name="fullName"
                                             value={shippingAddress.fullName}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.fullName ? 'border-red-400' : 'border-gray-300'}`}
-                                            placeholder="Muhammad Faizan"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.fullName ? 'border-red-400' : 'border-gray-300'}`}
+                                            placeholder="Faizan Butt"
                                         />
                                         {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
                                     </div>
@@ -149,8 +149,8 @@ const CheckoutPage = () => {
                                             name="address"
                                             value={shippingAddress.address}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.address ? 'border-red-400' : 'border-gray-300'}`}
-                                            placeholder="House #1, Street 5, Model Town"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.address ? 'border-red-400' : 'border-gray-300'}`}
+                                            placeholder="House #1, Street 5, Valencia Town"
                                         />
                                         {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
                                     </div>
@@ -161,8 +161,8 @@ const CheckoutPage = () => {
                                             name="city"
                                             value={shippingAddress.city}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.city ? 'border-red-400' : 'border-gray-300'}`}
-                                            placeholder="Lahore"
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.city ? 'border-red-400' : 'border-gray-300'}`}
+                                            placeholder="Sialkot"
                                         />
                                         {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
                                     </div>
@@ -173,7 +173,7 @@ const CheckoutPage = () => {
                                             name="postalCode"
                                             value={shippingAddress.postalCode}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.postalCode ? 'border-red-400' : 'border-gray-300'}`}
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.postalCode ? 'border-red-400' : 'border-gray-300'}`}
                                             placeholder="54000"
                                         />
                                         {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
@@ -185,7 +185,7 @@ const CheckoutPage = () => {
                                             name="country"
                                             value={shippingAddress.country}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.country ? 'border-red-400' : 'border-gray-300'}`}
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.country ? 'border-red-400' : 'border-gray-300'}`}
                                         />
                                         {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
                                     </div>
@@ -196,7 +196,7 @@ const CheckoutPage = () => {
                                             name="phone"
                                             value={shippingAddress.phone}
                                             onChange={handleChange}
-                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 ${errors.phone ? 'border-red-400' : 'border-gray-300'}`}
+                                            className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black ${errors.phone ? 'border-red-400' : 'border-gray-300'}`}
                                             placeholder="0300-1234567"
                                         />
                                         {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -207,13 +207,13 @@ const CheckoutPage = () => {
                             {/* Payment Method */}
                             <div className="bg-white rounded-xl shadow-sm p-6">
                                 <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <CreditCard className="w-5 h-5 text-amber-700" /> Payment Method
+                                    <CreditCard className="w-5 h-5 text-gray-900" /> Payment Method
                                 </h2>
                                 <div className="space-y-3">
                                     {PAYMENT_METHODS.map((method) => (
                                         <label
                                             key={method.id}
-                                            className={`flex items-center gap-3 border-2 rounded-lg px-4 py-3 cursor-pointer transition ${paymentMethod === method.id ? 'border-amber-600 bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                            className={`flex items-center gap-3 border-2 rounded-lg px-4 py-3 cursor-pointer transition ${paymentMethod === method.id ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
                                         >
                                             <input
                                                 type="radio"
@@ -221,7 +221,7 @@ const CheckoutPage = () => {
                                                 value={method.id}
                                                 checked={paymentMethod === method.id}
                                                 onChange={(e) => setPaymentMethod(e.target.value)}
-                                                className="accent-amber-700"
+                                                className="accent-black"
                                             />
                                             <span className="text-xl">{method.icon}</span>
                                             <span className="font-medium text-gray-800">{method.label}</span>
@@ -235,7 +235,7 @@ const CheckoutPage = () => {
                         <div className="lg:col-span-1">
                             <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
                                 <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Truck className="w-5 h-5 text-amber-700" /> Order Summary
+                                    <Truck className="w-5 h-5 text-gray-900" /> Order Summary
                                 </h2>
                                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                                     {cartItems.map((item, i) => (
@@ -255,7 +255,7 @@ const CheckoutPage = () => {
                                             value={couponCode}
                                             onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); setAppliedCoupon(null); }}
                                             placeholder="Enter code"
-                                            className="flex-grow border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase"
+                                            className="flex-grow border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black uppercase"
                                         />
                                         <button
                                             type="button"
