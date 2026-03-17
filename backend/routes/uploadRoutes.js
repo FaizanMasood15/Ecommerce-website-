@@ -1,17 +1,25 @@
 import path from 'path';
 import express from 'express';
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename(req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-    }
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: (req, file) => ({
+        folder: 'funiro-products',
+        public_id: `${file.fieldname}-${Date.now()}`,
+        format: path.extname(file.originalname).replace('.', '') || 'jpg',
+    }),
 });
 
 function checkFileType(file, cb) {
@@ -47,7 +55,7 @@ router.post('/', protect, admin, (req, res) => {
             }
             res.status(200).send({
                 message: 'Image uploaded',
-                image: `/${req.file.path.replace(/\\/g, '/')}`, // Normalize path for frontend
+                image: req.file.path, // Cloudinary returns a full URL
             });
         } catch (error) {
             res.status(400).send({ message: error.message });
