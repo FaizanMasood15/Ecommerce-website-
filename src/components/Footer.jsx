@@ -111,7 +111,7 @@ const Footer = () => {
 
         <div className="mt-10 pt-6 border-t border-stone-200">
           <p className="text-xs tracking-[0.16em] uppercase text-gray-600">
-            © 2024 Funiro15 · Designed & Developed by Faizan Butt · BSc Software Engineering, UOL
+            © 2026 Funiro15 · Designed & Developed by Faizan Butt · BSc Software Engineering, UOL
           </p>
         </div>
       </div>
