@@ -16,15 +16,18 @@ import categoryRoutes from './routes/categoryRoutes.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB with better logging
+connectDB();  // ← Keep this, but improve inside db.js (see below)
 
 const app = express();
 
 // Middleware
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json()); // Allows parsing POST requests with JSON body
-app.use(cookieParser()); // Allows parsing of cookies (like JWT)
+app.use(cors({
+  origin: true,           // Or set to your Vercel frontend URL in production: 'https://your-vercel-app.vercel.app'
+  credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -36,13 +39,13 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/categories', categoryRoutes);
 
-// Make the uploads folder accessible statically for the browser to load
+// Serve uploaded images statically
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Basic route to test the server
+// Test route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
