@@ -22,9 +22,13 @@ connectDB();  // ← Keep this, but improve inside db.js (see below)
 const app = express();
 
 // Middleware
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : true;
+
 app.use(cors({
-  origin: true,           // Or set to your Vercel frontend URL in production: 'https://your-vercel-app.vercel.app'
-  credentials: true
+  origin: allowedOrigins,
+  credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
