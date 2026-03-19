@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -47,17 +47,21 @@ function App() {
 
   const Layout = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const goToShop = () => navigate('/shop');
     const goToHome = () => navigate('/');
     const goToProduct = (id) => navigate(`/shop/${id}`);
+    const isAdminRoute = location.pathname.startsWith('/admin');
 
     return (
       <div className="flex flex-col min-h-screen">
-        <Header
-          goToHome={goToHome}
-          goToShop={goToShop}
-          toggleCart={toggleCart}
-        />
+        {!isAdminRoute && (
+          <Header
+            goToHome={goToHome}
+            goToShop={goToShop}
+            toggleCart={toggleCart}
+          />
+        )}
 
         <main className="flex-grow">
           <Routes>
@@ -105,8 +109,8 @@ function App() {
           </Routes>
         </main>
 
-        <Footer />
-        <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />}
       </div>
     );
   };

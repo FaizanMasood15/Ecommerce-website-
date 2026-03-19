@@ -240,7 +240,19 @@ const ShopPage = ({ goToProduct }) => {
       {/* 3. Product Grid */}
       <div className="py-16 bg-[#efefef]">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-4 snap-x snap-mandatory">
+              {shopProducts.map((product) => (
+                <div key={product._id} className="snap-start shrink-0 w-[78vw] max-w-[330px]">
+                  <ProductCard
+                    product={product}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
             {shopProducts.map(product => (
               <ProductCard
                 key={product._id}
@@ -250,7 +262,27 @@ const ShopPage = ({ goToProduct }) => {
           </div>
 
           {/* 4. Pagination (Functional) */}
-          <div className="flex justify-center space-x-4 mt-10">
+          <div className="sm:hidden mt-6 flex items-center justify-center gap-3">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 border border-gray-300 bg-white text-gray-800 text-xs uppercase tracking-[0.08em] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Prev
+            </button>
+            <span className="text-xs text-gray-600 tracking-[0.08em] uppercase">
+              Page {currentPage} / {Math.max(currentTotalPages, 1)}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage >= currentTotalPages}
+              className="px-4 py-2 border border-gray-300 bg-white text-gray-800 text-xs uppercase tracking-[0.08em] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+
+          <div className="hidden sm:flex justify-center space-x-4 mt-10">
             {[...Array(currentTotalPages)].map((_, index) => {
               const pageNumber = index + 1;
               return (

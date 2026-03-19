@@ -61,18 +61,32 @@ const Header = ({ toggleCart }) => {
   const { data: allProducts = [] } = useGetProductsQuery();
 
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [ipadCategoriesOpen, setIpadCategoriesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileExpandedCat, setMobileExpandedCat] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownTimerRef = useRef(null);
+  const ipadCategoriesRef = useRef(null);
   const searchOverlayRef = useRef(null);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    setIpadCategoriesOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (ipadCategoriesRef.current && !ipadCategoriesRef.current.contains(event.target)) {
+        setIpadCategoriesOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -136,8 +150,6 @@ const Header = ({ toggleCart }) => {
     dropdownTimerRef.current = setTimeout(() => setActiveDropdown(null), 180);
   };
 
-  const spacedLabel = (label = '') => label.split('').join(' ');
-
   return (
     <header className="sticky top-0 z-40 w-full">
       <div className="bg-black text-white">
@@ -149,29 +161,83 @@ const Header = ({ toggleCart }) => {
       </div>
       {/* ── Top bar ── */}
       <div className="bg-white border-b border-stone-200">
-        <div className="container mx-auto max-w-7xl px-4 lg:px-8 h-20 flex items-center gap-8">
+        <div className="container mx-auto max-w-7xl px-4 lg:px-8 h-16 lg:h-20 flex items-center gap-4 lg:gap-8">
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="font-display text-[25px] leading-none font-medium tracking-[0.1em] text-[#0b1f47]">Funiro15</span>
+            <span className="font-display text-[20px] md:text-[22px] lg:text-[25px] leading-none font-medium tracking-[0.08em] lg:tracking-[0.1em] text-[#0b1f47]">Funiro15</span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 flex-grow ml-8 lg:ml-12">
+          {/* iPad nav (compact) */}
+          <nav className="hidden md:flex lg:hidden items-center gap-4 flex-grow ml-4">
             <Link
               to="/"
-              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
+              className="py-5 text-[12px] tracking-[0.08em] uppercase font-medium text-stone-900 hover:text-black transition"
               aria-label="Home"
             >
-              <span className="leading-none">{spacedLabel('Home')}</span>
+              Home
+            </Link>
+            <Link
+              to="/shop"
+              className="py-5 text-[12px] tracking-[0.08em] uppercase font-medium text-stone-900 hover:text-black transition"
+              aria-label="Shop"
+            >
+              Shop
+            </Link>
+
+            <div ref={ipadCategoriesRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setIpadCategoriesOpen((prev) => !prev)}
+                className="py-5 text-[12px] tracking-[0.08em] uppercase font-medium text-stone-900 hover:text-black transition flex items-center gap-1"
+              >
+                Categories
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${ipadCategoriesOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {ipadCategoriesOpen && (
+                <div className="absolute top-full left-0 z-50 mt-1 w-[240px] bg-white border border-stone-200 shadow-xl">
+                  <Link
+                    to="/shop"
+                    onClick={() => setIpadCategoriesOpen(false)}
+                    className="flex items-center justify-between px-4 py-3 text-[12px] tracking-[0.08em] uppercase font-semibold text-black border-b border-stone-100 hover:bg-stone-50"
+                  >
+                    Shop All
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <div className="max-h-[320px] overflow-y-auto">
+                    {navCategories.map((cat) => (
+                      <Link
+                        key={cat._id}
+                        to={`/shop?category=${cat.slug}`}
+                        onClick={() => setIpadCategoriesOpen(false)}
+                        className="block px-4 py-3 text-[12px] tracking-[0.08em] uppercase text-stone-800 hover:text-black hover:bg-stone-50 border-b border-stone-50 last:border-b-0"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-3 lg:gap-8 flex-grow ml-4 lg:ml-12">
+            <Link
+              to="/"
+              className="py-5 lg:py-6 text-[12px] lg:text-[16px] tracking-[0.08em] lg:tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
+              aria-label="Home"
+            >
+              <span className="leading-none">Home</span>
               <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
             <Link
               to="/shop"
-              className="py-6 text-[15px] lg:text-[16px] tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
+              className="py-5 lg:py-6 text-[12px] lg:text-[16px] tracking-[0.08em] lg:tracking-wider uppercase font-medium text-stone-900 hover:text-black transition relative group"
               aria-label="Shop"
             >
-              <span className="leading-none">{spacedLabel('Shop')}</span>
+              <span className="leading-none">Shop</span>
               <span className="absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left scale-x-0 group-hover:scale-x-100"></span>
             </Link>
 
@@ -185,13 +251,13 @@ const Header = ({ toggleCart }) => {
               >
                 <Link
                   to={`/shop?category=${cat.slug}`}
-                  className={`flex items-center py-6 text-[15px] lg:text-[16px] font-medium tracking-wider uppercase transition relative ${activeDropdown === cat.slug
+                  className={`flex items-center py-5 lg:py-6 text-[12px] lg:text-[16px] font-medium tracking-[0.08em] lg:tracking-wider uppercase transition relative ${activeDropdown === cat.slug
                     ? 'text-black'
                     : 'text-stone-900 hover:text-black'
                     }`}
                   aria-label={cat.name}
                 >
-                  <span className="leading-none">{spacedLabel(cat.name)}</span>
+                  <span className="leading-none">{cat.name}</span>
                   <span className={`absolute bottom-[18px] left-0 w-full h-[2px] bg-black transition-transform duration-300 origin-left ${activeDropdown === cat.slug ? 'scale-x-100' : 'scale-x-0'}`}></span>
                 </Link>
 
@@ -206,24 +272,24 @@ const Header = ({ toggleCart }) => {
           </nav>
 
           {/* Right icons */}
-          <div className="flex items-center gap-4 shrink-0 ml-auto md:ml-0">
+          <div className="flex items-center gap-2.5 md:gap-3 lg:gap-4 shrink-0 ml-auto md:ml-0">
             <button
               onClick={() => setSearchOpen(true)}
               title="Search"
               className="text-stone-400 hover:text-gray-900 transition"
             >
-              <Search className="w-[22px] h-[22px]" />
+              <Search className="w-5 h-5 lg:w-[22px] lg:h-[22px]" />
             </button>
 
             {userInfo?.isAdmin && (
               <div className="hidden md:flex items-center">
                 <Link
                   to="/admin/dashboard"
-                  className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wider text-stone-700 hover:text-black transition"
+                  className="flex items-center gap-1 text-[11px] lg:text-sm font-semibold uppercase tracking-[0.06em] lg:tracking-wider text-stone-700 hover:text-black transition"
                   title="Admin Dashboard"
                 >
-                  <LayoutDashboard className="w-5 h-5" />
-                  Admin
+                  <LayoutDashboard className="w-4 h-4 lg:w-5 lg:h-5" />
+                  <span className="hidden lg:inline">Admin</span>
                 </Link>
               </div>
             )}
@@ -233,29 +299,29 @@ const Header = ({ toggleCart }) => {
               <div className="hidden md:flex items-center gap-3">
                 {userInfo?.isAdmin && <span className="w-px h-4 bg-stone-200" />}
                 <Link to="/wishlist" title="Wishlist" className="text-stone-400 hover:text-red-500 transition">
-                  <Heart className="w-[21px] h-[21px]" />
+                  <Heart className="w-[18px] h-[18px] lg:w-[21px] lg:h-[21px]" />
                 </Link>
                 <Link to="/profile/orders" title="My Orders" className="text-stone-400 hover:text-gray-900 transition">
-                  <ShoppingBag className="w-[21px] h-[21px]" />
+                  <ShoppingBag className="w-[18px] h-[18px] lg:w-[21px] lg:h-[21px]" />
                 </Link>
                 <Link to="/profile" title="My Profile" className="text-stone-400 hover:text-gray-900 transition">
-                  <User className="w-[21px] h-[21px]" />
+                  <User className="w-[18px] h-[18px] lg:w-[21px] lg:h-[21px]" />
                 </Link>
                 <button onClick={logoutHandler} title="Logout" className="cursor-pointer text-stone-400 hover:text-red-500 transition">
-                  <LogOut className="w-[21px] h-[21px]" />
+                  <LogOut className="w-[18px] h-[18px] lg:w-[21px] lg:h-[21px]" />
                 </button>
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-3">
                 <Link to="/login" className="text-stone-400 hover:text-gray-900 transition" title="Login">
-                  <User className="w-[21px] h-[21px]" />
+                  <User className="w-[18px] h-[18px] lg:w-[21px] lg:h-[21px]" />
                 </Link>
               </div>
             )}
 
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={toggleCart}>
-              <ShoppingBag className="w-[22px] h-[22px] text-gray-700 hover:text-black transition" />
+              <ShoppingBag className="w-5 h-5 lg:w-[22px] lg:h-[22px] text-gray-700 hover:text-black transition" />
               {totalItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center leading-none">
                   {totalItemCount > 9 ? '9+' : totalItemCount}

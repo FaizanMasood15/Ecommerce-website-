@@ -12,7 +12,7 @@ import { Plus, Trash2, Edit2, X, Layers, Eye, EyeOff, GripVertical, FolderOpen, 
 // Shared SweetAlert2 mixin (same style as AdminProductListPage)
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-amber-700 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-black hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -91,7 +91,7 @@ const AdminCategoryManager = () => {
     const handleDelete = async (cat) => {
         const children = getChildren(cat._id);
         const childText = children.length > 0
-            ? `<br/><span class="text-xs text-amber-600 font-medium">⚠ ${children.length} subcategory(ies) will be promoted to top level.</span>`
+            ? `<br/><span class="text-xs text-gray-700 font-medium">Warning: ${children.length} subcategory(ies) will be promoted to top level.</span>`
             : '';
 
         const result = await CustomSwal.fire({
@@ -131,20 +131,19 @@ const AdminCategoryManager = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-5xl px-4">
+        <div className="max-w-5xl">
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                            <Layers className="w-6 h-6 text-amber-700" /> Navigation Categories
+                            <Layers className="w-6 h-6 text-gray-900" /> Navigation Categories
                         </h1>
                         <p className="text-sm text-gray-500 mt-0.5">Categories and subcategories shown in the site header</p>
                     </div>
                     <button
                         onClick={() => { resetForm(); setShowForm(true); }}
-                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-700 transition text-sm shadow-sm"
+                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition text-sm shadow-sm"
                     >
                         <Plus className="w-4 h-4" /> Add Category
                     </button>
@@ -152,7 +151,7 @@ const AdminCategoryManager = () => {
 
                 {/* Form */}
                 {showForm && (
-                    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-amber-100">
+                    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
                         <div className="flex items-center justify-between mb-5">
                             <h2 className="font-bold text-gray-900 text-lg">{editId ? 'Edit Category' : 'New Category'}</h2>
                             <button onClick={resetForm} className="text-gray-400 hover:text-gray-700 transition">
@@ -162,11 +161,11 @@ const AdminCategoryManager = () => {
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Name *</label>
-                                <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Living Room" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" required />
+                                <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Living Room" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" required />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Parent Category</label>
-                                <select value={form.parent} onChange={e => setForm(f => ({ ...f, parent: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <select value={form.parent} onChange={e => setForm(f => ({ ...f, parent: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
                                     <option value="">None (Top-level)</option>
                                     {categories.filter(c => !c.parent && c._id !== editId).map(c => (
                                         <option key={c._id} value={c._id}>{c.name}</option>
@@ -175,28 +174,28 @@ const AdminCategoryManager = () => {
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Display Order</label>
-                                <input type="number" value={form.order} onChange={e => setForm(f => ({ ...f, order: Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={0} />
+                                <input type="number" value={form.order} onChange={e => setForm(f => ({ ...f, order: Number(e.target.value) }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" min={0} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Image URL <span className="text-gray-400 font-normal">(optional, for mega-menu)</span></label>
-                                <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} placeholder="https://..." className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} placeholder="https://..." className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
                             </div>
                             <div className="sm:col-span-2">
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Description <span className="text-gray-400 font-normal">(shown in dropdown)</span></label>
-                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Short description" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Short description" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
                             </div>
                             <div className="flex items-center gap-6">
                                 <label className="flex items-center gap-2 cursor-pointer text-sm">
-                                    <input type="checkbox" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-amber-600" />
+                                    <input type="checkbox" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-gray-900" />
                                     <span className="font-medium text-gray-700">Active</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer text-sm">
-                                    <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.target.checked }))} className="w-4 h-4 accent-amber-600" />
+                                    <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.target.checked }))} className="w-4 h-4 accent-gray-900" />
                                     <span className="font-medium text-gray-700">Show in Nav</span>
                                 </label>
                             </div>
                             <div className="sm:col-span-2 flex gap-3">
-                                <button type="submit" disabled={isCreating} className="bg-amber-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-700 transition text-sm disabled:opacity-50">
+                                <button type="submit" disabled={isCreating} className="bg-black text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-800 transition text-sm disabled:opacity-50">
                                     {isCreating ? 'Saving...' : (editId ? 'Save Changes' : 'Create Category')}
                                 </button>
                                 <button type="button" onClick={resetForm} className="border border-gray-300 text-gray-600 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50 transition text-sm">Cancel</button>
@@ -226,19 +225,19 @@ const AdminCategoryManager = () => {
                                         <p className="font-semibold text-gray-800 text-sm">{cat.name}</p>
                                         {cat.description && <p className="text-xs text-gray-400 truncate">{cat.description}</p>}
                                         {children.length > 0 && (
-                                            <p className="text-xs text-amber-600 mt-0.5">{children.length} subcategor{children.length > 1 ? 'ies' : 'y'}</p>
+                                            <p className="text-xs text-gray-700 mt-0.5">{children.length} subcategor{children.length > 1 ? 'ies' : 'y'}</p>
                                         )}
                                     </div>
                                     <span className="text-xs text-gray-300 hidden sm:block w-8 text-right">#{cat.order}</span>
-                                    <button onClick={() => handleToggleNav(cat)} title={cat.showInNav ? 'Visible in nav — click to hide' : 'Hidden from nav — click to show'} className={`p-1.5 rounded-full transition ${cat.showInNav ? 'text-green-500 hover:bg-green-50' : 'text-gray-300 hover:bg-gray-100'}`}>
+                                    <button onClick={() => handleToggleNav(cat)} title={cat.showInNav ? 'Visible in nav - click to hide' : 'Hidden from nav - click to show'} className={`p-1.5 rounded-full transition ${cat.showInNav ? 'text-green-500 hover:bg-green-50' : 'text-gray-300 hover:bg-gray-100'}`}>
                                         {cat.showInNav ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                     </button>
-                                    <button onClick={() => handleEdit(cat)} className="p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
+                                    <button onClick={() => handleEdit(cat)} className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
                                     <button onClick={() => handleDelete(cat)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition"><Trash2 className="w-4 h-4" /></button>
                                 </div>
                                 {/* Child rows */}
                                 {children.map(child => (
-                                    <div key={child._id} className={`flex items-center gap-3 px-5 py-2.5 bg-stone-50/60 border-t border-gray-50 hover:bg-amber-50/30 transition ${!child.isActive ? 'opacity-45' : ''}`}>
+                                    <div key={child._id} className={`flex items-center gap-3 px-5 py-2.5 bg-stone-50/60 border-t border-gray-50 hover:bg-gray-100 transition ${!child.isActive ? 'opacity-45' : ''}`}>
                                         <div className="w-4 flex-shrink-0" />
                                         <ChevronRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
                                         <div className="flex-grow min-w-0">
@@ -249,7 +248,7 @@ const AdminCategoryManager = () => {
                                         <button onClick={() => handleToggleNav(child)} className={`p-1.5 rounded-full transition ${child.showInNav ? 'text-green-500 hover:bg-green-50' : 'text-gray-300 hover:bg-gray-100'}`}>
                                             {child.showInNav ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                         </button>
-                                        <button onClick={() => handleEdit(child)} className="p-1.5 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
+                                        <button onClick={() => handleEdit(child)} className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
                                         <button onClick={() => handleDelete(child)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition"><Trash2 className="w-4 h-4" /></button>
                                     </div>
                                 ))}
@@ -263,10 +262,10 @@ const AdminCategoryManager = () => {
                     <span className="flex items-center gap-1"><EyeOff className="w-3.5 h-3.5" /> Hidden from nav</span>
                     <span>Order # = left-to-right position</span>
                 </div>
-            </div>
         </div>
     );
 };
 
 export default AdminCategoryManager;
+
 
