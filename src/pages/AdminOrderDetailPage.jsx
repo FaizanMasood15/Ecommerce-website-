@@ -8,7 +8,8 @@ import {
     useMarkOrderAsPaidMutation,
     useMarkOrderAsDeliveredMutation,
 } from '../slices/ordersApiSlice';
-import { Loader, AlertCircle, Package } from 'lucide-react';
+import { Loader, AlertCircle } from 'lucide-react';
+import AdminStatusBadge from '../components/AdminStatusBadge';
 
 const Toast = Swal.mixin({
     toast: true,
@@ -21,7 +22,7 @@ const Toast = Swal.mixin({
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-amber-700 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
+        confirmButton: 'bg-black hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -30,24 +31,6 @@ const CustomSwal = Swal.mixin({
 });
 
 const STATUS_OPTIONS = ['Pending', 'Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Refunded'];
-
-const StatusBadge = ({ status }) => {
-    const colors = {
-        Pending: 'bg-yellow-100 text-yellow-800',
-        Processing: 'bg-blue-100 text-blue-800',
-        Packed: 'bg-purple-100 text-purple-800',
-        Shipped: 'bg-indigo-100 text-indigo-800',
-        'Out for Delivery': 'bg-orange-100 text-orange-800',
-        Delivered: 'bg-green-100 text-green-800',
-        Cancelled: 'bg-red-100 text-red-800',
-        Refunded: 'bg-gray-100 text-gray-700',
-    };
-    return (
-        <span className={`text-sm font-bold px-3 py-1.5 rounded-full ${colors[status] || 'bg-gray-100'}`}>
-            {status}
-        </span>
-    );
-};
 
 const AdminOrderDetailPage = () => {
     const { id } = useParams();
@@ -92,22 +75,21 @@ const AdminOrderDetailPage = () => {
         }
     };
 
-    if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader className="w-8 h-8 animate-spin text-amber-700" /></div>;
+    if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader className="w-8 h-8 animate-spin text-gray-900" /></div>;
     if (error) return <div className="text-center py-16"><AlertCircle className="mx-auto w-10 h-10 text-red-400 mb-3" /><p>{error?.data?.message || 'Order not found'}</p></div>;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-5xl px-4">
+        <div className="max-w-5xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <Link to="/admin/orders" className="text-amber-700 text-sm hover:underline">← All Orders</Link>
+                        <Link to="/admin/orders" className="text-gray-900 text-sm hover:underline">Back to All Orders</Link>
                         <h1 className="text-2xl font-bold text-gray-900 mt-1">
                             Order #{order?._id?.slice(-8).toUpperCase()}
                         </h1>
                         <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleString()}</p>
                     </div>
-                    <StatusBadge status={order.status} />
+                    <AdminStatusBadge status={order.status} className="text-sm px-3 py-1.5" />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -133,7 +115,7 @@ const AdminOrderDetailPage = () => {
                                 <p className="font-semibold text-gray-900">{order.shippingAddress.fullName}</p>
                                 <p className="text-sm text-gray-500">{order.shippingAddress.address}</p>
                                 <p className="text-sm text-gray-500">{order.shippingAddress.city}, {order.shippingAddress.country}</p>
-                                {order.shippingAddress.phone && <p className="text-sm text-gray-500">📞 {order.shippingAddress.phone}</p>}
+                                {order.shippingAddress.phone && <p className="text-sm text-gray-500">Phone: {order.shippingAddress.phone}</p>}
                             </div>
                         </div>
 
@@ -148,11 +130,11 @@ const AdminOrderDetailPage = () => {
                                             <p className="font-medium text-gray-900 text-sm">{item.name}</p>
                                             <p className="text-xs text-gray-500">
                                                 {item.selectedSize && `Size: ${item.selectedSize}`}
-                                                {item.selectedSize && item.selectedColor && ' · '}
+                                                {item.selectedSize && item.selectedColor && ' - '}
                                                 {item.selectedColor && `Color: ${item.selectedColor}`}
                                             </p>
                                         </div>
-                                        <p className="text-sm text-gray-600">{item.qty} × ${item.price?.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-600">{item.qty} x ${item.price?.toLocaleString()}</p>
                                         <p className="font-bold text-gray-900 text-sm w-24 text-right">${(item.qty * item.price)?.toLocaleString()}</p>
                                     </div>
                                 ))}
@@ -166,10 +148,10 @@ const AdminOrderDetailPage = () => {
                                 <div className="space-y-2">
                                     {[...order.statusHistory].reverse().map((entry, i) => (
                                         <div key={i} className="flex gap-3 items-start text-sm">
-                                            <div className="w-2 h-2 rounded-full bg-amber-600 mt-1.5 flex-shrink-0" />
+                                            <div className="w-2 h-2 rounded-full bg-gray-700 mt-1.5 flex-shrink-0" />
                                             <div>
                                                 <span className="font-semibold text-gray-800">{entry.status}</span>
-                                                {entry.note && <span className="text-gray-500"> — {entry.note}</span>}
+                                                {entry.note && <span className="text-gray-500"> - {entry.note}</span>}
                                                 <p className="text-xs text-gray-400">{new Date(entry.changedAt).toLocaleString()}</p>
                                             </div>
                                         </div>
@@ -192,7 +174,7 @@ const AdminOrderDetailPage = () => {
                                 <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>${order.totalPrice?.toLocaleString()}</span></div>
                             </div>
                             <div className={`mt-3 text-sm font-semibold ${order.isPaid ? 'text-green-600' : 'text-yellow-600'}`}>
-                                {order.isPaid ? `✓ Paid on ${new Date(order.paidAt).toLocaleDateString()}` : '⚠ Not paid yet'}
+                                {order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleDateString()}` : 'Not paid yet'}
                             </div>
 
                             {!order.isPaid && (
@@ -221,7 +203,7 @@ const AdminOrderDetailPage = () => {
                             <select
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 mb-2"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-2"
                             >
                                 <option value="">-- Select new status --</option>
                                 {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -231,23 +213,23 @@ const AdminOrderDetailPage = () => {
                                 value={statusNote}
                                 onChange={(e) => setStatusNote(e.target.value)}
                                 placeholder="Optional note (e.g. tracking number)"
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 mb-3"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-3"
                             />
                             <button
                                 onClick={handleStatusUpdate}
                                 disabled={isStatusLoading || !selectedStatus}
-                                className="w-full bg-amber-700 hover:bg-gray-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
+                                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
                             >
                                 {isStatusLoading ? 'Updating...' : 'Update Status'}
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
 
 export default AdminOrderDetailPage;
+
 
 

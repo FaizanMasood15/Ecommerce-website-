@@ -6,6 +6,7 @@ import {
     ShoppingBag, DollarSign, Clock, TrendingUp,
     Loader, AlertCircle, Eye, Tag, Ticket, Box
 } from 'lucide-react';
+import AdminStatusBadge from '../components/AdminStatusBadge';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -133,7 +134,7 @@ const BarChart = ({ data, period }) => {
                                 </div>
 
                                 {!empty && (
-                                    <span className="absolute text-xs font-bold text-amber-700" style={{ bottom: `calc(${pct}% + 6px)` }}>
+                                    <span className="absolute text-xs font-bold text-blue-700" style={{ bottom: `calc(${pct}% + 6px)` }}>
                                         {fmtRevenue(item.revenue)}
                                     </span>
                                 )}
@@ -141,7 +142,7 @@ const BarChart = ({ data, period }) => {
                                 <div
                                     className={`w-full rounded-t-md cursor-pointer transition-all duration-700 ${empty
                                         ? 'bg-gray-100'
-                                        : 'bg-gradient-to-t from-amber-600 to-amber-400 hover:from-amber-700 hover:to-amber-500'
+                                        : 'bg-gradient-to-t from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600'
                                         }`}
                                     style={{ height: `${empty ? 1.5 : Math.max(pct, 2)}%` }}
                                 />
@@ -154,7 +155,7 @@ const BarChart = ({ data, period }) => {
                     {chartData.map((item, i) => (
                         <div key={i} className="flex-1 text-center overflow-hidden">
                             {period === 'daily' ? (
-                                <span className={`text-[10px] leading-none ${isRevenueDay(i) ? 'font-semibold text-amber-600' : 'text-gray-400'}`}>
+                                <span className={`text-[10px] leading-none ${isRevenueDay(i) ? 'font-semibold text-blue-700' : 'text-gray-400'}`}>
                                     {item._id.day}
                                 </span>
                             ) : showAnchor(i) ? (
@@ -170,25 +171,6 @@ const BarChart = ({ data, period }) => {
     );
 };
 
-const STATUS_BASE = 'inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide border shadow-sm';
-const StatusBadge = ({ status }) => {
-    const colors = {
-        Pending: 'bg-amber-200 text-amber-950 border-amber-300',
-        Processing: 'bg-sky-200 text-sky-950 border-sky-300',
-        Packed: 'bg-violet-200 text-violet-950 border-violet-300',
-        Shipped: 'bg-indigo-200 text-indigo-950 border-indigo-300',
-        'Out for Delivery': 'bg-orange-200 text-orange-950 border-orange-300',
-        Delivered: 'bg-emerald-200 text-emerald-950 border-emerald-300',
-        Cancelled: 'bg-rose-200 text-rose-950 border-rose-300',
-        Refunded: 'bg-slate-200 text-slate-900 border-slate-300',
-    };
-    return (
-        <span className={`${STATUS_BASE} ${colors[status] || 'bg-slate-200 text-slate-900 border-slate-300'}`}>
-            {status}
-        </span>
-    );
-};
-
 const AdminDashboardPage = () => {
     const [period, setPeriod] = useState('monthly');
     const { data: analytics, isLoading, error, isFetching } = useGetAnalyticsQuery(period);
@@ -196,14 +178,14 @@ const AdminDashboardPage = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <Loader className="w-8 h-8 animate-spin text-amber-700" />
+                <Loader className="w-8 h-8 animate-spin text-gray-900" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="container mx-auto max-w-5xl px-4 py-16 text-center">
+            <div className="max-w-5xl px-4 py-16 text-center">
                 <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
                 <p className="text-gray-600">{error?.data?.message || 'Failed to load analytics.'}</p>
             </div>
@@ -213,30 +195,13 @@ const AdminDashboardPage = () => {
     const currentPeriodMeta = PERIODS.find((p) => p.key === period);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-7xl px-4">
+        <div className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                         <p className="text-sm text-gray-500">Welcome back! Here's your store overview.</p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <Link to="/admin/products" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
-                            <Box className="w-3.5 h-3.5" /> Products
-                        </Link>
-                        <span className="text-gray-300">|</span>
-                        <Link to="/admin/orders" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
-                            <ShoppingBag className="w-3.5 h-3.5" /> Orders
-                        </Link>
-                        <span className="text-gray-300">|</span>
-                        <Link to="/admin/categories" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
-                            <Tag className="w-3.5 h-3.5" /> Categories
-                        </Link>
-                        <span className="text-gray-300">|</span>
-                        <Link to="/admin/coupons" className="flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-900 font-medium hover:underline transition">
-                            <Ticket className="w-3.5 h-3.5" /> Coupons
-                        </Link>
-                    </div>
+                     
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -245,28 +210,28 @@ const AdminDashboardPage = () => {
                         value={`$${analytics.totalRevenue?.toLocaleString()}`}
                         subtitle="From delivered orders"
                         icon={DollarSign}
-                        bg="linear-gradient(135deg, #4ade80, #22c55e)"
+                        bg="linear-gradient(135deg, #0f766e, #14b8a6)"
                     />
                     <StatCard
                         title="Total Orders"
                         value={analytics.totalOrders}
                         subtitle={`${analytics.deliveredOrders} delivered`}
                         icon={ShoppingBag}
-                        bg="linear-gradient(135deg, #60a5fa, #3b82f6)"
+                        bg="linear-gradient(135deg, #2563eb, #1d4ed8)"
                     />
                     <StatCard
                         title="Pending Orders"
                         value={analytics.pendingOrders}
                         subtitle="Awaiting processing"
                         icon={Clock}
-                        bg="linear-gradient(135deg, #fcd34d, #fbbf24)"
+                        bg="linear-gradient(135deg, #d97706, #f59e0b)"
                     />
                     <StatCard
                         title="Processing"
                         value={analytics.processingOrders}
                         subtitle="In progress"
                         icon={TrendingUp}
-                        bg="linear-gradient(135deg, #fb923c, #f97316)"
+                        bg="linear-gradient(135deg, #7c3aed, #9333ea)"
                     />
                 </div>
 
@@ -276,7 +241,7 @@ const AdminDashboardPage = () => {
                             <div>
                                 <h2 className="font-bold text-gray-900 text-lg">Revenue Overview</h2>
                                 <p className="text-xs text-gray-400 mt-0.5">
-                                    {currentPeriodMeta?.sub} · From delivered orders
+                                    {currentPeriodMeta?.sub} - From delivered orders
                                 </p>
                             </div>
 
@@ -286,7 +251,7 @@ const AdminDashboardPage = () => {
                                         key={key}
                                         onClick={() => setPeriod(key)}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${period === key
-                                            ? 'bg-white text-amber-700 shadow-sm'
+                                            ? 'bg-white text-gray-900 shadow-sm'
                                             : 'text-gray-500 hover:text-gray-800'
                                             }`}
                                     >
@@ -299,7 +264,7 @@ const AdminDashboardPage = () => {
                         <div className={`transition-opacity duration-300 ${isFetching ? 'opacity-40' : 'opacity-100'}`}>
                             {isFetching && !analytics ? (
                                 <div className="flex items-center justify-center h-48">
-                                    <Loader className="w-6 h-6 animate-spin text-amber-600" />
+                                    <Loader className="w-6 h-6 animate-spin text-gray-900" />
                                 </div>
                             ) : (
                                 <BarChart data={analytics?.chartData} period={period} />
@@ -313,8 +278,8 @@ const AdminDashboardPage = () => {
                             {[
                                 { label: 'Delivered', value: analytics.deliveredOrders, color: 'bg-green-500' },
                                 { label: 'Processing', value: analytics.processingOrders, color: 'bg-blue-500' },
-                                { label: 'Pending', value: analytics.pendingOrders, color: 'bg-yellow-400' },
-                                { label: 'Cancelled', value: analytics.cancelledOrders, color: 'bg-red-400' },
+                                { label: 'Pending', value: analytics.pendingOrders, color: 'bg-amber-500' },
+                                { label: 'Cancelled', value: analytics.cancelledOrders, color: 'bg-rose-500' },
                             ].map((item) => (
                                 <div key={item.label}>
                                     <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -336,7 +301,7 @@ const AdminDashboardPage = () => {
                 <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="font-bold text-gray-900">Recent Orders</h2>
-                        <Link to="/admin/orders" className="text-sm text-amber-700 hover:underline">View All ?</Link>
+                        <Link to="/admin/orders" className="text-sm text-gray-900 hover:underline">View all</Link>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
@@ -355,9 +320,9 @@ const AdminDashboardPage = () => {
                                         <td className="py-2.5 font-mono font-bold text-gray-700">#{order._id.slice(-6).toUpperCase()}</td>
                                         <td className="py-2.5 text-gray-600">{order.user?.name || 'Guest'}</td>
                                         <td className="py-2.5 font-semibold text-gray-900">${order.totalPrice?.toLocaleString()}</td>
-                                        <td className="py-2.5"><StatusBadge status={order.status} /></td>
+                                        <td className="py-2.5"><AdminStatusBadge status={order.status} /></td>
                                         <td className="py-2.5">
-                                            <Link to={`/admin/orders/${order._id}`} className="text-amber-700 hover:text-amber-800">
+                                            <Link to={`/admin/orders/${order._id}`} className="text-gray-800 hover:text-black">
                                                 <Eye className="w-4 h-4" />
                                             </Link>
                                         </td>
@@ -367,10 +332,10 @@ const AdminDashboardPage = () => {
                         </table>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
 
 export default AdminDashboardPage;
+
 

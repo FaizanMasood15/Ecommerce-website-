@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#B88E2F', 
+        'primary': '#111827', 
         'secondary-accent': '#1B5E20',
         'sale-red': '#E57373', 
         'background-light': '#F4F5F7', 
@@ -15,7 +15,7 @@ export default {
         'my-custom-color': '#fff3e3', // Use clean 6-digit hex
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Manrope', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',

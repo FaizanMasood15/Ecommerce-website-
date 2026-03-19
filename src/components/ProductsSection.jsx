@@ -22,15 +22,30 @@ const ProductsSection = ({ goToShop, goToProduct }) => {
         ) : error ? (
           <h2 className="text-xl text-red-500">{error?.data?.message || error.error}</h2>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {products.slice(0, 8).map(product => (
-              <ProductCard
-                key={product._id}
-                product={product}
-                goToProduct={goToProduct} // <--- CRITICAL FIX: Passing navigation function
-              />
-            ))}
-          </div>
+          <>
+            <div className="sm:hidden -mx-4 px-4 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-4 snap-x snap-mandatory">
+                {products.slice(0, 8).map((product) => (
+                  <div key={product._id} className="snap-start shrink-0 w-[78vw] max-w-[330px]">
+                    <ProductCard
+                      product={product}
+                      goToProduct={goToProduct}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {products.slice(0, 8).map(product => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  goToProduct={goToProduct} // <--- CRITICAL FIX: Passing navigation function
+                />
+              ))}
+            </div>
+          </>
         )}
 
         {/* Show More Button (Uses the goToShop routing function) */}

@@ -3,21 +3,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetAllOrdersQuery } from '../slices/ordersApiSlice';
 import { Loader, Eye, AlertCircle } from 'lucide-react';
-
-const STATUS_BASE = 'inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide border shadow-sm';
-const STATUS_COLORS = {
-    Pending: 'bg-amber-200 text-amber-950 border-amber-300',
-    Processing: 'bg-sky-200 text-sky-950 border-sky-300',
-    Packed: 'bg-violet-200 text-violet-950 border-violet-300',
-    Shipped: 'bg-indigo-200 text-indigo-950 border-indigo-300',
-    'Out for Delivery': 'bg-orange-200 text-orange-950 border-orange-300',
-    Delivered: 'bg-emerald-200 text-emerald-950 border-emerald-300',
-    Cancelled: 'bg-rose-200 text-rose-950 border-rose-300',
-    Refunded: 'bg-slate-200 text-slate-900 border-slate-300',
-};
+import AdminStatusBadge from '../components/AdminStatusBadge';
 
 const AdminOrderListPage = () => {
-    const { data: orders, isLoading, error, refetch } = useGetAllOrdersQuery();
+    const { data: orders, isLoading, error } = useGetAllOrdersQuery();
     const [statusFilter, setStatusFilter] = useState('All');
 
     const ALL_STATUSES = ['All', 'Pending', 'Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Refunded'];
@@ -29,14 +18,14 @@ const AdminOrderListPage = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <Loader className="w-8 h-8 animate-spin text-amber-700" />
+                <Loader className="w-8 h-8 animate-spin text-gray-900" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="container mx-auto max-w-5xl px-4 py-16 text-center">
+            <div className="max-w-5xl px-4 py-16 text-center">
                 <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-3" />
                 <p className="text-gray-600">{error?.data?.message || 'Failed to load orders.'}</p>
             </div>
@@ -44,15 +33,14 @@ const AdminOrderListPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-7xl px-4">
+        <div className="max-w-7xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">All Orders</h1>
                         <p className="text-sm text-gray-500">{orders?.length || 0} total orders</p>
                     </div>
-                    <Link to="/admin/products" className="text-amber-700 hover:underline text-sm">← Products</Link>
+                    <Link to="/admin/products" className="text-gray-900 hover:underline text-sm">Back to Products</Link>
                 </div>
 
                 {/* Status Filter Tabs */}
@@ -62,8 +50,8 @@ const AdminOrderListPage = () => {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${statusFilter === status
-                                ? 'bg-amber-700 text-white border-amber-700'
-                                : 'bg-white text-gray-600 border-gray-300 hover:border-amber-400'
+                                ? 'bg-black text-white border-black'
+                                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
                                 }`}
                         >
                             {status}
@@ -118,19 +106,17 @@ const AdminOrderListPage = () => {
                                         </td>
                                         <td className="px-5 py-3">
                                             {order.isPaid
-                                                ? <span className="text-green-600 font-semibold">✓ Paid</span>
-                                                : <span className="text-red-500">✗ Unpaid</span>
+                                                ? <span className="text-green-600 font-semibold">Paid</span>
+                                                : <span className="text-red-500">Unpaid</span>
                                             }
                                         </td>
                                         <td className="px-5 py-3">
-                                            <span className={`${STATUS_BASE} ${STATUS_COLORS[order.status] || 'bg-slate-200 text-slate-900 border-slate-300'}`}>
-                                                {order.status}
-                                            </span>
+                                            <AdminStatusBadge status={order.status} />
                                         </td>
                                         <td className="px-5 py-3">
                                             <Link
                                                 to={`/admin/orders/${order._id}`}
-                                                className="inline-flex items-center gap-1 text-amber-700 hover:text-amber-800 font-medium"
+                                                className="inline-flex items-center gap-1 text-gray-800 hover:text-black font-medium"
                                             >
                                                 <Eye className="w-4 h-4" /> View
                                             </Link>
@@ -147,10 +133,10 @@ const AdminOrderListPage = () => {
                         </table>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
 
 export default AdminOrderListPage;
+
 

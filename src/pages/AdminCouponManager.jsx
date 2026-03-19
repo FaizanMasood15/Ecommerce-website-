@@ -11,7 +11,7 @@ import { Plus, Trash2, Edit2, X, Tag } from 'lucide-react';
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-amber-700 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
+        confirmButton: 'bg-black hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition duration-200',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -103,8 +103,7 @@ const AdminCouponManager = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto max-w-5xl px-4">
+        <div className="max-w-5xl">
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -114,7 +113,7 @@ const AdminCouponManager = () => {
                     </div>
                     <button
                         onClick={() => { resetForm(); setShowForm(true); }}
-                        className="flex items-center gap-2 bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-700 transition text-sm shadow-sm"
+                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition text-sm shadow-sm"
                     >
                         <Plus className="w-4 h-4" /> Add Coupon
                     </button>
@@ -122,7 +121,7 @@ const AdminCouponManager = () => {
 
                 {/* Form */}
                 {showForm && (
-                    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-amber-100">
+                    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="font-bold text-gray-900 text-lg">{editId ? 'Edit Coupon' : 'New Coupon'}</h2>
                             <button onClick={resetForm} className="text-gray-400 hover:text-gray-700 transition"><X className="w-5 h-5" /></button>
@@ -130,41 +129,41 @@ const AdminCouponManager = () => {
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Code *</label>
-                                <input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="SUMMER20" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase font-mono" required />
+                                <input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="SUMMER20" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 uppercase font-mono" required />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Description</label>
-                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Summer Sale 20% off" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Summer Sale 20% off" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Discount Type *</label>
-                                <select value={form.discountType} onChange={e => setForm(f => ({ ...f, discountType: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <select value={form.discountType} onChange={e => setForm(f => ({ ...f, discountType: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
                                     <option value="percentage">Percentage (%)</option>
                                     <option value="fixed">Fixed Amount (USD)</option>
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Discount Value *</label>
-                                <input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 500'} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" required min={0} />
+                                <input type="number" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} placeholder={form.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 500'} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" required min={0} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Min Order (USD)</label>
-                                <input type="number" value={form.minOrderAmount} onChange={e => setForm(f => ({ ...f, minOrderAmount: e.target.value }))} placeholder="0" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={0} />
+                                <input type="number" value={form.minOrderAmount} onChange={e => setForm(f => ({ ...f, minOrderAmount: e.target.value }))} placeholder="0" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" min={0} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Max Uses <span className="text-gray-400 font-normal">(blank = unlimited)</span></label>
-                                <input type="number" value={form.maxUses} onChange={e => setForm(f => ({ ...f, maxUses: e.target.value }))} placeholder="Unlimited" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" min={1} />
+                                <input type="number" value={form.maxUses} onChange={e => setForm(f => ({ ...f, maxUses: e.target.value }))} placeholder="Unlimited" className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" min={1} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-600 mb-1">Expiry Date</label>
-                                <input type="date" value={form.expiresAt} onChange={e => setForm(f => ({ ...f, expiresAt: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                                <input type="date" value={form.expiresAt} onChange={e => setForm(f => ({ ...f, expiresAt: e.target.value }))} className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
                             </div>
                             <div className="flex items-center gap-2 mt-4">
-                                <input type="checkbox" id="couponIsActive" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-amber-600" />
+                                <input type="checkbox" id="couponIsActive" checked={form.isActive} onChange={e => setForm(f => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 accent-gray-900" />
                                 <label htmlFor="couponIsActive" className="text-sm font-medium text-gray-700 cursor-pointer">Active</label>
                             </div>
                             <div className="sm:col-span-2 flex gap-3">
-                                <button type="submit" disabled={isCreating} className="bg-amber-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-700 transition text-sm disabled:opacity-50">
+                                <button type="submit" disabled={isCreating} className="bg-black text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-800 transition text-sm disabled:opacity-50">
                                     {isCreating ? 'Saving...' : (editId ? 'Save Changes' : 'Create Coupon')}
                                 </button>
                                 <button type="button" onClick={resetForm} className="border border-gray-300 text-gray-600 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50 transition text-sm">Cancel</button>
@@ -197,7 +196,7 @@ const AdminCouponManager = () => {
                                     <tr key={coupon._id} className="hover:bg-gray-50 transition">
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-2">
-                                                <Tag className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                                                <Tag className="w-4 h-4 text-gray-700 flex-shrink-0" />
                                                 <span className="font-mono font-bold text-gray-800">{coupon.code}</span>
                                             </div>
                                             {coupon.description && <p className="text-xs text-gray-400 mt-0.5 ml-6">{coupon.description}</p>}
@@ -206,13 +205,13 @@ const AdminCouponManager = () => {
                                             {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `$${coupon.discountValue?.toLocaleString()}`}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
-                                            {coupon.minOrderAmount > 0 ? `$${coupon.minOrderAmount?.toLocaleString()}` : '—'}
+                                            {coupon.minOrderAmount > 0 ? `$${coupon.minOrderAmount?.toLocaleString()}` : '-'}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
-                                            {coupon.usedCount}/{coupon.maxUses ?? '∞'}
+                                            {coupon.usedCount}/{coupon.maxUses ?? 'Unlimited'}
                                         </td>
                                         <td className="px-5 py-3 text-gray-600">
-                                            {coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                                            {coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                                         </td>
                                         <td className="px-5 py-3">
                                             {coupon.isActive
@@ -222,7 +221,7 @@ const AdminCouponManager = () => {
                                         </td>
                                         <td className="px-5 py-3">
                                             <div className="flex gap-3">
-                                                <button onClick={() => handleEdit(coupon)} title="Edit" className="text-amber-500 hover:text-amber-700 hover:bg-amber-50 p-1.5 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
+                                                <button onClick={() => handleEdit(coupon)} title="Edit" className="text-gray-500 hover:text-black hover:bg-gray-100 p-1.5 rounded-full transition"><Edit2 className="w-4 h-4" /></button>
                                                 <button onClick={() => handleDelete(coupon)} title="Delete" className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-full transition"><Trash2 className="w-4 h-4" /></button>
                                             </div>
                                         </td>
@@ -232,11 +231,11 @@ const AdminCouponManager = () => {
                         </table>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };
 
 export default AdminCouponManager;
+
 
 

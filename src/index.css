@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 @theme {
-  --color-primary: #1f2937;
+  --color-primary: #111827;
   --color-secondary-accent: #1B5E20;
   --color-sale-red: #E57373;
   --color-background-light: #f7f7f5;
