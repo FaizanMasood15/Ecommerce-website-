@@ -22,7 +22,7 @@ const Toast = Swal.mixin({
 
 const CustomSwal = Swal.mixin({
     customClass: {
-        confirmButton: 'bg-black hover:bg-gray-800 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
+        confirmButton: 'bg-primary hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg ml-3 transition',
         cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg transition',
         popup: 'bg-white rounded-2xl shadow-xl border border-gray-100 p-6',
         title: 'text-xl font-bold text-gray-900',
@@ -75,7 +75,7 @@ const AdminOrderDetailPage = () => {
         }
     };
 
-    if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader className="w-8 h-8 animate-spin text-gray-900" /></div>;
+    if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader className="w-8 h-8 animate-spin text-primary" /></div>;
     if (error) return <div className="text-center py-16"><AlertCircle className="mx-auto w-10 h-10 text-red-400 mb-3" /><p>{error?.data?.message || 'Order not found'}</p></div>;
 
     return (
@@ -83,8 +83,8 @@ const AdminOrderDetailPage = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <Link to="/admin/orders" className="text-gray-900 text-sm hover:underline">Back to All Orders</Link>
-                        <h1 className="text-2xl font-bold text-gray-900 mt-1">
+                        <Link to="/admin/orders" className="text-primary text-sm hover:underline">Back to All Orders</Link>
+                        <h1 className="text-2xl font-bold text-primary mt-1">
                             Order #{order?._id?.slice(-8).toUpperCase()}
                         </h1>
                         <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleString()}</p>
@@ -95,7 +95,7 @@ const AdminOrderDetailPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-5">
                         {/* Customer & Shipping */}
-                        <div className="bg-white rounded-xl shadow-sm p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <h2 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide text-gray-500">Customer</h2>
                                 {order.user ? (
@@ -120,8 +120,8 @@ const AdminOrderDetailPage = () => {
                         </div>
 
                         {/* Order Items */}
-                        <div className="bg-white rounded-xl shadow-sm p-5">
-                            <h2 className="font-bold text-gray-900 mb-4">Items ({order.orderItems.length})</h2>
+                        <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-5">
+                            <h2 className="font-bold text-primary mb-4">Items ({order.orderItems.length})</h2>
                             <div className="space-y-3">
                                 {order.orderItems.map((item, i) => (
                                     <div key={i} className="flex items-center gap-3">
@@ -143,12 +143,12 @@ const AdminOrderDetailPage = () => {
 
                         {/* Status History */}
                         {order.statusHistory?.length > 0 && (
-                            <div className="bg-white rounded-xl shadow-sm p-5">
-                                <h2 className="font-bold text-gray-900 mb-3">Status History</h2>
+                            <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-5">
+                                <h2 className="font-bold text-primary mb-3">Status History</h2>
                                 <div className="space-y-2">
                                     {[...order.statusHistory].reverse().map((entry, i) => (
                                         <div key={i} className="flex gap-3 items-start text-sm">
-                                            <div className="w-2 h-2 rounded-full bg-gray-700 mt-1.5 flex-shrink-0" />
+                                            <div className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
                                             <div>
                                                 <span className="font-semibold text-gray-800">{entry.status}</span>
                                                 {entry.note && <span className="text-gray-500"> - {entry.note}</span>}
@@ -164,8 +164,8 @@ const AdminOrderDetailPage = () => {
                     {/* Right: Controls */}
                     <div className="space-y-5">
                         {/* Price Summary */}
-                        <div className="bg-white rounded-xl shadow-sm p-5">
-                            <h2 className="font-bold text-gray-900 mb-3">Payment</h2>
+                        <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-5">
+                            <h2 className="font-bold text-primary mb-3">Payment</h2>
                             <div className="space-y-1.5 text-sm text-gray-600">
                                 <div className="flex justify-between"><span>Method</span><span className="font-medium text-gray-800">{order.paymentMethod}</span></div>
                                 <div className="flex justify-between"><span>Subtotal</span><span>${order.itemsPrice?.toLocaleString()}</span></div>
@@ -173,7 +173,7 @@ const AdminOrderDetailPage = () => {
                                 <hr />
                                 <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>${order.totalPrice?.toLocaleString()}</span></div>
                             </div>
-                            <div className={`mt-3 text-sm font-semibold ${order.isPaid ? 'text-green-600' : 'text-yellow-600'}`}>
+                            <div className={`mt-3 text-sm font-semibold ${order.isPaid ? 'text-secondary-accent' : 'text-sale-red'}`}>
                                 {order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleDateString()}` : 'Not paid yet'}
                             </div>
 
@@ -181,7 +181,7 @@ const AdminOrderDetailPage = () => {
                                 <button
                                     onClick={handleMarkPaid}
                                     disabled={isPaidLoading}
-                                    className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 rounded-lg transition disabled:opacity-50"
+                                    className="mt-3 w-full bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 rounded-lg transition disabled:opacity-50"
                                 >
                                     {isPaidLoading ? 'Processing...' : 'Mark as Paid'}
                                 </button>
@@ -190,7 +190,7 @@ const AdminOrderDetailPage = () => {
                                 <button
                                     onClick={handleMarkDelivered}
                                     disabled={isDeliverLoading}
-                                    className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 rounded-lg transition disabled:opacity-50"
+                                    className="mt-2 w-full bg-primary hover:bg-gray-700 text-white text-sm font-semibold py-2 rounded-lg transition disabled:opacity-50"
                                 >
                                     {isDeliverLoading ? 'Processing...' : 'Mark as Delivered'}
                                 </button>
@@ -198,12 +198,12 @@ const AdminOrderDetailPage = () => {
                         </div>
 
                         {/* Update Status */}
-                        <div className="bg-white rounded-xl shadow-sm p-5">
-                            <h2 className="font-bold text-gray-900 mb-3">Update Status</h2>
+                        <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-5">
+                            <h2 className="font-bold text-primary mb-3">Update Status</h2>
                             <select
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-2"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary mb-2"
                             >
                                 <option value="">-- Select new status --</option>
                                 {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -213,12 +213,12 @@ const AdminOrderDetailPage = () => {
                                 value={statusNote}
                                 onChange={(e) => setStatusNote(e.target.value)}
                                 placeholder="Optional note (e.g. tracking number)"
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 mb-3"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary mb-3"
                             />
                             <button
                                 onClick={handleStatusUpdate}
                                 disabled={isStatusLoading || !selectedStatus}
-                                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
+                                className="w-full bg-primary hover:bg-gray-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 text-sm"
                             >
                                 {isStatusLoading ? 'Updating...' : 'Update Status'}
                             </button>
