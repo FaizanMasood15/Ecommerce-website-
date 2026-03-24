@@ -32,10 +32,18 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="min-h-screen bg-background-light">
       <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)] min-h-screen">
+        {mobileOpen && (
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+            aria-label="Close sidebar overlay"
+          />
+        )}
         <aside
-          className={`bg-black text-white border-r border-white/10 ${mobileOpen ? 'block' : 'hidden'} lg:block`}
+          className={`fixed inset-y-0 left-0 z-40 border-r border-white/10 bg-primary text-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:block`}
         >
           <div className={`h-16 border-b border-white/10 flex items-center ${collapsed ? 'px-2 justify-center' : 'px-4 justify-between'}`}>
             {!collapsed && (
@@ -64,7 +72,7 @@ const AdminLayout = () => {
           <div className={`py-3 border-b border-white/10 flex items-center ${collapsed ? 'px-2 justify-center' : 'px-4'}`}>
             {!collapsed && <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-white/50">Navigation</p>}
           </div>
-          <nav className={`p-2 ${collapsed ? 'w-[68px]' : 'w-[240px]'}`}>
+          <nav className={`p-2 w-[240px] ${collapsed ? 'lg:w-[68px]' : 'lg:w-[240px]'}`}>
             {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}

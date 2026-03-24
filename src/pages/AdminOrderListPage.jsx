@@ -37,10 +37,10 @@ const AdminOrderListPage = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">All Orders</h1>
+                        <h1 className="text-2xl font-bold text-primary">All Orders</h1>
                         <p className="text-sm text-gray-500">{orders?.length || 0} total orders</p>
                     </div>
-                    <Link to="/admin/products" className="text-gray-900 hover:underline text-sm">Back to Products</Link>
+                    <Link to="/admin/products" className="text-primary hover:underline text-sm">Back to Products</Link>
                 </div>
 
                 {/* Status Filter Tabs */}
@@ -50,8 +50,8 @@ const AdminOrderListPage = () => {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${statusFilter === status
-                                ? 'bg-black text-white border-black'
-                                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-white text-gray-600 border-gray-300 hover:border-primary/40'
                                 }`}
                         >
                             {status}
@@ -116,7 +116,7 @@ const AdminOrderListPage = () => {
                                         <td className="px-5 py-3">
                                             <Link
                                                 to={`/admin/orders/${order._id}`}
-                                                className="inline-flex items-center gap-1 text-gray-800 hover:text-black font-medium"
+                                                className="inline-flex items-center gap-1 text-primary hover:text-gray-700 font-medium"
                                             >
                                                 <Eye className="w-4 h-4" /> View
                                             </Link>
